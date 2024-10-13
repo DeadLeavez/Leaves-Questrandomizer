@@ -1,4 +1,4 @@
-import { DependencyContainer } from "tsyringe";
+import { DependencyContainer, Lifecycle } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
@@ -13,6 +13,8 @@ import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
+import { LeavesUtils } from "./LeavesUtils";
+import { LeavesQuestTools } from "./LeavesQuestTools";
 
 
 // ISSUES:
@@ -20,22 +22,16 @@ import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 
 class Questrandomizer implements IPreSptLoadMod
 {
-
-    private logger: ILogger;
     private databaseServer: DatabaseServer;
-    private jsonUtil: JsonUtil;
     private hashUtil: HashUtil;
-    private vfs: VFS;
-    private outputFolder: string;
     private weightedRandomHelper: WeightedRandomHelper;
     private handbookHelper: HandbookHelper;
 
+    private leavesUtils: LeavesUtils;
+    private leavesQuestTools: LeavesQuestTools;
     private config: any;
     private weaponCategories: any;
     private weaponCategoriesWeighting: any;
-    private questpoints: any;
-    private itemCategories: any;
-    private itemTiers: number[];
     private localizationChanges: any;
     private QuestDB: any;
 
@@ -98,27 +94,15 @@ class Questrandomizer implements IPreSptLoadMod
         "sandbox_high": "653e6760052c01c1c805532f"
     };
 
-
-    private loadFile( file: string ): any
-    {
-        const directoryFile = path.resolve( __dirname, `../${ file }` );
-        return jsonc.parse( this.vfs.readFile( directoryFile ) );
-    }
-
-    private saveFile( data: any, file: string )
-    {
-        const serialized = this.jsonUtil.serialize( data, true );
-        this.printColor( `${ this.outputFolder }${ file }` );
-        this.vfs.writeFile( `${ this.outputFolder }${ file }`, serialized );
-    }
-
     private loadWeaponCategories()
     {
         //Load the file
-        const categoriesConfig = this.loadFile( "config/weaponcategories.jsonc" );
+        const categoriesConfig = this.leavesUtils.loadFile( "config/weaponcategories.jsonc" );
         this.weaponCategories = {};
 
         //Load the weightings
+
+
         this.weaponCategoriesWeighting = categoriesConfig.weightings;
         for ( let weighting in this.weaponCategoriesWeighting )
         {
@@ -136,7 +120,7 @@ class Questrandomizer implements IPreSptLoadMod
                 }
                 else
                 {
-                    this.printColor( `Weapon ${ weapon } is trying to add to ${ category }, but it doesn't exist` )
+                    this.leavesUtils.printColor( `Weapon ${ weapon } is trying to add to ${ category }, but it doesn't exist` )
                 }
             }
         }
@@ -151,43 +135,44 @@ class Questrandomizer implements IPreSptLoadMod
 
     public preSptLoad( container: DependencyContainer ): void
     {
-        this.logger = container.resolve<ILogger>( "WinstonLogger" );
-        this.jsonUtil = container.resolve<JsonUtil>( "JsonUtil" );
         this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
-        this.vfs = container.resolve<VFS>( "VFS" );
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
-
-        this.config = this.loadFile( "config/config.jsonc" );
-        this.questpoints = this.loadFile( "config/questpoints.jsonc" );
-        this.itemCategories = this.loadFile( "config/itemcategories.jsonc" );
-        this.generateItemTiers();
-
-        this.loadWeaponCategories();
-
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
-        this.outputFolder = `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/`;
-    }
 
-    private generateItemTiers()
-    {
-        this.itemTiers = [];
-        for ( const tier in this.itemCategories )
-        {
-            this.itemTiers.push( Number( tier ) );
-        }
+        //Helper Classes
+        container.register<LeavesUtils>( "LeavesUtils", LeavesUtils, { lifecycle: Lifecycle.Singleton } );
+        this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
+
+        this.leavesUtils.setOutputFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
+        const itemTierList = this.leavesUtils.loadFile( "config/itemcategories.jsonc" );
+        this.leavesUtils.setTierList( itemTierList );
+
+        container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
+
+        this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
+        const questpoints = this.leavesUtils.loadFile( "config/questpoints.jsonc" );
+        this.leavesQuestTools.setQuestPoints( questpoints );
+
+        //Load data
+        this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
+
+
+
+        //Process data
+        this.loadWeaponCategories();
     }
 
     private getEditedQuest( questID: string ): IQuest
     {
         if ( !this.QuestDB[ questID ] )
         {
-            this.printColor( `[Questrandomizer] Didn't find quest: ${ questID }, creating` )
+            this.leavesUtils.printColor( `[Questrandomizer] Didn't find quest: ${ questID }, creating` )
             //Edit the quest
 
             this.QuestDB[ questID ] = this.editQuest( structuredClone( this.databaseServer.getTables().templates.quests[ questID ] ) );
 
-            this.printColor( `[Questrandomizer] ${ questID }, created` )
+            this.leavesUtils.printColor( `[Questrandomizer] ${ questID }, created` )
         }
 
         return this.QuestDB[ questID ];
@@ -196,12 +181,12 @@ class Questrandomizer implements IPreSptLoadMod
     private loadEditedQuests()
     {
         //Load saved quests
-        this.QuestDB = this.loadFile( "quests/generated.jsonc" )
-        this.printColor( `[Questrandomizer] Loaded quest bundle!` );
+        this.QuestDB = this.leavesUtils.loadFile( "quests/generated.jsonc" )
+        this.leavesUtils.printColor( `[Questrandomizer] Loaded quest bundle!` );
 
 
         //Load localization bundle
-        this.localizationChanges = this.loadFile( "quests/locale.jsonc" );
+        this.localizationChanges = this.leavesUtils.loadFile( "quests/locale.jsonc" );
 
         //Load into database.
         for ( const change in this.localizationChanges )
@@ -209,15 +194,15 @@ class Questrandomizer implements IPreSptLoadMod
             this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] = this.localizationChanges[ change ];
         }
 
-        this.printColor( `[Questrandomizer] Loaded localization bundle!` );
+        this.leavesUtils.printColor( `[Questrandomizer] Loaded localization bundle!` );
     }
 
     private saveEditedQuests()
     {
-        this.saveFile( this.QuestDB, "quests/generated.jsonc" );
-        this.printColor( `[Questrandomizer] Saved quest bundle!` )
-        this.saveFile( this.localizationChanges, "quests/locale.jsonc" );
-        this.printColor( `[Questrandomizer] Saved localization bundle!` )
+        this.leavesUtils.saveFile( this.QuestDB, "quests/generated.jsonc" );
+        this.leavesUtils.printColor( `[Questrandomizer] Saved quest bundle!` )
+        this.leavesUtils.saveFile( this.localizationChanges, "quests/locale.jsonc" );
+        this.leavesUtils.printColor( `[Questrandomizer] Saved localization bundle!` )
     }
 
     public postDBLoad( container: DependencyContainer ): void
@@ -265,11 +250,11 @@ class Questrandomizer implements IPreSptLoadMod
         let hasKillsFailstate = false;
         if ( quest.conditions.Fail )
         {
-            hasKillsFailstate = this.checkForSubconditionType( "Kills", quest.conditions.Fail );
+            hasKillsFailstate = this.leavesUtils.searchObject( "Kills", quest.conditions.Fail );
         }
 
         //Check if quest has kill type
-        if ( !this.checkForSubconditionType( "Kills", quest.conditions.AvailableForFinish ) && Math.random() < this.config.addKillObjectiveToQuestChance )
+        if ( !this.leavesUtils.searchObject( "Kills", quest.conditions.AvailableForFinish ) && Math.random() < this.config.addKillObjectiveToQuestChance )
         {
             this.addKillObjectiveToQuest( quest );
         }
@@ -298,7 +283,7 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         //Edit quest location
-        quest.location = this.locationIdMap[ this.getQuestLocationText( quest ).toLocaleLowerCase() ];
+        quest.location = this.locationIdMap[ this.leavesQuestTools.getQuestLocationText( quest ).toLocaleLowerCase() ];
 
         return quest;
     }
@@ -348,33 +333,22 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         let newTarget = [];
-        let tier = this.findItemCategoryTier( originalItem );
+        let tier = this.leavesUtils.getTierFromID(  originalItem );
         if ( tier == -1 )
         {
             const cost = this.handbookHelper.getTemplatePrice( originalItem );
-            tier = this.getClosestTier( Math.round( cost / this.config.handoverItemUnknownItemValueDivider ) );
+            tier = this.leavesUtils.getClosestTier( Math.round( cost / this.config.handoverItemUnknownItemValueDivider ) );
         }
 
-        newTarget.push( this.getRandomItemFromTier( tier ) );
+        newTarget.push( this.leavesUtils.getRandomItemFromTier(  tier ) );
 
         task.target = newTarget;
 
         const previousValue: number = task.value as number;
-        task.value = this.generateValueAdjustment( previousValue, this.config.adjustHandoverCountFactorsUpDown );
+        task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.config.adjustHandoverCountFactorsUpDown );
         const newLocale = this.generateHandoverItemLocale( task );
         this.editTaskLocale( task, newLocale );
 
-    }
-
-    private generateValueAdjustment( previousValue: number, factors: number[] ): number
-    {
-        const multiplier = 1 + ( Math.random() * factors[ 0 ] - Math.random() * factors[ 1 ] );
-        const newValue = Math.round( previousValue * multiplier );
-        if ( newValue < 1 )
-        {
-            return 1;
-        }
-        return newValue;
     }
 
     private generateHandoverItemLocale( task: IQuestCondition )
@@ -386,123 +360,6 @@ class Questrandomizer implements IPreSptLoadMod
         line += this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ `${ task.target[ 0 ] } Name` ];
 
         return line;
-    }
-
-    private getRandomItemFromTier( tier: number ): string
-    {
-        let size = this.itemCategories[ tier ].length;
-
-        return this.itemCategories[ tier ][ randomInt( size ) ];
-    }
-
-    private getClosestTier( currentTier: number )
-    {
-        let closestDistance = 9999;
-        let closestTier = 9999;
-        for ( const tier of this.itemTiers )
-        {
-            const tempDistance = Math.abs( currentTier - tier );
-            if ( tempDistance < closestDistance )
-            {
-                closestDistance = tempDistance;
-                closestTier = tier;
-            }
-        }
-        return closestTier;
-    }
-
-    private findItemCategoryTier( item: string ): number
-    {
-        for ( const tier in this.itemCategories )
-        {
-            if ( tier.includes( item ) )
-            {
-                return Number( tier );
-            }
-        }
-        return -1;
-    }
-
-    private getQuestLocationText( quest: IQuest ): string 
-    {
-        //Use a set to get all maps, but we only care if they exist or not.
-        let maps = new Set<string>();
-
-        //Check all completion conditions
-        for ( const task of quest.conditions.AvailableForFinish )
-        {
-            //Check for zoneID in the direct condition
-            if ( task.zoneId )
-            {
-                const temp = this.zoneIDToMap( task.zoneId )
-                if ( temp === "unknown" )
-                {
-                    return "any";
-                }
-                maps.add( temp );
-            }
-
-            //Check if its a counter condition
-            if ( task.counter )
-            {
-                //Go through each counter condition
-                for ( const condition of task.counter.conditions )
-                {
-                    //Check fo the existence of zoneIds (they exist dammit, spt!)
-                    if ( condition.zoneIds )
-                    {
-                        for ( const zone of condition.zoneIds )
-                        {
-                            const temp = this.zoneIDToMap( zone )
-                            if ( temp === "unknown" )
-                            {
-                                return "any";
-                            }
-                            maps.add( temp );
-                        }
-                    }
-                    //Check if there are location type conditions
-                    if ( condition.conditionType === "Location" )
-                    {
-                        for ( const map of condition.target )
-                        {
-                            let temp = "";
-
-                            //They're sometimes arrays, sometimes not. Fuck you BSG!
-                            if ( Array.isArray( condition.target ) )
-                            {
-                                temp = condition.target[ 0 ];
-                            }
-                            else
-                            {
-                                temp = condition.target;
-                            }
-                            maps.add( temp );
-                        }
-                    }
-                }
-            }
-        }
-        //If the sets size is exactly 1, we're only on a single map in total.
-        if ( maps.size === 1 )
-        {
-            return Array.from( maps.values() )[ 0 ];
-        }
-
-        //Else, we're not on a map in particular, or we're on more than one map. either way, "any" applies.
-        return "any";
-    }
-
-    private zoneIDToMap( zoneID: string ): string
-    {
-        for ( let map in this.questpoints )
-        {
-            if ( this.questpoints[ map ][ zoneID ] )
-            {
-                return map;
-            }
-        }
-        return "unknown";
     }
 
     private editCounterCreatorTask( task: IQuestCondition, hasKillsFailstate: boolean )
@@ -521,7 +378,8 @@ class Questrandomizer implements IPreSptLoadMod
             hasWeapon: -1,
             whatWeaponGroup: "",
             hasSavageRole: -1,
-            hasKillFailstate: hasKillsFailstate ? 1 : -1
+            hasKillFailstate: hasKillsFailstate ? 1 : -1,
+            hasEquipment: -1
         }
 
         //Check what countercreator conditions exist
@@ -543,6 +401,10 @@ class Questrandomizer implements IPreSptLoadMod
             else if ( conditions[ counterConditionIndex ].conditionType === "InZone" )
             {
                 flags.hasInZone = counterConditionIndex;
+            }
+            else if ( conditions[ counterConditionIndex ].conditionType === "Equipment" )
+            {
+                flags.hasEquipment = counterConditionIndex;
             }
         }
 
@@ -586,7 +448,7 @@ class Questrandomizer implements IPreSptLoadMod
             if ( flags.hasSavageRole )
             {
                 const previousValue: number = task.value as number;
-                task.value = this.generateValueAdjustment( previousValue, this.config.adjustKillCountFactorsUpDown );
+                task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.config.adjustKillCountFactorsUpDown );
             }
 
             const templocale = this.generateKillsLocale( task, flags )
@@ -602,7 +464,7 @@ class Questrandomizer implements IPreSptLoadMod
         const taskid = task.id;
         this.localizationChanges[ taskid ] = templocale;
         this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ taskid ] = templocale;
-        this.printColor( templocale, LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( templocale, LogTextColor.MAGENTA );
     }
 
     private addLocationToQuest( conditions: IQuestConditionCounterCondition[], flags: any )
@@ -618,20 +480,10 @@ class Questrandomizer implements IPreSptLoadMod
         let mapCount = 1;
 
         //Add new maps to location
-        locationData.target = this.getUniqueValues( this.validMaps, mapCount );
+        locationData.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
 
         //Index will be the length minus 1
         flags.hasLocation = conditions.push( locationData ) - 1;
-    }
-
-    private checkForSubconditionType( type: string, searchTarget: any )
-    {
-        //Hackiest shit ever
-        if ( this.jsonUtil.serialize( searchTarget ).search( `${ type }` ) > -1 )
-        {
-            return true;
-        }
-        return false;
     }
 
     private addKillObjectiveToQuest( quest: IQuest )
@@ -703,7 +555,7 @@ class Questrandomizer implements IPreSptLoadMod
         let mapCount = 1
 
         //Generate new map
-        locations.target = this.getUniqueValues( this.validMaps, mapCount );
+        locations.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
     }
 
     private generateKillsLocale( task: IQuestCondition, flags: any ): string
@@ -776,6 +628,22 @@ class Questrandomizer implements IPreSptLoadMod
                 }
             }
             line += mapsline;
+        }
+
+        //Gear
+        if ( flags.hasEquipment >= 0 )
+        {
+            line += "wearing ";
+            for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
+            {
+                line += "\n[";
+                for ( const gearID of gearGroup )
+                {
+                    line += `${ this.leavesUtils.getLocale( this.config.targetLocale, gearID, " Name" ) } `;
+                }
+                line += "] ";
+
+            }
         }
 
         return line;
@@ -884,7 +752,7 @@ class Questrandomizer implements IPreSptLoadMod
 
     private getBodyparts( count: number ): string[]
     {
-        let tempArray = this.getUniqueValues( this.bodyParts, count );
+        let tempArray = this.leavesUtils.getUniqueValues( this.bodyParts, count );
         let newArray = [];
         for ( const item of tempArray )
         {
@@ -906,56 +774,6 @@ class Questrandomizer implements IPreSptLoadMod
         return newArray;
     }
 
-    //Uses set to guarantee unique values.
-    private getUniqueValues<T>( array: T[], count: number ): T[]
-    {
-        if ( count > array.length )
-        {
-            count = array.length;
-        }
-
-        let generatedValues = new Set<T>();
-
-        while ( generatedValues.size < count )
-        {
-            generatedValues.add( array[ randomInt( array.length ) ] );
-        }
-
-        return Array.from( generatedValues.values() );
-    }
-
-    private debugJsonOutput( jsonObject: any, label: string = "" )
-    {
-        if ( label.length > 0 )
-        {
-            this.logger.logWithColor( "[" + label + "]", LogTextColor.GREEN );
-        }
-        this.logger.logWithColor( JSON.stringify( jsonObject, null, 4 ), LogTextColor.MAGENTA );
-    }
-
-    private printColor( message: string, color: LogTextColor = LogTextColor.GREEN )
-    {
-        this.logger.logWithColor( message, color );
-    }
-
-    private dataDump()
-    {
-        const parents =
-            [
-                "-5448e54d4bdc2dcc718b4568", //Armor
-                "5a341c4086f77401f2541505", //Headwear
-                "-5448e5284bdc2dcb718b4567" //Vest
-            ]
-        const itemDB = this.databaseServer.getTables().templates.items;
-        const locale = this.databaseServer.getTables().locales.global[ "en" ];
-        for ( const item in itemDB )
-        {
-            if ( parents.includes( itemDB[ item ]._parent ) )
-            {
-                this.printColor( `"${ item }", //${ locale[ item + " Name" ] }` );
-            }
-        }
-    }
 
 }
 
