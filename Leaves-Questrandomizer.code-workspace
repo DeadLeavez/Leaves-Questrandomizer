@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": { },
+	"tasks": {
+		"version": "2.0.0",
+		"yourface": "cute",
+		"tasks":
+		[
+			{
+				"label": "Server-Launch",
+				"type": "shell",
+				"command": "Start-Process -FilePath \"SPT.Server.exe\" -NoNewWindow -Wait",
+				"options": {
+					"cwd": "G:\\Tarkov\\SPT-AKI\\SPT-3.10BE-TESTING"
+				},
+				"yoursecondface": "alsocute",
+				"problemMatcher": [ ],
+				"yourfacesface": "notcute"
+			}
+		]
+	}
+}

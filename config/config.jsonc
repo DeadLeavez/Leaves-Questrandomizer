@@ -1,0 +1,26 @@
+{
+    //WIP WILL BE EXPANDED MORE.
+    "questBlacklist": //These quests wont be edited
+    [
+        "5c0d190cd09282029f5390d8" //Grenadier
+    ],
+    
+    "targetLocale": "en", //Will add the new lines to this locale
+
+    "chanceToAddLocations": 0.5,
+    "chanceToAddTimeOfDay": 0.05,
+    "chanceToAddBodypart": 0.05,
+    "chanceToAddDistance": 0.05,
+    "chanceToAddWeapon": 0.5,
+    "adjustKillCountFactorsUpDown": [0.2,0.2],
+
+    "addKillObjectiveToQuestChance": 0.5,
+    "addKillObjectiveKillCount": 5,
+
+    "handoverItemUnknownItemValueDivider": 15000,
+    "adjustHandoverCountFactorsUpDown": [0.2,0.2],
+    "findItemBlacklist":
+    [
+
+    ]
+}
