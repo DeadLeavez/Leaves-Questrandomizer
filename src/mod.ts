@@ -1,15 +1,10 @@
 import { DependencyContainer, Lifecycle } from "tsyringe";
-import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { JsonUtil } from "@spt/utils/JsonUtil";
-import { VFS } from "@spt/utils/VFS";
 import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
 import type { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
 import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { randomInt } from "crypto";
-import { jsonc } from "jsonc";
-import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
@@ -18,7 +13,7 @@ import { LeavesQuestTools } from "./LeavesQuestTools";
 
 
 // ISSUES:
-// GEAR U WEAR //At least add to locale
+// GEAR U WEAR //Added to locale
 
 class Questrandomizer implements IPreSptLoadMod
 {
@@ -32,6 +27,7 @@ class Questrandomizer implements IPreSptLoadMod
     private config: any;
     private weaponCategories: any;
     private weaponCategoriesWeighting: any;
+    private gearList: any;
     private localizationChanges: any;
     private QuestDB: any;
 
@@ -49,6 +45,48 @@ class Questrandomizer implements IPreSptLoadMod
             "Savage",
             "Any" //Maybe add USEC/BEAR distinguishing later.
         ];
+    private targetNameTranslator =
+        {
+            "anypmc": "Any PMC",
+            "savage": "Scavs",
+            "any": "Anything",
+            "marksman": "Sniper Scav",
+            "assault": "Scav",
+            "bossbully": "Reshala",
+            "followerbully": "Reshala Follower",
+            "bosskilla": "Killa",
+            "bosskojaniy": "Shturman",
+            "followerkojaniy": "Shturman Follower",
+            "bossgluhar": "Gluhar",
+            "followergluharassault": "Gl. Fol. Assault",
+            "followergluharsecurity": "Gl. Fol. Security",
+            "followergluharscout": "Gl. Fol. Scout",
+            "followergluharsniper": "Gl. Fol. Snipe",
+            "followersanitar": "Sanitar Follower",
+            "bosssanitar": "Sanitar",
+            "sectantwarrior": "Cultist Warrior",
+            "sectantpreist": "Cultist Priest",
+            "bosstagilla": "Tagilla",
+            "followertagilla": "Tagilla Follower",
+            "exusec": "Rogue",
+            "bossknight": "Knight",
+            "followerbigpipe": "Big Pipe",
+            "followerbirdeye": "Birdeye",
+            "bosszryachiy": "Zryachiy",
+            "followerzryachiy": "Zryachiy Follower",
+            "bossboar": "Kaban",
+            "followerboar": "Kaban Follower",
+            "bossboarsniper": "Kaban Sniper",
+            "followerboarclose1": "Kaban Follower C.",
+            "followerboarclose2": "Kaban Follower C.2",
+            "bosskolontay": "Kolontay",
+            "followerkolontayassault": "Kolontay F. Assault.",
+            "followerkolontaysecurity": "Kolontay F. Security",
+            "bossPARTISAN": "Partisan",
+            "pmcbear": "Bear PMC",
+            "pmcusec": "USEC PMC"
+
+        }
     private mapNameTranslator =
         {
             "bigmap": "Customs",
@@ -156,6 +194,7 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Load data
         this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
+        this.gearList = this.leavesUtils.loadFile( "config/gearcategories.jsonc" );
 
 
 
@@ -333,14 +372,14 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         let newTarget = [];
-        let tier = this.leavesUtils.getTierFromID(  originalItem );
+        let tier = this.leavesUtils.getTierFromID( originalItem );
         if ( tier == -1 )
         {
             const cost = this.handbookHelper.getTemplatePrice( originalItem );
             tier = this.leavesUtils.getClosestTier( Math.round( cost / this.config.handoverItemUnknownItemValueDivider ) );
         }
 
-        newTarget.push( this.leavesUtils.getRandomItemFromTier(  tier ) );
+        newTarget.push( this.leavesUtils.getRandomItemFromTier( tier ) );
 
         task.target = newTarget;
 
@@ -433,7 +472,11 @@ class Questrandomizer implements IPreSptLoadMod
                 flags.whatLoctations = structuredClone( conditions[ flags.hasLocation ].target as string[] );
             }
 
-
+            //Add gear
+            if ( flags.hasEquipment < 0 && Math.random() < this.config.chanceToAddGear )
+            {
+                flags.hasEquipment = this.addGearToQuest( conditions );
+            }
 
             //Edit zones possibly (PROBABLY WONT DO)
             if ( flags.hasInZone >= 0 )
@@ -457,6 +500,26 @@ class Questrandomizer implements IPreSptLoadMod
         }
         //We don't edit anything else with counters for now.
         return;
+    }
+    private addGearToQuest( condition: IQuestConditionCounterCondition[] ): number
+    {
+        let gearPieces = this.leavesUtils.getUniqueWeightedValues<string>( this.gearList, this.config.addGearCount );
+        let tempGear =
+        {
+            "IncludeNotEquippedItems": false,
+            "conditionType": "Equipment",
+            "dynamicLocale": false,
+            "equipmentExclusive": [],
+            "equipmentInclusive": [],
+            "id": this.hashUtil.generate()
+        };
+        for ( const piece of gearPieces )
+        {
+            tempGear.equipmentInclusive.push( [ piece ] );
+        }
+
+        //return the index of the new entry
+        return condition.push( tempGear ) - 1;
     }
 
     private editTaskLocale( task: IQuestCondition, templocale: string )
@@ -567,15 +630,19 @@ class Questrandomizer implements IPreSptLoadMod
         {
             for ( let role of conditions[ flags.hasKills ].savageRole ) 
             {
-                target += `${ role } `;
+                const targetTranslated = this.targetNameTranslator[ role.toLocaleLowerCase() ];
+                target += `${ targetTranslated } `;
             }
         }
         else
         {
             target = conditions[ flags.hasKills ].target as string;
+            target = this.targetNameTranslator[ target.toLocaleLowerCase() ] + " ";
         }
 
-        let line: string = `Kill ${ kills } ${ target } `;
+       
+
+        let line: string = `Kill ${ kills } ${ target }`;
 
         //Distance
         if ( flags.hasDistance >= 0 )
@@ -633,16 +700,29 @@ class Questrandomizer implements IPreSptLoadMod
         //Gear
         if ( flags.hasEquipment >= 0 )
         {
-            line += "wearing ";
+            line += "wearing:\n";
+            let tempCount = 0;
             for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
             {
-                line += "\n[";
+                line += "[";
                 for ( const gearID of gearGroup )
                 {
-                    line += `${ this.leavesUtils.getLocale( this.config.targetLocale, gearID, " Name" ) } `;
+                    let name = this.leavesUtils.getLocale( this.config.targetLocale, gearID, " Name" );
+                    line += `${ name }`;
                 }
-                line += "] ";
+                line += "]";
 
+                //Check if we're on the last line, so to not add extra |
+                if ( tempCount < conditions.length - 1 )
+                {
+                    line += "|"
+                }
+                else
+                {
+                    line += " ";
+                }
+
+                tempCount++;
             }
         }
 
@@ -746,6 +826,12 @@ class Questrandomizer implements IPreSptLoadMod
                 flags.hasWeapon = 1;
                 killsCondition.weapon = this.getWeaponGroup( flags );
             }
+        }
+
+        //Gear
+        if ( flags.hasEquipment )
+        {
+            //Randomize
         }
         //LEAVE FOR NOW
     }

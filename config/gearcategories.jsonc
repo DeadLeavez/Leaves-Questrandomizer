@@ -1,188 +1,185 @@
 {
-    "armor":
-    [
-        "5fd4c474dd870108a754b241", //5.11 Tactical Hexgrid plate carrier
-        "5b44d0de86f774503d30cba8", //IOTV Gen4 body armor (High Mobility Kit, MultiCam)
-        "64be79e2bf8412471d0d9bcc", //NPP KlASS Kora-Kulon body armor (Digital Flora)
-        "609e8540d5c319764c2bc2e9", //NFM THOR Concealable Reinforced Vest body armor
-        "5f5f41476bdad616ad46d631", //NPP KlASS Korund-VM body armor (Black)
-        "5c0e625a86f7742d77340f62", //BNTI Zhuk body armor (Digital Flora)
-        "62a09d79de7ac81993580530", //DRD body armor
-        "64abd93857958b4249003418", //Interceptor OTV body armor (UCP)
-        "6038b4b292ec1c3103795a0b", //LBT-6094A Slick Plate Carrier (Coyote Tan)
-        "5c0e57ba86f7747fa141986d", //6B23-2 body armor (Mountain Flora)
-        "5c0e655586f774045612eeb2", //HighCom Trooper TFO body armor (MultiCam)
-        "5b44d22286f774172b0c9de8", //BNTI Kirasa-N body armor
-        "5b44cf1486f77431723e3d05", //IOTV Gen4 body armor (Assault Kit, MultiCam)
-        "5648a7494bdc2d9d488b4583", //PACA Soft Armor
-        "5c0e5edb86f77461f55ed1f7", //BNTI Zhuk body armor (Press)
-        "5ab8e79e86f7742d8b372e78", //BNTI Gzhel-K body armor
-        "5ca2151486f774244a3b8d30", //FORT Redut-M body armor
-        "6038b4ca92ec1c3103795a0d", //LBT-6094A Slick Plate Carrier (Olive Drab)
-        "5c0e541586f7747fa54205c9", //6B13 M assault armor (Killa Edition)
-        "545cdb794bdc2d3a198b456a", //6B43 Zabralo-Sh body armor (Digital Flora)
-        "5c0e5bab86f77461f55ed1f3", //6B23-1 body armor (Digital Flora)
-        "5c0e53c886f7747fa54205c7", //6B13 assault armor (Digital Flora)
-        "5e9dacf986f774054d6b89f4", //FORT Defender-2 body armor
-        "5ca21c6986f77479963115a7", //FORT Redut-T5 body armor (Smog)
-        "59e7635f86f7742cbf2c1095", //BNTI Module-3M body armor
-        "60a283193cb70855c43a381d", //NFM THOR Integrated Carrier body armor
-        "63737f448b28897f2802b874", //Hexatac HPC Plate Carrier (MultiCam Black)
-        "64be79c487d1510151095552", //NPP KlASS Kora-Kulon body armor (Black)
-        "5b44cd8b86f774503d30cba2", //IOTV Gen4 body armor (Full Protection Kit, MultiCam)
-        "607f20859ee58b18e41ecd90", //PACA Soft Armor (Rivals Edition)
-        "5df8a2ca86f7740bfe6df777", //6B2 body armor (Flora)
-        "5ab8e4ed86f7742d8e50c7fa", //MF-UNTAR body armor
-        "5e4abb5086f77406975c9342", //LBT-6094A Slick Plate Carrier (Black)
-        "5c0e51be86f774598e797894" //6B13 assault armor (Flora)
-    ],
-    "Vests":
-    [
-        "5fd4c5477a8d854fa0105061", //Security vest
-        "61bc85697113f767765c7fe7", //Eagle Industries MMAC plate carrier (Ranger Green)
-        "6034cf5fffd42c541047f72e", //Umka M33-SET1 hunter vest (Olive Drab)
-        "5f5f41f56760b4138443b352", //Direct Action Thunderbolt compact chest rig (Shadow Grey)
-        "5e4ac41886f77406a511c9a8", //Ars Arma CPC MOD.1 plate carrier (A-TACS FG)
-        "609e860ebd219504d8507525", //Crye Precision AVS plate carrier (Tagilla Edition)
-        "592c2d1a86f7746dbe2af32a", //ANA Tactical Alpha chest rig (Olive Drab)
-        "5d5d87f786f77427997cfaef", //Ars Arma A18 Skanda plate carrier (MultiCam)
-        "5d5d85c586f774279a21cbdb", //Haley Strategic D3CRX Chest Harness (Ranger Green)
-        "5c0e6a1586f77404597b4965", //Poyas-A + Poyas-B gear rig
-        "5c0e722886f7740458316a57", //ANA Tactical M1 plate carrier (Olive Drab)
-        "5c0e3eb886f7742015526062", //6B5-16 Zh-86 Uley armored rig (Khaki)
-        "5d5d646386f7742797261fd9", //6B3TM-01 armored rig (Khaki)
-        "5648a69d4bdc2ded0b8b457b", //BlackRock chest rig (Gray)
-        "5c0e446786f7742013381639", //6B5-15 Zh-86 Uley armored rig (Flora)
-        "544a5caa4bdc2d1a388b4568", //Crye Precision AVS plate carrier (Ranger Green)
-        "6034d0230ca681766b6a0fb5", //CSA chest rig (Black)
-        "5ab8dced86f774646209ec87", //ANA Tactical M2 plate carrier (Digital Flora)
-        "59e7643b86f7742cbf2c109a", //WARTECH TV-109 + TV-106 chest rig (A-TACS FG)
-        "5ca20abf86f77418567a43f2", //Dynaforce Triton M43-A chest harness (Black)
-        "64a5366719bab53bd203bf33", //Eagle Allied Industries MBSS plate carrier (Coyote Brown)
-        "628d0618d1ba6e4fa07ce5a4", //NPP KlASS Bagariy plate carrier (Digital Flora)
-        "628baf0b967de16aab5a4f36", //LBT-1961A Load Bearing Chest Rig (Goons Edition)
-        "603648ff5a45383c122086ac", //Azimut SS Zhuk chest harness (Black)
-        "64be7110bf597ba84a0a41ea", //Type 56 Chicom chest harness
-        "63611865ba5b90db0c0399d1", //Azimut SS "Khamelion" chest harness (Olive)
-        "5c0e746986f7741453628fe5", //WARTECH TV-110 plate carrier (Coyote)
-        "572b7adb24597762ae139821", //Scav Vest
-        "5d5d8ca986f7742798716522", //SOE Micro Rig (MultiCam)
-        "5df8a42886f77412640e2e75", //Velocity Systems MPPV Multi-Purpose Patrol Vest (Wolf Grey)
-        "5929a2a086f7744f4b234d43", //UMTBS 6Sh112 Scout-Sniper chest rig (Digital Flora)
-        "61bcc89aef0f505f0c6cd0fc", //FirstSpear Strandhogg plate carrier (Ranger Green)
-        "5fd4c4fa16cac650092f6771", //DIY IDEA chest rig
-        "5ab8dab586f77441cd04f2a2", //WARTECH MK3 TV-104 chest rig (MultiCam)
-        "5fd4c60f875c30179f5d04c2", //Gear Craft GC-BSS-MK1 chest rig (A-TACS FG)
-        "5b44c8ea86f7742d1627baf1", //BlackHawk! Commando chest harness (Desert Tan)
-        "66b6295a8ca68c6461709efa", //Tasmanian Tiger Plate Carrier MKIII (Coyote Brown)
-        "5c0e9f2c86f77432297fe0a3", //BlackHawk! Commando chest harness (Black)
-        "64a536392d2c4e6e970f4121", //WARTECH TV-115 plate carrier (Olive Drab)
-        "60a3c68c37ea821725773ef5", //CQC Osprey MK4A plate carrier (Protection, MTP)
-        "5e9db13186f7742f845ee9d3", //LBT-1961A Load Bearing Chest Rig (MAS Grey)
-        "639343fce101f4caa40a4ef3", //Shellback Tactical Banshee plate carrier (A-TACS AU)
-        "60a6220e953894617404b00a", //Stich Profi Chest Rig MK2 (Recon, A-TACS FG)
-        "6040dd4ddcf9592f401632d2", //Azimut SS Zhuk chest harness (SURPAT)
-        "60a3c70cde5f453f634816a3", //CQC Osprey MK4A plate carrier (Assault, MTP)
-        "5e4abc1f86f774069619fbaa", //Spiritus Systems Bank Robber chest rig (MultiCam Black)
-        "66b6296d7994640992013b17", //Stich Profi Plate Carrier V2 (Black)
-        "628dc750b910320f4c27a732", //ECLiPSE RBAV-AF plate carrier (Ranger Green)
-        "628b9784bcf6e2659e09b8a2", //S&S Precision PlateFrame plate carrier (Goons Edition)
-        "628cd624459354321c4b7fa2", //Tasmanian Tiger SK plate carrier (MultiCam Black)
-        "64be7095047e826eae02b0c1", //Zulu Nylon Gear M4 Reduced Signature Chest Rig (Ranger Green)
-        "60a621c49c197e4e8c4455e6", //Stich Profi Chest Rig MK2 (Assault, A-TACS FG)
-        "628b9c7d45122232a872358f", //Crye Precision CPC plate carrier (Goons Edition)
-        "66b6295178bbc0200425f995", //Stich Profi Stich Defense mod.2 plate carrier (MultiCam)
-        "5e4abfed86f77406a2713cf7", //Splav Tarzan M22 chest rig (Smog)
-        "5b44cad286f77402a54ae7e5" //5.11 Tactical TacTec plate carrier (Ranger Green)
-    ],
-    "Headgear":
-    [
-        "5ca20ee186f774799474abc2", //Vulkan-5 LShZ-5 bulletproof helmet (Black)
-        "5ac8d6885acfc400180ae7b0", //Ops-Core FAST MT Super High Cut helmet (Urban Tan)
-        "5f60e7788adaa7100c3adb49", //Beret (Blue)
-        "61bca7cda0eae612383adf57", //NFM HJELM helmet (Hellhound Grey)
-        "5aa7cfc0e5b5b00015693143", //6B47 Ratnik-BSh helmet (Digital Flora cover)
-        "5d6d3716a4b9361bc8618872", //BNTI LShZ-2DTM helmet (Black)
-        "5b432d215acfc4771e1c6624", //LShZ lightweight helmet (Olive Drab)
-        "5d5e9c74a4b9364855191c40", //MSA ACH TC-2002 MICH Series helmet (Olive Drab)
-        "5aa7d193e5b5b000171d063f", //SSSh-94 SFERA-S helmet
-        "5e4bfc1586f774264f7582d3", //MSA Gallet TC 800 High Cut combat helmet (Black)
-        "59e7708286f7742cbd762753", //Ushanka ear flap hat
-        "5aa2b87de5b5b00016327c25", //BEAR baseball cap (Olive Drab)
-        "628e4dd1f477aa12234918aa", //Big Pipe's bandana
-        "5ea05cf85ad9772e6624305d", //Tac-Kek FAST MT helmet (Replica)
-        "5b40e3f35acfc40016388218", //HighCom Striker ACHHC IIIA helmet (Black)
-        "572b7fa124597762b472f9d2", //Beanie
-        "60b52e5bc7d8103275739d67", //Stich Profi Chimera boonie hat
-        "5aa7e276e5b5b000171d0647", //Altyn bulletproof helmet (Olive Drab)
-        "5d5e7d28a4b936645d161203", //MSA ACH TC-2001 MICH Series helmet (Olive Drab)
-        "59e770f986f7742cbe3164ef", //Army cap
-        "5a154d5cfcdbcb001a3b00da", //Ops-Core FAST MT Super High Cut helmet (Black)
-        "60bf74184a63fc79b60c57f6", //Bomber beanie
-        "5c066ef40db834001966a595", //Armasight NVG head strap
-        "5c17a7ed2e2216152142459c", //Crye Precision AirFrame helmet (Tan)
-        "5c08f87c0db8340019124324", //ShPM Firefighter helmet
-        "5a16bb52fcdbcb001a3b00dc", //Wilcox Skull Lock head mount
-        "5bd073c986f7747f627e796c", //Kotton beanie
-        "5df8a58286f77412631087ed", //TSh-4M-L soft tank crew helmet
-        "6531119b9afebff7ff0a1769", //Vengeful Zryachiy's balaclava (folded)
-        "60361b5a9a15b10d96792291", //Army cap (UCP)
-        "5aa2ba46e5b5b000137b758d", //UX PRO beanie
-        "5f60c74e3b85f6263c145586", //Rys-T bulletproof helmet (Black)
-        "5c06c6a80db834001b735491", //SSh-68 steel helmet (Olive Drab)
-        "603618feffd42c541047f771", //Army cap (Black)
-        "603619720ca681766b6a0fc4", //Army cap (Coyote Tan)
-        "5ab8f20c86f7745cdb629fb2", //Ski hat with holes for eyes
-        "5b40e5e25acfc4001a599bea", //BEAR baseball cap (Black)
-        "5a43943586f77416ad2f06e2", //Ded Moroz hat
-        "5645bc214bdc2d363b8b4571", //FORT Kiver-M bulletproof helmet
-        "5aa2ba19e5b5b00014028f4e", //Tactical fleece beanie (Tan)
-        "5aa7e4a4e5b5b000137b76f2", //ZSh-1-2M helmet (Black cover)
-        "572b7d8524597762b472f9d1", //Baseball cap
-        "5aa7d03ae5b5b00016327db5", //UNTAR helmet
-        "5b4327aa5acfc400175496e0", //MIL-TEC boonie hat
-        "5aa2b8d7e5b5b00014028f4a", //Police cap
-        "5b4329f05acfc47a86086aa1", //DevTac Ronin Respirator
-        "5b40e61f5acfc4001a599bec", //USEC baseball cap (Black)
-        "636270263f2495c26f00b007", //Zryachiy's balaclava (folded)
-        "5f60b34a41e30a4ab12a6947", //Galvion Caiman Hybrid helmet (Grey)
-        "60361b0b5a45383c122086a1", //Army cap (Desert)
-        "5d96141523f0ea1b7f2aacab", //Door Kicker boonie hat
-        "5aa7e454e5b5b0214e506fa2", //ZSh-1-2M helmet (Olive Drab)
-        "60a7acf20c5cb24b01346648", //BOSS cap
-        "65709d2d21b9f815e208ff95", //Diamond Age NeoSteel High Cut helmet (Black)
-        "65719f0775149d62ce0a670b", //NPP KlASS Tor-2 helmet (Olive Drab)
-        "5b4329075acfc400153b78ff", //Pompon hat
-        "5b43271c5acfc432ff4dce65", //Bandana
-        "66b5f65ca7f72d197e70bcd6", //Ballistic Armor Co. Bastion helmet (Armor Black)
-        "5f99418230835532b445e954", //Rivals 2020 cap
-        "5f994730c91ed922dd355de3", //Rivals 2020 beanie
-        "5aa2a7e8e5b5b00016327c16", //USEC baseball cap (Coyote)
-        "5a7c4850e899ef00150be885", //6B47 Ratnik-BSh helmet (Olive Drab)
-        "5f60e6403b85f6263c14558c", //Beret (Black)
-        "65749cb8e0423b9ebe0c79c9", //Gus baseball cap
-        "5b40e2bc5acfc40016388216", //HighCom Striker ULACH IIIA helmet (Desert Tan)
-        "5c091a4e0db834001d5addc8", //Maska-1SCh bulletproof helmet (Olive Drab)
-        "5aa2b89be5b5b0001569311f", //EMERCOM cap
-        "59ef13ca86f77445fd0e2483", //Jack-o'-lantern tactical pumpkin helmet
-        "66bdc28a0b603c26902b2011", //DevTac Ronin ballistic helmet
-        "66b5f661af44ca0014063c05", //Ballistic Armor Co. Bastion helmet (OD Green)
-        "5f60e784f2bcbb675b00dac7", //Beret (Olive Drab)
-        "59e7711e86f7746cae05fbe1", //Kolpak-1S riot helmet
-        "61c18db6dfd64163ea78fbb4", //Leather cap
-        "5a43957686f7742a2c2f11b0", //Santa hat
-        "5aa2b9ede5b5b000137b758b", //Kinda cowboy hat
-        "5e01ef6886f77445f643baa4", //Team Wendy EXFIL Ballistic Helmet (Coyote Brown)
-        "5ea17ca01412a1425304d1c0", //Diamond Age Bastion helmet (Black)
-        "5b40e4035acfc47a87740943", //HighCom Striker ACHHC IIIA helmet (Olive Drab)
-        "5c0e874186f7745dc7616606", //Maska-1SCh bulletproof helmet (Killa Edition)
-        "5c0d2727d174af02a012cf58", //PSh-97 DJETA riot helmet
-        "6040de02647ad86262233012", //Army cap (CADPAT)
-        "65749ccf33fdc9c0cf06d3ca", //Basmach leather cap
-        "66b5f666cad6f002ab7214c2", //Ballistic Armor Co. Bastion helmet (MultiCam)
-        "5e00c1ad86f774747333222c", //Team Wendy EXFIL Ballistic Helmet (Black)
-        "618aef6d0a5a59657e5f55ee", //Jack Pyke Hunting LLCS boonie hat
-        "5b40e1525acfc4771e1c6611", //HighCom Striker ULACH IIIA helmet (Black)
-        "60361a7497633951dc245eb4" //Army cap (Flora)      
-    ]
+
+    //"armor":
+    "5fd4c474dd870108a754b241": 1, //5.11 Tactical Hexgrid plate carrier
+    "5b44d0de86f774503d30cba8": 1, //IOTV Gen4 body armor (High Mobility Kit, MultiCam)
+    "64be79e2bf8412471d0d9bcc": 1, //NPP KlASS Kora-Kulon body armor (Digital Flora)
+    "609e8540d5c319764c2bc2e9": 1, //NFM THOR Concealable Reinforced Vest body armor
+    "5f5f41476bdad616ad46d631": 1, //NPP KlASS Korund-VM body armor (Black)
+    "5c0e625a86f7742d77340f62": 1, //BNTI Zhuk body armor (Digital Flora)
+    "62a09d79de7ac81993580530": 1, //DRD body armor
+    "64abd93857958b4249003418": 1, //Interceptor OTV body armor (UCP)
+    "6038b4b292ec1c3103795a0b": 1, //LBT-6094A Slick Plate Carrier (Coyote Tan)
+    "5c0e57ba86f7747fa141986d": 1, //6B23-2 body armor (Mountain Flora)
+    "5c0e655586f774045612eeb2": 1, //HighCom Trooper TFO body armor (MultiCam)
+    "5b44d22286f774172b0c9de8": 1, //BNTI Kirasa-N body armor
+    "5b44cf1486f77431723e3d05": 1, //IOTV Gen4 body armor (Assault Kit, MultiCam)
+    "5648a7494bdc2d9d488b4583": 1, //PACA Soft Armor
+    "5c0e5edb86f77461f55ed1f7": 1, //BNTI Zhuk body armor (Press)
+    "5ab8e79e86f7742d8b372e78": 1, //BNTI Gzhel-K body armor
+    "5ca2151486f774244a3b8d30": 1, //FORT Redut-M body armor
+    "6038b4ca92ec1c3103795a0d": 1, //LBT-6094A Slick Plate Carrier (Olive Drab)
+    "5c0e541586f7747fa54205c9": 1, //6B13 M assault armor (Killa Edition)
+    "545cdb794bdc2d3a198b456a": 1, //6B43 Zabralo-Sh body armor (Digital Flora)
+    "5c0e5bab86f77461f55ed1f3": 1, //6B23-1 body armor (Digital Flora)
+    "5c0e53c886f7747fa54205c7": 1, //6B13 assault armor (Digital Flora)
+    "5e9dacf986f774054d6b89f4": 1, //FORT Defender-2 body armor
+    "5ca21c6986f77479963115a7": 1, //FORT Redut-T5 body armor (Smog)
+    "59e7635f86f7742cbf2c1095": 1, //BNTI Module-3M body armor
+    "60a283193cb70855c43a381d": 1, //NFM THOR Integrated Carrier body armor
+    "63737f448b28897f2802b874": 1, //Hexatac HPC Plate Carrier (MultiCam Black)
+    "64be79c487d1510151095552": 1, //NPP KlASS Kora-Kulon body armor (Black)
+    "5b44cd8b86f774503d30cba2": 1, //IOTV Gen4 body armor (Full Protection Kit, MultiCam)
+    "607f20859ee58b18e41ecd90": 1, //PACA Soft Armor (Rivals Edition)
+    "5df8a2ca86f7740bfe6df777": 1, //6B2 body armor (Flora)
+    "5ab8e4ed86f7742d8e50c7fa": 1, //MF-UNTAR body armor
+    "5e4abb5086f77406975c9342": 1, //LBT-6094A Slick Plate Carrier (Black)
+    "5c0e51be86f774598e797894": 1, //6B13 assault armor (Flora)
+
+    //"Vests"
+    "5fd4c5477a8d854fa0105061": 1, //Security vest
+    "61bc85697113f767765c7fe7": 1, //Eagle Industries MMAC plate carrier (Ranger Green)
+    "6034cf5fffd42c541047f72e": 1, //Umka M33-SET1 hunter vest (Olive Drab)
+    "5f5f41f56760b4138443b352": 1, //Direct Action Thunderbolt compact chest rig (Shadow Grey)
+    "5e4ac41886f77406a511c9a8": 1, //Ars Arma CPC MOD.1 plate carrier (A-TACS FG)
+    "609e860ebd219504d8507525": 1, //Crye Precision AVS plate carrier (Tagilla Edition)
+    "592c2d1a86f7746dbe2af32a": 1, //ANA Tactical Alpha chest rig (Olive Drab)
+    "5d5d87f786f77427997cfaef": 1, //Ars Arma A18 Skanda plate carrier (MultiCam)
+    "5d5d85c586f774279a21cbdb": 1, //Haley Strategic D3CRX Chest Harness (Ranger Green)
+    "5c0e6a1586f77404597b4965": 1, //Poyas-A + Poyas-B gear rig
+    "5c0e722886f7740458316a57": 1, //ANA Tactical M1 plate carrier (Olive Drab)
+    "5c0e3eb886f7742015526062": 1, //6B5-16 Zh-86 Uley armored rig (Khaki)
+    "5d5d646386f7742797261fd9": 1, //6B3TM-01 armored rig (Khaki)
+    "5648a69d4bdc2ded0b8b457b": 1, //BlackRock chest rig (Gray)
+    "5c0e446786f7742013381639": 1, //6B5-15 Zh-86 Uley armored rig (Flora)
+    "544a5caa4bdc2d1a388b4568": 1, //Crye Precision AVS plate carrier (Ranger Green)
+    "6034d0230ca681766b6a0fb5": 1, //CSA chest rig (Black)
+    "5ab8dced86f774646209ec87": 1, //ANA Tactical M2 plate carrier (Digital Flora)
+    "59e7643b86f7742cbf2c109a": 1, //WARTECH TV-109 + TV-106 chest rig (A-TACS FG)
+    "5ca20abf86f77418567a43f2": 1, //Dynaforce Triton M43-A chest harness (Black)
+    "64a5366719bab53bd203bf33": 1, //Eagle Allied Industries MBSS plate carrier (Coyote Brown)
+    "628d0618d1ba6e4fa07ce5a4": 1, //NPP KlASS Bagariy plate carrier (Digital Flora)
+    "628baf0b967de16aab5a4f36": 1, //LBT-1961A Load Bearing Chest Rig (Goons Edition)
+    "603648ff5a45383c122086ac": 1, //Azimut SS Zhuk chest harness (Black)
+    "64be7110bf597ba84a0a41ea": 1, //Type 56 Chicom chest harness
+    "63611865ba5b90db0c0399d1": 1, //Azimut SS "Khamelion" chest harness (Olive)
+    "5c0e746986f7741453628fe5": 1, //WARTECH TV-110 plate carrier (Coyote)
+    "572b7adb24597762ae139821": 1, //Scav Vest
+    "5d5d8ca986f7742798716522": 1, //SOE Micro Rig (MultiCam)
+    "5df8a42886f77412640e2e75": 1, //Velocity Systems MPPV Multi-Purpose Patrol Vest (Wolf Grey)
+    "5929a2a086f7744f4b234d43": 1, //UMTBS 6Sh112 Scout-Sniper chest rig (Digital Flora)
+    "61bcc89aef0f505f0c6cd0fc": 1, //FirstSpear Strandhogg plate carrier (Ranger Green)
+    "5fd4c4fa16cac650092f6771": 1, //DIY IDEA chest rig
+    "5ab8dab586f77441cd04f2a2": 1, //WARTECH MK3 TV-104 chest rig (MultiCam)
+    "5fd4c60f875c30179f5d04c2": 1, //Gear Craft GC-BSS-MK1 chest rig (A-TACS FG)
+    "5b44c8ea86f7742d1627baf1": 1, //BlackHawk! Commando chest harness (Desert Tan)
+    "66b6295a8ca68c6461709efa": 1, //Tasmanian Tiger Plate Carrier MKIII (Coyote Brown)
+    "5c0e9f2c86f77432297fe0a3": 1, //BlackHawk! Commando chest harness (Black)
+    "64a536392d2c4e6e970f4121": 1, //WARTECH TV-115 plate carrier (Olive Drab)
+    "60a3c68c37ea821725773ef5": 1, //CQC Osprey MK4A plate carrier (Protection, MTP)
+    "5e9db13186f7742f845ee9d3": 1, //LBT-1961A Load Bearing Chest Rig (MAS Grey)
+    "639343fce101f4caa40a4ef3": 1, //Shellback Tactical Banshee plate carrier (A-TACS AU)
+    "60a6220e953894617404b00a": 1, //Stich Profi Chest Rig MK2 (Recon, A-TACS FG)
+    "6040dd4ddcf9592f401632d2": 1, //Azimut SS Zhuk chest harness (SURPAT)
+    "60a3c70cde5f453f634816a3": 1, //CQC Osprey MK4A plate carrier (Assault, MTP)
+    "5e4abc1f86f774069619fbaa": 1, //Spiritus Systems Bank Robber chest rig (MultiCam Black)
+    "66b6296d7994640992013b17": 1, //Stich Profi Plate Carrier V2 (Black)
+    "628dc750b910320f4c27a732": 1, //ECLiPSE RBAV-AF plate carrier (Ranger Green)
+    "628b9784bcf6e2659e09b8a2": 1, //S&S Precision PlateFrame plate carrier (Goons Edition)
+    "628cd624459354321c4b7fa2": 1, //Tasmanian Tiger SK plate carrier (MultiCam Black)
+    "64be7095047e826eae02b0c1": 1, //Zulu Nylon Gear M4 Reduced Signature Chest Rig (Ranger Green)
+    "60a621c49c197e4e8c4455e6": 1, //Stich Profi Chest Rig MK2 (Assault, A-TACS FG)
+    "628b9c7d45122232a872358f": 1, //Crye Precision CPC plate carrier (Goons Edition)
+    "66b6295178bbc0200425f995": 1, //Stich Profi Stich Defense mod.2 plate carrier (MultiCam)
+    "5e4abfed86f77406a2713cf7": 1, //Splav Tarzan M22 chest rig (Smog)
+    "5b44cad286f77402a54ae7e5": 1, //5.11 Tactical TacTec plate carrier (Ranger Green)
+
+    //"Headgear"
+    "5ca20ee186f774799474abc2": 1, //Vulkan-5 LShZ-5 bulletproof helmet (Black)
+    "5ac8d6885acfc400180ae7b0": 1, //Ops-Core FAST MT Super High Cut helmet (Urban Tan)
+    "5f60e7788adaa7100c3adb49": 1, //Beret (Blue)
+    "61bca7cda0eae612383adf57": 1, //NFM HJELM helmet (Hellhound Grey)
+    "5aa7cfc0e5b5b00015693143": 1, //6B47 Ratnik-BSh helmet (Digital Flora cover)
+    "5d6d3716a4b9361bc8618872": 1, //BNTI LShZ-2DTM helmet (Black)
+    "5b432d215acfc4771e1c6624": 1, //LShZ lightweight helmet (Olive Drab)
+    "5d5e9c74a4b9364855191c40": 1, //MSA ACH TC-2002 MICH Series helmet (Olive Drab)
+    "5aa7d193e5b5b000171d063f": 1, //SSSh-94 SFERA-S helmet
+    "5e4bfc1586f774264f7582d3": 1, //MSA Gallet TC 800 High Cut combat helmet (Black)
+    "59e7708286f7742cbd762753": 1, //Ushanka ear flap hat
+    "5aa2b87de5b5b00016327c25": 1, //BEAR baseball cap (Olive Drab)
+    "628e4dd1f477aa12234918aa": 1, //Big Pipe's bandana
+    "5ea05cf85ad9772e6624305d": 1, //Tac-Kek FAST MT helmet (Replica)
+    "5b40e3f35acfc40016388218": 1, //HighCom Striker ACHHC IIIA helmet (Black)
+    //"572b7fa124597762b472f9d2": 1, //Beanie
+    "60b52e5bc7d8103275739d67": 1, //Stich Profi Chimera boonie hat
+    "5aa7e276e5b5b000171d0647": 1, //Altyn bulletproof helmet (Olive Drab)
+    "5d5e7d28a4b936645d161203": 1, //MSA ACH TC-2001 MICH Series helmet (Olive Drab)
+    "59e770f986f7742cbe3164ef": 1, //Army cap
+    "5a154d5cfcdbcb001a3b00da": 1, //Ops-Core FAST MT Super High Cut helmet (Black)
+    "60bf74184a63fc79b60c57f6": 1, //Bomber beanie
+    "5c066ef40db834001966a595": 1, //Armasight NVG head strap
+    "5c17a7ed2e2216152142459c": 1, //Crye Precision AirFrame helmet (Tan)
+    "5c08f87c0db8340019124324": 1, //ShPM Firefighter helmet
+    "5a16bb52fcdbcb001a3b00dc": 1, //Wilcox Skull Lock head mount
+    "5bd073c986f7747f627e796c": 1, //Kotton beanie
+    "5df8a58286f77412631087ed": 1, //TSh-4M-L soft tank crew helmet
+    "6531119b9afebff7ff0a1769": 1, //Vengeful Zryachiy's balaclava (folded)
+    "60361b5a9a15b10d96792291": 1, //Army cap (UCP)
+    "5aa2ba46e5b5b000137b758d": 1, //UX PRO beanie
+    "5f60c74e3b85f6263c145586": 1, //Rys-T bulletproof helmet (Black)
+    "5c06c6a80db834001b735491": 1, //SSh-68 steel helmet (Olive Drab)
+    "603618feffd42c541047f771": 1, //Army cap (Black)
+    "603619720ca681766b6a0fc4": 1, //Army cap (Coyote Tan)
+    "5ab8f20c86f7745cdb629fb2": 1, //Ski hat with holes for eyes
+    "5b40e5e25acfc4001a599bea": 1, //BEAR baseball cap (Black)
+    //"5a43943586f77416ad2f06e2": 1, //Ded Moroz hat
+    "5645bc214bdc2d363b8b4571": 1, //FORT Kiver-M bulletproof helmet
+    "5aa2ba19e5b5b00014028f4e": 1, //Tactical fleece beanie (Tan)
+    "5aa7e4a4e5b5b000137b76f2": 1, //ZSh-1-2M helmet (Black cover)
+    "572b7d8524597762b472f9d1": 1, //Baseball cap
+    "5aa7d03ae5b5b00016327db5": 1, //UNTAR helmet
+    "5b4327aa5acfc400175496e0": 1, //MIL-TEC boonie hat
+    "5aa2b8d7e5b5b00014028f4a": 1, //Police cap
+    "5b4329f05acfc47a86086aa1": 1, //DevTac Ronin Respirator
+    "5b40e61f5acfc4001a599bec": 1, //USEC baseball cap (Black)
+    //"636270263f2495c26f00b007": 1, //Zryachiy's balaclava (folded)
+    "5f60b34a41e30a4ab12a6947": 1, //Galvion Caiman Hybrid helmet (Grey)
+    "60361b0b5a45383c122086a1": 1, //Army cap (Desert)
+    "5d96141523f0ea1b7f2aacab": 1, //Door Kicker boonie hat
+    "5aa7e454e5b5b0214e506fa2": 1, //ZSh-1-2M helmet (Olive Drab)
+    "60a7acf20c5cb24b01346648": 1, //BOSS cap
+    "65709d2d21b9f815e208ff95": 1, //Diamond Age NeoSteel High Cut helmet (Black)
+    "65719f0775149d62ce0a670b": 1, //NPP KlASS Tor-2 helmet (Olive Drab)
+    "5b4329075acfc400153b78ff": 1, //Pompon hat
+    "5b43271c5acfc432ff4dce65": 1, //Bandana
+    "66b5f65ca7f72d197e70bcd6": 1, //Ballistic Armor Co. Bastion helmet (Armor Black)
+    //"5f99418230835532b445e954": 1, //Rivals 2020 cap
+    //"5f994730c91ed922dd355de3": 1, //Rivals 2020 beanie
+    "5aa2a7e8e5b5b00016327c16": 1, //USEC baseball cap (Coyote)
+    "5a7c4850e899ef00150be885": 1, //6B47 Ratnik-BSh helmet (Olive Drab)
+    "5f60e6403b85f6263c14558c": 1, //Beret (Black)
+    "65749cb8e0423b9ebe0c79c9": 1, //Gus baseball cap
+    "5b40e2bc5acfc40016388216": 1, //HighCom Striker ULACH IIIA helmet (Desert Tan)
+    "5c091a4e0db834001d5addc8": 1, //Maska-1SCh bulletproof helmet (Olive Drab)
+    "5aa2b89be5b5b0001569311f": 1, //EMERCOM cap
+    //"59ef13ca86f77445fd0e2483": 1, //Jack-o'-lantern tactical pumpkin helmet
+    "66bdc28a0b603c26902b2011": 1, //DevTac Ronin ballistic helmet
+    "66b5f661af44ca0014063c05": 1, //Ballistic Armor Co. Bastion helmet (OD Green)
+    "5f60e784f2bcbb675b00dac7": 1, //Beret (Olive Drab)
+    "59e7711e86f7746cae05fbe1": 1, //Kolpak-1S riot helmet
+    "61c18db6dfd64163ea78fbb4": 1, //Leather cap
+    //"5a43957686f7742a2c2f11b0": 1, //Santa hat
+    "5aa2b9ede5b5b000137b758b": 1, //Kinda cowboy hat
+    "5e01ef6886f77445f643baa4": 1, //Team Wendy EXFIL Ballistic Helmet (Coyote Brown)
+    "5ea17ca01412a1425304d1c0": 1, //Diamond Age Bastion helmet (Black)
+    "5b40e4035acfc47a87740943": 1, //HighCom Striker ACHHC IIIA helmet (Olive Drab)
+    "5c0e874186f7745dc7616606": 1, //Maska-1SCh bulletproof helmet (Killa Edition)
+    "5c0d2727d174af02a012cf58": 1, //PSh-97 DJETA riot helmet
+    "6040de02647ad86262233012": 1, //Army cap (CADPAT)
+    "65749ccf33fdc9c0cf06d3ca": 1, //Basmach leather cap
+    "66b5f666cad6f002ab7214c2": 1, //Ballistic Armor Co. Bastion helmet (MultiCam)
+    "5e00c1ad86f774747333222c": 1, //Team Wendy EXFIL Ballistic Helmet (Black)
+    "618aef6d0a5a59657e5f55ee": 1, //Jack Pyke Hunting LLCS boonie hat
+    "5b40e1525acfc4771e1c6611": 1, //HighCom Striker ULACH IIIA helmet (Black)
+    "60361a7497633951dc245eb4": 1 //Army cap (Flora)      
 }

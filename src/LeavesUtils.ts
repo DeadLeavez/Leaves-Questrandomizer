@@ -1,19 +1,13 @@
 import { inject, injectable } from "tsyringe";
-import { DependencyContainer } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
-import type { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
-import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { randomInt } from "crypto";
 import { jsonc } from "jsonc";
 import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
-import { HashUtil } from "@spt/utils/HashUtil";
-import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 
 
 @injectable()
@@ -27,7 +21,8 @@ export class LeavesUtils
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
         @inject( "VFS" ) protected vfs: VFS,
         @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
-        @inject( "WinstonLogger" ) protected logger: ILogger
+        @inject( "WinstonLogger" ) protected logger: ILogger,
+        @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper
     )
     {
         this.outputFolder = "";
@@ -110,6 +105,23 @@ export class LeavesUtils
         return Array.from( generatedValues.values() );
     }
 
+    public getUniqueWeightedValues<T>( weightedArray: any, count: number ): T[]
+    {
+        if ( count > Object.keys(weightedArray).length )
+        {
+            count = Object.keys(weightedArray).length;
+        }
+
+        let generatedValues = new Set<T>();
+
+        while ( generatedValues.size < count )
+        {
+            generatedValues.add( this.weightedRandomHelper.getWeightedValue( weightedArray ) );
+        }
+
+        return Array.from( generatedValues.values() );
+    }
+
     public generateValueAdjustment( previousValue: number, factors: number[] ): number
     {
         const multiplier = 1 + ( Math.random() * factors[ 0 ] - Math.random() * factors[ 1 ] );
@@ -134,8 +146,8 @@ export class LeavesUtils
     //Tier related stuff
     public getClosestTier( currentTier: number )
     {
-        let closestDistance:number = Number.MAX_SAFE_INTEGER;
-        let closestTier:number = Number.MAX_SAFE_INTEGER;
+        let closestDistance: number = Number.MAX_SAFE_INTEGER;
+        let closestTier: number = Number.MAX_SAFE_INTEGER;
         for ( const tier of this.itemTiers )
         {
             const tempDistance = Math.abs( currentTier - tier );
@@ -154,7 +166,7 @@ export class LeavesUtils
 
         return this.tierList[ tier ][ randomInt( size ) ];
     }
-    public getTierFromID(  item: string ): number
+    public getTierFromID( item: string ): number
     {
         for ( const tier in this.tierList )
         {

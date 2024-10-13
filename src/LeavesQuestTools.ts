@@ -1,19 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import { DependencyContainer } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
-import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
-import type { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
-import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
-import { randomInt } from "crypto";
-import { jsonc } from "jsonc";
-import * as path from "node:path";
-import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
-import { HashUtil } from "@spt/utils/HashUtil";
-import { HandbookHelper } from "@spt/helpers/HandbookHelper";
+import { IQuest} from "@spt/models/eft/common/tables/IQuest";
 import { LeavesUtils } from "./LeavesUtils";
 
 @injectable()

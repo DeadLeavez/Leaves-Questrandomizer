@@ -12,6 +12,9 @@
     "chanceToAddBodypart": 0.05,
     "chanceToAddDistance": 0.05,
     "chanceToAddWeapon": 0.5,
+    "chanceToAddGear": 0.05,
+    "addGearCount": 3,
+
     "adjustKillCountFactorsUpDown": [0.2,0.2],
 
     "addKillObjectiveToQuestChance": 0.5,
