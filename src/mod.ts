@@ -104,17 +104,17 @@ class Questrandomizer implements IPreSptLoadMod
         };
     private validMaps =
         [
-            "bigmap",
             "factory4_day",
             "factory4_night",
-            "interchange",
+            "TarkovStreets",
+            "bigmap",
+            "Sandbox",
+            "Interchange",
+            "RezervBase",
+            "Shoreline",
             "laboratory",
-            "lighthouse",
-            "rezervbase",
-            "shoreline",
-            "tarkovstreets",
-            "woods",
-            "sandbox"
+            "Woods",
+            "Lighthouse"
         ];
     private locationIdMap = {
         "any": "any",
@@ -194,12 +194,26 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Load data
         this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
-        this.gearList = this.leavesUtils.loadFile( "config/gearcategories.jsonc" );
+        this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
 
 
 
         //Process data
         this.loadWeaponCategories();
+    }
+    private generateWeaponCategorySheet()
+    {
+        let sheet = "";
+        for ( const category in this.weaponCategories )
+        {
+            sheet += `[Category: ${ category }]\n-----------------------------\n`;
+            for ( const weapon of this.weaponCategories[ category ] )
+            {
+                sheet += `\t${ this.leavesUtils.getLocale( this.config.targetLocale, weapon, " Name" ) }\n`;
+            }
+            sheet += "\n";
+        }
+        this.leavesUtils.saveFile( sheet, "quests/categories.txt", false);
     }
 
     private getEditedQuest( questID: string ): IQuest
@@ -271,6 +285,8 @@ class Questrandomizer implements IPreSptLoadMod
         //Save them to file. NOT SAVING UNTIL IT WORKS BETTER
         this.saveEditedQuests();
 
+        //Generate a category list
+        this.generateWeaponCategorySheet();
         //this.dataDump();
     }
 
@@ -640,7 +656,7 @@ class Questrandomizer implements IPreSptLoadMod
             target = this.targetNameTranslator[ target.toLocaleLowerCase() ] + " ";
         }
 
-       
+
 
         let line: string = `Kill ${ kills } ${ target }`;
 

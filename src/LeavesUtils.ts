@@ -47,11 +47,16 @@ export class LeavesUtils
         return jsonc.parse( this.vfs.readFile( directoryFile ) );
     }
 
-    public saveFile( data: any, file: string )
+    public saveFile( data: any, file: string, serialize: boolean = true )
     {
-        const serialized = this.jsonUtil.serialize( data, true );
-        //this.printColor( `${ this.outputFolder }${ file }` );
-        this.vfs.writeFile( `${ this.outputFolder }${ file }`, serialized );
+        let dataCopy = structuredClone( data );
+        
+        if ( serialize )
+        {
+            dataCopy = this.jsonUtil.serialize( data, true );
+        }
+
+        this.vfs.writeFile( `${ this.outputFolder }${ file }`, dataCopy );
     }
 
     public dataDump()
@@ -107,9 +112,9 @@ export class LeavesUtils
 
     public getUniqueWeightedValues<T>( weightedArray: any, count: number ): T[]
     {
-        if ( count > Object.keys(weightedArray).length )
+        if ( count > Object.keys( weightedArray ).length )
         {
-            count = Object.keys(weightedArray).length;
+            count = Object.keys( weightedArray ).length;
         }
 
         let generatedValues = new Set<T>();
