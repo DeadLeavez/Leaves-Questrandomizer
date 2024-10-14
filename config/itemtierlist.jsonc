@@ -331,8 +331,7 @@
 		"5d03794386f77420415576f5", //6-STEN-140-M military battery - Battery",
 		"6389c7750ef44505c87f5996", //Microcontroller board - Electronics",
 		"5c05308086f7746b2101e90b", //Virtex programmable processor - Electronics",
-		"5d1b2f3f86f774252167a52c", //FP-100 filter absorber - undefined"
-		"66d9f7256916142b3b02276e" //Radar station spare parts - Electronics",
+		"5d1b2f3f86f774252167a52c" //FP-100 filter absorber - undefined"
 	],
 	"90": [
 		"6389c8c5dbfd5e4b95197e6b", //TerraGroup "Blue Folders" materials - Info",

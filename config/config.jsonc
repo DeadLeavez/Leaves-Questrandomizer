@@ -5,8 +5,9 @@
         "60e729cf5698ee7b05057439" //Swift one
     ],
     
+    //Locales will be replaced eventually by generating locales for everything.
     "targetLocale": "en", //The locale from the database of mod items.
-    "generatedLocale": "se", //The locale for this mod.
+    "generatedLocale": "en", //The locale for this mod.
 
     "chanceToAddLocations": 0.5, //Chance to add a location requirement to kill quests.
     "chanceToAddTimeOfDay": 0.05, //CHance to add a time of day requirement to kill quests.
@@ -23,7 +24,7 @@
 
     "handoverItemUnknownItemValueDivider": 15000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. 
     "adjustHandoverCountFactorsUpDown": [0.2,0.2], //Adjusts how many items are needed for a handover quest. See how it works above.
-    "findItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entierly and left alone.
+    "handoverItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entierly and left alone.
     [
         "5696686a4bdc2da3298b456a", //Dollars
         "5449016a4bdc2d6f028b456f", //Roubles

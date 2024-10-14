@@ -372,10 +372,6 @@ class Questrandomizer implements IPreSptLoadMod
                     {
                         purge = false;
                     }
-                    if ( this.config.findItemBlacklist.includes( item ) )
-                    {
-                        purge = false;
-                    }
                 }
                 if ( purge )
                 {
@@ -396,6 +392,12 @@ class Questrandomizer implements IPreSptLoadMod
         const originalItem = task.target[ 0 ];
         //Ignore quest items
         if ( itemDB[ originalItem ]._props.QuestItem )
+        {
+            return;
+        }
+
+        //Item blacklist
+        if ( this.config.handoverItemBlacklist.includes( originalItem ) )
         {
             return;
         }
