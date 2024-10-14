@@ -1,5 +1,4 @@
 {
-    //WIP WILL BE EXPANDED MORE.
     "questBlacklist": //These quests wont be edited
     [
         "5c0d190cd09282029f5390d8" //Grenadier
@@ -7,22 +6,22 @@
     
     "targetLocale": "en", //Will add the new lines to this locale
 
-    "chanceToAddLocations": 0.5,
-    "chanceToAddTimeOfDay": 0.05,
-    "chanceToAddBodypart": 0.05,
-    "chanceToAddDistance": 0.05,
-    "chanceToAddWeapon": 0.5,
-    "chanceToAddGear": 0.05,
-    "addGearCount": 3,
+    "chanceToAddLocations": 0.5, //Chance to add a location requirement to kill quests.
+    "chanceToAddTimeOfDay": 0.05, //CHance to add a time of day requirement to kill quests.
+    "chanceToAddBodypart": 0.05, //Chance to add having to target specific body parts to kill quests.
+    "chanceToAddDistance": 0.05, //Chance to add a distance requirement to kill quests. (Currently >=/<= 20-100m, Might add options for this later)
+    "chanceToAddWeapon": 0.5, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
+    "chanceToAddGear": 0.05, //Chance to add gear requirement to kill quest. Will do a weighted selection from the gearlist.jsonc file.
+    "addGearCount": 3, //How many different gear pieces will be selected. Every gear piece is an alternative. You only ever need to wear 1 of them.
 
-    "adjustKillCountFactorsUpDown": [0.2,0.2],
+    "adjustKillCountFactorsUpDown": [0.2,0.2], //How many kills a quest will need. It's randomly increased/decreased by a multiplier between the factors. So default settings makes the multiplier between 0.8-1.2
 
-    "addKillObjectiveToQuestChance": 0.5,
-    "addKillObjectiveKillCount": 5,
+    "addKillObjectiveToQuestChance": 0.5, //Chance to add a kill objective to quests that dont naturally have them.
+    "addKillObjectiveKillCount": 5,    //Base kill count to added objectives. Then multiplied by the factors above.
 
-    "handoverItemUnknownItemValueDivider": 15000,
-    "adjustHandoverCountFactorsUpDown": [0.2,0.2],
-    "findItemBlacklist":
+    "handoverItemUnknownItemValueDivider": 15000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. 
+    "adjustHandoverCountFactorsUpDown": [0.2,0.2], //Adjusts how many items are needed for a handover quest. See how it works above.
+    "findItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entierly and left alone.
     [
 
     ]

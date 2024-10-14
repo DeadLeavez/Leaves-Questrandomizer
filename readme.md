@@ -1,6 +1,6 @@
-# Shell Mod
-Template
+# Quest randomizer
+
 
 # Changelog
 ## 1.0.0
-Template
+Initial Release

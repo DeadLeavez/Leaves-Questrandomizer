@@ -1,3 +1,7 @@
+//Data dump by DeadLeaves, using JC's Quests Extended. Thanks.
+//This file should be updated with each version. The mod will work fine without it. It makes descriptions more accurate, as we use this data to determine what map a specific zone is on.
+//This is currently from 3.9, but seems to work fine in 3.10. Will be updated once 3.10 is out, and JC's Quests Extended is updated for that version.
+//You shouldn't have to ever touch this file.
 {
     "laboratory":
     {

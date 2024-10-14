@@ -1,3 +1,8 @@
+//This file contains the weapon categories that can be used for adding/randomizing weapon requirements for quests.
+//The ``weightings`` part contains a list of category names, and their relative weighting. A category with a weight of 3, will be 3 times as likely to be picked as specific other category of weight 1. 
+//Each category will display it's name in-game. And so try to make them decently descriptive. Or have users reference the ``\user\mods\leaves-questrandomizer\quests\categories.txt`` for an auto-generated list of categories.
+//The ``weapons`` part contain a list of all weapons in the game. As of 3.10. Other weapons, and mod weapons can be added (ensure this mod is loaded AFTER any weapon mods in that case). Each weapon has a list of categories they are part of. 
+//Any weapon can be part of as many categories as you want. All category names ARE case sensitive, so ensure that the casing is correct. (recommended to just copy-paste rather than write by hand.)
 {
     "weightings":
     {

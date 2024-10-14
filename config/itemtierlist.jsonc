@@ -1,20 +1,19 @@
-{ //Exported from Barter Economy By DeadLeaves (That's me!)
+//Exported from Barter Economy By DeadLeaves (That's me!)
+//This list contains tiers of items that are considered to be similar value to each other. So a quest with that requires a pack of vita juice, might instead require a duct tape instead.
+//If an item required by a quest isn't on this list. It will use the ``handoverItemUnknownItemValueDivider`` setting from config. See the config.jsonc for more info.
+{
 	"1": [
 		"57513fcc24597720a31c09a6", //Pack of Vita juice - Drink",
 		"5448fee04bdc2dbc018b4567", //Bottle of water (0.6L) - Drink",
 		"57513f07245977207e26a311", //Pack of apple juice - Drink",
 		"544fb62a4bdc2dfb738b4568", //Pack of Russian Army pineapple juice - Drink",
 		"5751487e245977207e26a315", //Emelya rye croutons - Food",
-		"6331ba83f2ab4f3f09502983", //Secure Flash drive V2 - Info",
 		"57513f9324597720a7128161", //Pack of Grand juice - Drink",
 		"5448ff904bdc2d6f028b456e", //Army crackers - Food",
 		"575062b524597720a31c09a1", //Can of Ice Green tea - Drink",
 		"57347d692459774491567cf1", //Can of green peas - Food",
 		"544fb6cc4bdc2d34748b456e", //Slickers chocolate bar - Food",
 		"57347d3d245977448f7b7f61", //Rye croutons - Food",
-		"660bbc98c38b837877075e4a", //Decrypted flash drive - Info",
-		"660bc341c38b837877075e4c", //Documents with decrypted data - Info",
-		"660bbc47c38b837877075e47", //Encrypted flash drive - Info",
 		"544fb25a4bdc2dfb738b4567", //Aseptic bandage - Medical item",
 		"544fb3364bdc2d34748b456a", //Immobilizing splint - Medical item",
 		"5751a25924597722c463c472", //Army bandage - Medical item",
@@ -211,9 +210,7 @@
 		"5c0e533786f7747fa23f4d47", //Zagustin hemostatic drug injector - Stimulant",
 		"5c10c8fd86f7743d7d706df3", //Adrenaline injector - Stimulant",
 		"5bc9b720d4351e450201234b", //Golden 1GPhone smartphone - Electronics",
-		"66d9f7e7099cf6adcc07a369", //KOSA UAV electronic jamming device - Electronics",
 		"5d1b327086f7742525194449", //Pressure gauge - Building material",
-		"66d9f7256916142b3b02276e", //Radar station spare parts - Electronics",
 		"5b43575a86f77424f443fe62", //Fuel conditioner - Lubricant",
 		"5bc9b9ecd4351e3bac122519", //Deadlyslob's beard oil - Household goods",
 		"5d0375ff86f774186372f685", //Military cable - Electronics",
@@ -302,7 +299,6 @@
 		"655c67ab0d37ca5135388f4b", //Ded Moroz figurine - Jewelry",
 		"66572c82ad599021091c6118", //Killa figurine - Jewelry",
 		"5bc9bc53d4351e00367fbcee", //Golden rooster figurine - Jewelry",
-		"66d9f8744827a77e870ecaf1", //GARY ZONT portable electronic warfare device - Electronics",
 		"655c669103999d3c810c025b", //Cultist figurine - Jewelry",
 		"60b0f7057897d47c5b04ab94", //Loot Lord plushie - undefined",
 		"619cbfccbedcde2f5b3f7bdd", //Pipe grip wrench - Tool",
@@ -336,7 +332,8 @@
 		"5d03794386f77420415576f5", //6-STEN-140-M military battery - Battery",
 		"6389c7750ef44505c87f5996", //Microcontroller board - Electronics",
 		"5c05308086f7746b2101e90b", //Virtex programmable processor - Electronics",
-		"5d1b2f3f86f774252167a52c" //FP-100 filter absorber - undefined"
+		"5d1b2f3f86f774252167a52c", //FP-100 filter absorber - undefined"
+		"66d9f7256916142b3b02276e" //Radar station spare parts - Electronics",
 	],
 	"90": [
 		"6389c8c5dbfd5e4b95197e6b", //TerraGroup "Blue Folders" materials - Info",

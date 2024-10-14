@@ -183,7 +183,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
 
         this.leavesUtils.setOutputFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
-        const itemTierList = this.leavesUtils.loadFile( "config/itemcategories.jsonc" );
+        const itemTierList = this.leavesUtils.loadFile( "config/itemtierlist.jsonc" );
         this.leavesUtils.setTierList( itemTierList );
 
         container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
