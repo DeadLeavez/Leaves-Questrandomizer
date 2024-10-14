@@ -1,6 +1,7 @@
 //Exported from Barter Economy By DeadLeaves (That's me!)
 //This list contains tiers of items that are considered to be similar value to each other. So a quest with that requires a pack of vita juice, might instead require a duct tape instead.
 //If an item required by a quest isn't on this list. It will use the ``handoverItemUnknownItemValueDivider`` setting from config. See the config.jsonc for more info.
+//This can also be seen as a sort of "whitelist" for items that CAN appear as handover quest targets. Anything not on this list will never be required.
 {
 	"1": [
 		"57513fcc24597720a31c09a6", //Pack of Vita juice - Drink",
@@ -293,7 +294,6 @@
 		"66572be36a723f7f005a066e", //Reshala figurine - Jewelry",
 		"655c66e40b2de553b618d4b8", //Politician Mutkevich figurine - Jewelry",
 		"59e3639286f7741777737013", //Bronze lion figurine - Jewelry",
-		"6656560053eaaa7a23349c86", //Lega Medal - Jewelry",
 		"66572cbdad599021091c611a", //Tagilla figurine - Jewelry",
 		"655c67ab0d37ca5135388f4b", //Ded Moroz figurine - Jewelry",
 		"66572c82ad599021091c6118", //Killa figurine - Jewelry",

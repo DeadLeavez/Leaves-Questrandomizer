@@ -1,10 +1,12 @@
 {
     "questBlacklist": //These quests wont be edited
     [
-        "5c0d190cd09282029f5390d8" //Grenadier
+        "5c0d190cd09282029f5390d8", //Grenadier
+        "60e729cf5698ee7b05057439" //Swift one
     ],
     
-    "targetLocale": "en", //Will add the new lines to this locale
+    "targetLocale": "en", //The locale from the database of mod items.
+    "generatedLocale": "se", //The locale for this mod.
 
     "chanceToAddLocations": 0.5, //Chance to add a location requirement to kill quests.
     "chanceToAddTimeOfDay": 0.05, //CHance to add a time of day requirement to kill quests.
@@ -23,6 +25,31 @@
     "adjustHandoverCountFactorsUpDown": [0.2,0.2], //Adjusts how many items are needed for a handover quest. See how it works above.
     "findItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entierly and left alone.
     [
-
+        "5696686a4bdc2da3298b456a", //Dollars
+        "5449016a4bdc2d6f028b456f", //Roubles
+        "569668774bdc2da2298b4568" //Euros
     ]
 }
+
+    //All listed locales below exist for targetLocale. The ones not marked "Not implemented" exist as generated locale.
+    //List of available locales: 
+    /*
+    "ch": "Chinese", //NOT IMPLEMENTED
+    "cz": "Czech",   //NOT IMPLEMENTED
+    "en": "English",
+    "es": "Spanish", //NOT IMPLEMENTED
+    "es-mx": "Spanish (Mexico)", //NOT IMPLEMENTED
+    "fr": "French", //NOT IMPLEMENTED
+    "ge": "German", //NOT IMPLEMENTED
+    "hu": "Hungarian", //NOT IMPLEMENTED
+    "it": "Italian", //NOT IMPLEMENTED
+    "jp": "Japanese", //NOT IMPLEMENTED
+    "kr": "Korean", //NOT IMPLEMENTED
+    "pl": "Polish", //NOT IMPLEMENTED
+    "po": "Portuguese", //NOT IMPLEMENTED
+    "ro": "Romanian", //NOT IMPLEMENTED
+    "ru": "Russian", //NOT IMPLEMENTED
+    "sk": "Slovak", //NOT IMPLEMENTED
+    "tu": "Turkish" //NOT IMPLEMENTED
+    "se": "Swedish" //ONLY AS GENERATED LOCALE
+    */

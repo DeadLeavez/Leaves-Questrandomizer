@@ -81,6 +81,7 @@ export class LeavesUtils
     public printColor( message: string, color: LogTextColor = LogTextColor.GREEN )
     {
         this.logger.logWithColor( message, color );
+        this.logger.debug( message );
     }
 
     public debugJsonOutput( jsonObject: any, label: string = "" )

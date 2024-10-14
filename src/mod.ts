@@ -11,9 +11,7 @@ import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 import { LeavesUtils } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 
-
 // ISSUES:
-// GEAR U WEAR //Added to locale
 
 class Questrandomizer implements IPreSptLoadMod
 {
@@ -29,6 +27,7 @@ class Questrandomizer implements IPreSptLoadMod
     private weaponCategoriesWeighting: any;
     private gearList: any;
     private localizationChanges: any;
+    private locale: any;
     private QuestDB: any;
 
     private bodyParts =
@@ -65,7 +64,7 @@ class Questrandomizer implements IPreSptLoadMod
             "followersanitar": "Sanitar Follower",
             "bosssanitar": "Sanitar",
             "sectantwarrior": "Cultist Warrior",
-            "sectantpreist": "Cultist Priest",
+            "sectantpriest": "Cultist Priest",
             "bosstagilla": "Tagilla",
             "followertagilla": "Tagilla Follower",
             "exusec": "Rogue",
@@ -82,7 +81,7 @@ class Questrandomizer implements IPreSptLoadMod
             "bosskolontay": "Kolontay",
             "followerkolontayassault": "Kolontay F. Assault.",
             "followerkolontaysecurity": "Kolontay F. Security",
-            "bossPARTISAN": "Partisan",
+            "bosspartisan": "Partisan",
             "pmcbear": "Bear PMC",
             "pmcusec": "USEC PMC"
 
@@ -195,12 +194,14 @@ class Questrandomizer implements IPreSptLoadMod
         //Load data
         this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
         this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
+        this.locale = this.leavesUtils.loadFile( "config/locale.jsonc" );
 
 
 
         //Process data
         this.loadWeaponCategories();
     }
+
     private generateWeaponCategorySheet()
     {
         let sheet = "";
@@ -213,7 +214,7 @@ class Questrandomizer implements IPreSptLoadMod
             }
             sheet += "\n";
         }
-        this.leavesUtils.saveFile( sheet, "quests/categories.txt", false);
+        this.leavesUtils.saveFile( sheet, "quests/categories.txt", false );
     }
 
     private getEditedQuest( questID: string ): IQuest
@@ -244,7 +245,14 @@ class Questrandomizer implements IPreSptLoadMod
         //Load into database.
         for ( const change in this.localizationChanges )
         {
-            this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] = this.localizationChanges[ change ];
+            if ( this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] )
+            {
+                this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] = this.localizationChanges[ change ];
+            }
+            else
+            {
+                this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] = this.localizationChanges[ change ];
+            }
         }
 
         this.leavesUtils.printColor( `[Questrandomizer] Loaded localization bundle!` );
@@ -309,11 +317,13 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         //Check if quest has kill type
-        if ( !this.leavesUtils.searchObject( "Kills", quest.conditions.AvailableForFinish ) && Math.random() < this.config.addKillObjectiveToQuestChance )
+        if ( !this.leavesUtils.searchObject( "Kills", quest.conditions.AvailableForFinish ) && Math.random() < this.config.addKillObjectiveToQuestChance && !hasKillsFailstate )
         {
             this.addKillObjectiveToQuest( quest );
+            this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW );
         }
 
+        let editedHandoverItemTask = false;
         //Loop all AvailableForFinish conditions
         for ( let task of quest.conditions.AvailableForFinish )
         {
@@ -327,14 +337,17 @@ class Questrandomizer implements IPreSptLoadMod
             }
             else if ( task.conditionType === "CounterCreator" )
             {
-                //Skip if it has kill failstate?
                 this.editCounterCreatorTask( task, hasKillsFailstate );
             }
             else if ( task.conditionType === "HandoverItem" )
             {
-                this.purgeFindItemTasks( quest.conditions.AvailableForFinish );
                 this.editHandoverItemTask( task );
+                editedHandoverItemTask = true;
             }
+        }
+        if( editedHandoverItemTask )
+        {
+            this.purgeFindItemTasks( quest.conditions.AvailableForFinish );
         }
 
         //Edit quest location
@@ -399,18 +412,26 @@ class Questrandomizer implements IPreSptLoadMod
 
         task.target = newTarget;
 
+
+        //Remove gear condition
+        task.maxDurability = 100;
+        task.minDurability = 0;
+
+        //Stip visibilityConditions
+        task.visibilityConditions = [];
+
         const previousValue: number = task.value as number;
         task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.config.adjustHandoverCountFactorsUpDown );
+
         const newLocale = this.generateHandoverItemLocale( task );
         this.editTaskLocale( task, newLocale );
-
     }
 
     private generateHandoverItemLocale( task: IQuestCondition )
     {
-        let line = "Handover ";
+        let line = `${ this.getSLoc( "HandoverItem" ) } `;
 
-        line += `${ task.value } amount of `;
+        line += `${ task.value } ${ this.getSLoc( "ofItem" ) } `;
 
         line += this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ `${ task.target[ 0 ] } Name` ];
 
@@ -463,10 +484,11 @@ class Questrandomizer implements IPreSptLoadMod
             }
         }
 
+        this.leavesUtils.printColor( "Reached check for kills", LogTextColor.YELLOW );
         if ( flags.hasKills >= 0 && flags.hasKillFailstate < 0 )
         {
             //Add location to quest potentially.
-            if ( flags.hasLocation === -1 && Math.random() < this.config.chanceToAddLocations )
+            if ( flags.hasLocation === -1 && Math.random() < this.config.chanceToAddLocations && flags.hasSavageRole < 0 )
             {
                 this.addLocationToQuest( conditions, flags );
             }
@@ -477,10 +499,10 @@ class Questrandomizer implements IPreSptLoadMod
 
             if ( flags.hasLocation >= 0 )
             {
-                //Check for GZ, and add the _high version to it. //MOVE THIS OUTSIDE
-                if ( conditions[ flags.hasLocation ].target.includes( "sandbox" ) )
+                //Check for GZ, and add the _high version to it. //MOVE THIS OUTSIDE??
+                if ( conditions[ flags.hasLocation ].target.includes( "Sandbox" ) )
                 {
-                    ( conditions[ flags.hasLocation ].target as string[] ).push( "sandbox_high" );
+                    ( conditions[ flags.hasLocation ].target as string[] ).push( "Sandbox_high" );
 
                 }
 
@@ -504,7 +526,7 @@ class Questrandomizer implements IPreSptLoadMod
             this.editKillsDetails( conditions[ flags.hasKills ], flags );
 
             //edit KILL count if its not a special type
-            if ( flags.hasSavageRole )
+            if ( flags.hasSavageRole < 0 )
             {
                 const previousValue: number = task.value as number;
                 task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.config.adjustKillCountFactorsUpDown );
@@ -512,11 +534,11 @@ class Questrandomizer implements IPreSptLoadMod
 
             const templocale = this.generateKillsLocale( task, flags )
             this.editTaskLocale( task, templocale );
-
         }
         //We don't edit anything else with counters for now.
         return;
     }
+
     private addGearToQuest( condition: IQuestConditionCounterCondition[] ): number
     {
         let gearPieces = this.leavesUtils.getUniqueWeightedValues<string>( this.gearList, this.config.addGearCount );
@@ -538,12 +560,12 @@ class Questrandomizer implements IPreSptLoadMod
         return condition.push( tempGear ) - 1;
     }
 
-    private editTaskLocale( task: IQuestCondition, templocale: string )
+    private editTaskLocale( task: IQuestCondition, tempLocale: string )
     {
-        const taskid = task.id;
-        this.localizationChanges[ taskid ] = templocale;
-        this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ taskid ] = templocale;
-        this.leavesUtils.printColor( templocale, LogTextColor.MAGENTA );
+        const taskId = task.id;
+        this.localizationChanges[ taskId ] = tempLocale;
+        this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ taskId ] = tempLocale;
+        this.leavesUtils.printColor( tempLocale, LogTextColor.MAGENTA );
     }
 
     private addLocationToQuest( conditions: IQuestConditionCounterCondition[], flags: any )
@@ -565,7 +587,7 @@ class Questrandomizer implements IPreSptLoadMod
         flags.hasLocation = conditions.push( locationData ) - 1;
     }
 
-    private addKillObjectiveToQuest( quest: IQuest )
+    private addKillObjectiveToQuest( quest: IQuest ): number
     {
         //SPT, YOUR TYPES SUCK!
         let objectiveData: any =
@@ -620,7 +642,8 @@ class Questrandomizer implements IPreSptLoadMod
             "value": this.config.addKillObjectiveKillCount,
             "visibilityConditions": []
         };
-        quest.conditions.AvailableForFinish.push( objectiveData );
+
+        return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
     }
 
     private editLocations( locations: IQuestConditionCounterCondition, flags: any )
@@ -635,6 +658,18 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Generate new map
         locations.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
+    }
+
+    private getSLoc( original: string ): string
+    {
+        if ( this.locale[ this.config.generatedLocale ][ original ] )
+        {
+            return this.locale[ this.config.generatedLocale ][ original ];
+        }
+        else
+        {
+            return this.locale[ "en" ][ original ];
+        }
     }
 
     private generateKillsLocale( task: IQuestCondition, flags: any ): string
@@ -658,13 +693,13 @@ class Questrandomizer implements IPreSptLoadMod
 
 
 
-        let line: string = `Kill ${ kills } ${ target }`;
+        let line: string = `${ this.getSLoc( "Kill" ) } ${ kills } ${ target }`;
 
         //Distance
         if ( flags.hasDistance >= 0 )
         {
             const distance = conditions[ flags.hasKills ].distance.compareMethod as string + " " + conditions[ flags.hasKills ].distance.value as string;
-            line += `at ${ distance }m `;
+            line += `${ this.getSLoc( "AtDistance" ) } ${ distance }m `;
         }
 
         //Time of day //Skip if labs or factory
@@ -672,19 +707,19 @@ class Questrandomizer implements IPreSptLoadMod
         {
             const start: string = ( conditions[ flags.hasKills ].daytime.from ).toString().padStart( 2, `0` );
             const finish: string = ( conditions[ flags.hasKills ].daytime.to ).toString().padStart( 2, `0` );
-            line += `during ${ start }-${ finish } `;
+            line += `${ this.getSLoc( "DuringTimeOfDay" ) } ${ start }-${ finish } `;
         }
 
         //Weapon requirements
         if ( flags.hasWeapon >= 0 )
         {
-            line += `using ${ flags.whatWeaponGroup } `;
+            line += `${ this.getSLoc( "usingWeaponGroup" ) } ${ flags.whatWeaponGroup } `;
         }
 
         //Body part hit requirement
         if ( flags.hasBodyparts >= 0 )
         {
-            let bodypartsline = "in: ";
+            let bodypartsline = `${ this.getSLoc( "inBodyPart" ) }: `;
             for ( let partindex = 0; partindex < conditions[ flags.hasKills ].bodyPart.length; partindex++ )
             {
                 bodypartsline += `${ conditions[ flags.hasKills ].bodyPart[ partindex ] } `
@@ -695,7 +730,7 @@ class Questrandomizer implements IPreSptLoadMod
         //Location
         if ( flags.hasLocation >= 0 )
         {
-            let mapsline = "at ";
+            let mapsline = `${ this.getSLoc( "atLocation" ) } `;
             for ( let mapsindex = 0; mapsindex < conditions[ flags.hasLocation ].target.length; mapsindex++ )
             {
                 mapsline += `${ this.mapNameTranslator[ conditions[ flags.hasLocation ].target[ mapsindex ].toLowerCase() ] }`;
@@ -716,7 +751,7 @@ class Questrandomizer implements IPreSptLoadMod
         //Gear
         if ( flags.hasEquipment >= 0 )
         {
-            line += "wearing:\n";
+            line += `${ this.getSLoc( "wearingGear" ) }:\n`;
             let tempCount = 0;
             for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
             {
