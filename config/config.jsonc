@@ -9,12 +9,12 @@
     "targetLocale": "en", //The locale from the database of mod items.
     "generatedLocale": "en", //The locale for this mod.
 
-    "chanceToAddLocations": 0.5, //Chance to add a location requirement to kill quests.
-    "chanceToAddTimeOfDay": 0.05, //CHance to add a time of day requirement to kill quests.
-    "chanceToAddBodypart": 0.05, //Chance to add having to target specific body parts to kill quests.
-    "chanceToAddDistance": 0.05, //Chance to add a distance requirement to kill quests. (Currently >=/<= 20-100m, Might add options for this later)
-    "chanceToAddWeapon": 0.5, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
-    "chanceToAddGear": 0.05, //Chance to add gear requirement to kill quest. Will do a weighted selection from the gearlist.jsonc file.
+    "chanceToAddLocations": 1,//0.5, //Chance to add a location requirement to kill quests.
+    "chanceToAddTimeOfDay": 1,//0.05, //CHance to add a time of day requirement to kill quests.
+    "chanceToAddBodypart": 1,//0.05, //Chance to add having to target specific body parts to kill quests.
+    "chanceToAddDistance": 1,//0.05, //Chance to add a distance requirement to kill quests. (Currently >=/<= 20-100m, Might add options for this later)
+    "chanceToAddWeapon": 1,//0.5, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
+    "chanceToAddGear": 1,//0.05, //Chance to add gear requirement to kill quest. Will do a weighted selection from the gearlist.jsonc file.
     "addGearCount": 3, //How many different gear pieces will be selected. Every gear piece is an alternative. You only ever need to wear 1 of them.
 
     "adjustKillCountFactorsUpDown": [0.2,0.2], //How many kills a quest will need. It's randomly increased/decreased by a multiplier between the factors. So default settings makes the multiplier between 0.8-1.2

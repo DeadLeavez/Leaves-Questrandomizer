@@ -12,6 +12,7 @@ import { LeavesUtils } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 
 // ISSUES:
+//Locale generation
 
 class Questrandomizer implements IPreSptLoadMod
 {
@@ -27,109 +28,14 @@ class Questrandomizer implements IPreSptLoadMod
     private weaponCategoriesWeighting: any;
     private gearList: any;
     private localizationChanges: any;
-    private locale: any;
+    private localization: any;
     private QuestDB: any;
 
-    private bodyParts =
-        [
-            "Head",
-            "Chest",
-            "Stomach",
-            "Arms",
-            "Legs"
-        ];
-    private validTargets =
-        [
-            "AnyPmc",
-            "Savage",
-            "Any" //Maybe add USEC/BEAR distinguishing later.
-        ];
-    private targetNameTranslator =
-        {
-            "anypmc": "Any PMC",
-            "savage": "Scavs",
-            "any": "Anything",
-            "marksman": "Sniper Scav",
-            "assault": "Scav",
-            "bossbully": "Reshala",
-            "followerbully": "Reshala Follower",
-            "bosskilla": "Killa",
-            "bosskojaniy": "Shturman",
-            "followerkojaniy": "Shturman Follower",
-            "bossgluhar": "Gluhar",
-            "followergluharassault": "Gl. Fol. Assault",
-            "followergluharsecurity": "Gl. Fol. Security",
-            "followergluharscout": "Gl. Fol. Scout",
-            "followergluharsniper": "Gl. Fol. Snipe",
-            "followersanitar": "Sanitar Follower",
-            "bosssanitar": "Sanitar",
-            "sectantwarrior": "Cultist Warrior",
-            "sectantpriest": "Cultist Priest",
-            "bosstagilla": "Tagilla",
-            "followertagilla": "Tagilla Follower",
-            "exusec": "Rogue",
-            "bossknight": "Knight",
-            "followerbigpipe": "Big Pipe",
-            "followerbirdeye": "Birdeye",
-            "bosszryachiy": "Zryachiy",
-            "followerzryachiy": "Zryachiy Follower",
-            "bossboar": "Kaban",
-            "followerboar": "Kaban Follower",
-            "bossboarsniper": "Kaban Sniper",
-            "followerboarclose1": "Kaban Follower C.",
-            "followerboarclose2": "Kaban Follower C.2",
-            "bosskolontay": "Kolontay",
-            "followerkolontayassault": "Kolontay F. Assault.",
-            "followerkolontaysecurity": "Kolontay F. Security",
-            "bosspartisan": "Partisan",
-            "pmcbear": "Bear PMC",
-            "pmcusec": "USEC PMC"
-
-        }
-    private mapNameTranslator =
-        {
-            "bigmap": "Customs",
-            "factory4_day": "Factory - Day",
-            "factory4_night": "Factory - Night",
-            "interchange": "Interchange",
-            "laboratory": "Labs",
-            "lighthouse": "Lighthouse",
-            "rezervbase": "Rezerv",
-            "shoreline": "Shoreline",
-            "tarkovstreets": "Streets of Tarkov",
-            "woods": "Woods",
-            "sandbox": "Ground Zero L",
-            "sandbox_high": "Ground Zero H"
-        };
-    private validMaps =
-        [
-            "factory4_day",
-            "factory4_night",
-            "TarkovStreets",
-            "bigmap",
-            "Sandbox",
-            "Interchange",
-            "RezervBase",
-            "Shoreline",
-            "laboratory",
-            "Woods",
-            "Lighthouse"
-        ];
-    private locationIdMap = {
-        "any": "any",
-        "factory4_day": "55f2d3fd4bdc2d5f408b4567",
-        "factory4_night": "59fc81d786f774390775787e",
-        "bigmap": "56f40101d2720b2a4d8b45d6",
-        "woods": "5704e3c2d2720bac5b8b4567",
-        "shoreline": "5704e554d2720bac5b8b456e",
-        "interchange": "5714dbc024597771384a510d",
-        "lighthouse": "5704e4dad2720bb55b8b4567",
-        "laboratory": "5b0fc42d86f7744a585f9105",
-        "rezervbase": "5704e5fad2720bc05b8b4567",
-        "tarkovstreets": "5714dc692459777137212e12",
-        "sandbox": "653e6760052c01c1c805532f",
-        "sandbox_high": "653e6760052c01c1c805532f"
-    };
+    private bodyParts;
+    private validTargets;
+    private validMaps;
+    private locationIdMap;
+    private targetLocales: Set<string>;
 
     private loadWeaponCategories()
     {
@@ -170,6 +76,19 @@ class Questrandomizer implements IPreSptLoadMod
         return this.weaponCategories[ group ];
     }
 
+    private loadLocalization()
+    {
+        this.localization = [];
+        //Turn this into a loop. Thats it.
+        for ( const file of this.leavesUtils.getFilesInFolder( "assets/data/localization/" ) )
+        {
+            const fileWithoutExtension = file.split( '.' )[ 0 ];
+            this.localization[ fileWithoutExtension ] = this.leavesUtils.loadFile( `assets/data/localization/${ file }` );
+        }
+
+
+    }
+
     public preSptLoad( container: DependencyContainer ): void
     {
         this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
@@ -181,21 +100,27 @@ class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesUtils>( "LeavesUtils", LeavesUtils, { lifecycle: Lifecycle.Singleton } );
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
 
-        this.leavesUtils.setOutputFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
+        this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
         const itemTierList = this.leavesUtils.loadFile( "config/itemtierlist.jsonc" );
         this.leavesUtils.setTierList( itemTierList );
 
         container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
 
         this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
-        const questpoints = this.leavesUtils.loadFile( "config/questpoints.jsonc" );
+        const questpoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
         this.leavesQuestTools.setQuestPoints( questpoints );
 
         //Load data
         this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
         this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
-        this.locale = this.leavesUtils.loadFile( "config/locale.jsonc" );
 
+        this.loadLocalization();
+
+        const miscData = this.leavesUtils.loadFile( "assets/data/misc.jsonc" );
+        this.locationIdMap = miscData.locationIdMap;
+        this.validMaps = miscData.validMaps;
+        this.validTargets = miscData.validTargets;
+        this.bodyParts = miscData.bodyParts;
 
 
         //Process data
@@ -204,17 +129,20 @@ class Questrandomizer implements IPreSptLoadMod
 
     private generateWeaponCategorySheet()
     {
-        let sheet = "";
-        for ( const category in this.weaponCategories )
+        for ( const language in this.databaseServer.getTables().locales.global )
         {
-            sheet += `[Category: ${ category }]\n-----------------------------\n`;
-            for ( const weapon of this.weaponCategories[ category ] )
+            let sheet = "";
+            for ( const category in this.weaponCategories )
             {
-                sheet += `\t${ this.leavesUtils.getLocale( this.config.targetLocale, weapon, " Name" ) }\n`;
+                sheet += `[${ this.getLoc( "Category", language ) }: ${ category }]\n-----------------------------\n`;
+                for ( const weapon of this.weaponCategories[ category ] )
+                {
+                    sheet += `\t${ this.leavesUtils.getLocale( language, weapon, " Name" ) }\n`;
+                }
+                sheet += "\n";
             }
-            sheet += "\n";
+            this.leavesUtils.saveFile( sheet, `categories/categories_${ language }.txt`, false );
         }
-        this.leavesUtils.saveFile( sheet, "quests/categories.txt", false );
     }
 
     private getEditedQuest( questID: string ): IQuest
@@ -235,12 +163,11 @@ class Questrandomizer implements IPreSptLoadMod
     private loadEditedQuests()
     {
         //Load saved quests
-        this.QuestDB = this.leavesUtils.loadFile( "quests/generated.jsonc" )
+        this.QuestDB = this.leavesUtils.loadFile( "assets/generated/quests.jsonc" );
         this.leavesUtils.printColor( `[Questrandomizer] Loaded quest bundle!` );
 
-
         //Load localization bundle
-        this.localizationChanges = this.leavesUtils.loadFile( "quests/locale.jsonc" );
+        this.localizationChanges = this.leavesUtils.loadFile( "assets/generated/locale.jsonc" );
 
         //Load into database.
         for ( const change in this.localizationChanges )
@@ -260,9 +187,9 @@ class Questrandomizer implements IPreSptLoadMod
 
     private saveEditedQuests()
     {
-        this.leavesUtils.saveFile( this.QuestDB, "quests/generated.jsonc" );
+        this.leavesUtils.saveFile( this.QuestDB, "assets/generated/quests.jsonc" );
         this.leavesUtils.printColor( `[Questrandomizer] Saved quest bundle!` )
-        this.leavesUtils.saveFile( this.localizationChanges, "quests/locale.jsonc" );
+        this.leavesUtils.saveFile( this.localizationChanges, "assets/generated/locale.jsonc" );
         this.leavesUtils.printColor( `[Questrandomizer] Saved localization bundle!` )
     }
 
@@ -275,6 +202,17 @@ class Questrandomizer implements IPreSptLoadMod
         this.localizationChanges = {};
 
         this.loadEditedQuests();
+
+        //Set up locale system.
+        this.targetLocales = new Set<string>();
+        for ( const locale in this.localization )
+        {
+            this.targetLocales.add( locale );
+        }
+        for ( const language in this.databaseServer.getTables().locales.global )
+        {
+            this.targetLocales.add( language );
+        }
 
         //Iterate the regular quest database see if any new quests are added.
         for ( const originalQuest in this.databaseServer.getTables().templates.quests )
@@ -345,7 +283,7 @@ class Questrandomizer implements IPreSptLoadMod
                 editedHandoverItemTask = true;
             }
         }
-        if( editedHandoverItemTask )
+        if ( editedHandoverItemTask )
         {
             this.purgeFindItemTasks( quest.conditions.AvailableForFinish );
         }
@@ -425,19 +363,22 @@ class Questrandomizer implements IPreSptLoadMod
         const previousValue: number = task.value as number;
         task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.config.adjustHandoverCountFactorsUpDown );
 
-        const newLocale = this.generateHandoverItemLocale( task );
-        this.editTaskLocale( task, newLocale );
+        this.generateHandoverItemLocale( task );
     }
 
     private generateHandoverItemLocale( task: IQuestCondition )
     {
-        let line = `${ this.getSLoc( "HandoverItem" ) } `;
+        for ( const targetLocale of this.targetLocales )
+        {
+            let line = `${ this.getLoc( "HandoverItem", targetLocale ) } `;
 
-        line += `${ task.value } ${ this.getSLoc( "ofItem" ) } `;
+            line += `${ task.value } ${ this.getLoc( "ofItem", targetLocale ) } `;
 
-        line += this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ `${ task.target[ 0 ] } Name` ];
+            line += this.leavesUtils.getLocale( targetLocale, task.target[ 0 ], ` Name` );
 
-        return line;
+
+            this.editTaskLocale( task, line, targetLocale );
+        }
     }
 
     private editCounterCreatorTask( task: IQuestCondition, hasKillsFailstate: boolean )
@@ -486,7 +427,6 @@ class Questrandomizer implements IPreSptLoadMod
             }
         }
 
-        this.leavesUtils.printColor( "Reached check for kills", LogTextColor.YELLOW );
         if ( flags.hasKills >= 0 && flags.hasKillFailstate < 0 )
         {
             //Add location to quest potentially.
@@ -534,8 +474,7 @@ class Questrandomizer implements IPreSptLoadMod
                 task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.config.adjustKillCountFactorsUpDown );
             }
 
-            const templocale = this.generateKillsLocale( task, flags )
-            this.editTaskLocale( task, templocale );
+            this.generateKillsLocale( task, flags )
         }
         //We don't edit anything else with counters for now.
         return;
@@ -562,12 +501,20 @@ class Questrandomizer implements IPreSptLoadMod
         return condition.push( tempGear ) - 1;
     }
 
-    private editTaskLocale( task: IQuestCondition, tempLocale: string )
+    private editTaskLocale( task: IQuestCondition, newLocale: string, targetLocale: string )
     {
         const taskId = task.id;
-        this.localizationChanges[ taskId ] = tempLocale;
-        this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ taskId ] = tempLocale;
-        this.leavesUtils.printColor( tempLocale, LogTextColor.MAGENTA );
+        if ( !this.localizationChanges[ targetLocale ] )
+        {
+            this.localizationChanges[ targetLocale ] = {};
+        }
+        this.localizationChanges[ targetLocale ][ taskId ] = newLocale;
+        if ( !this.databaseServer.getTables().locales.global[ targetLocale ] )
+        {
+            this.databaseServer.getTables().locales.global[ targetLocale ] = {};
+        }
+        this.databaseServer.getTables().locales.global[ targetLocale ][ taskId ] = newLocale;
+        this.leavesUtils.printColor( newLocale, LogTextColor.MAGENTA );
     }
 
     private addLocationToQuest( conditions: IQuestConditionCounterCondition[], flags: any )
@@ -662,124 +609,131 @@ class Questrandomizer implements IPreSptLoadMod
         locations.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
     }
 
-    private getSLoc( original: string ): string
+    private getLoc( original: string, targetLocale ): string
     {
-        if ( this.locale[ this.config.generatedLocale ][ original ] )
+        if ( this.localization[ targetLocale ] && this.localization[ targetLocale ][ original ] )
         {
-            return this.locale[ this.config.generatedLocale ][ original ];
+            return this.localization[ targetLocale ][ original ];
         }
         else
         {
-            return this.locale[ "en" ][ original ];
+            return this.localization[ "en" ][ original ];
         }
     }
 
-    private generateKillsLocale( task: IQuestCondition, flags: any ): string
+    private generateKillsLocale( task: IQuestCondition, flags: any )
     {
-        const kills = task.value as number;
-        const conditions = task.counter.conditions;
-        let target: string = "";
-        if ( flags.hasSavageRole >= 0 )
+        for ( const targetLocale of this.targetLocales )
         {
-            for ( let role of conditions[ flags.hasKills ].savageRole ) 
+
+            const kills = task.value as number;
+            const conditions = task.counter.conditions;
+            let target: string = "";
+            if ( flags.hasSavageRole >= 0 )
             {
-                const targetTranslated = this.targetNameTranslator[ role.toLocaleLowerCase() ];
-                target += `${ targetTranslated } `;
-            }
-        }
-        else
-        {
-            target = conditions[ flags.hasKills ].target as string;
-            target = this.targetNameTranslator[ target.toLocaleLowerCase() ] + " ";
-        }
-
-
-
-        let line: string = `${ this.getSLoc( "Kill" ) } ${ kills } ${ target }`;
-
-        //Distance
-        if ( flags.hasDistance >= 0 )
-        {
-            const distance = conditions[ flags.hasKills ].distance.compareMethod as string + " " + conditions[ flags.hasKills ].distance.value as string;
-            line += `${ this.getSLoc( "AtDistance" ) } ${ distance }m `;
-        }
-
-        //Time of day //Skip if labs or factory
-        if ( flags.hasTime >= 0 )
-        {
-            const start: string = ( conditions[ flags.hasKills ].daytime.from ).toString().padStart( 2, `0` );
-            const finish: string = ( conditions[ flags.hasKills ].daytime.to ).toString().padStart( 2, `0` );
-            line += `${ this.getSLoc( "DuringTimeOfDay" ) } ${ start }-${ finish } `;
-        }
-
-        //Weapon requirements
-        if ( flags.hasWeapon >= 0 )
-        {
-            line += `${ this.getSLoc( "usingWeaponGroup" ) } ${ flags.whatWeaponGroup } `;
-        }
-
-        //Body part hit requirement
-        if ( flags.hasBodyparts >= 0 )
-        {
-            let bodypartsline = `${ this.getSLoc( "inBodyPart" ) }: `;
-            for ( let partindex = 0; partindex < conditions[ flags.hasKills ].bodyPart.length; partindex++ )
-            {
-                bodypartsline += `${ conditions[ flags.hasKills ].bodyPart[ partindex ] } `
-            }
-            line += bodypartsline;
-        }
-
-        //Location
-        if ( flags.hasLocation >= 0 )
-        {
-            let mapsline = `${ this.getSLoc( "atLocation" ) } `;
-            for ( let mapsindex = 0; mapsindex < conditions[ flags.hasLocation ].target.length; mapsindex++ )
-            {
-                mapsline += `${ this.mapNameTranslator[ conditions[ flags.hasLocation ].target[ mapsindex ].toLowerCase() ] }`;
-
-                //Check last line
-                if ( mapsindex != conditions[ flags.hasLocation ].target.length - 1 )
+                for ( let role of conditions[ flags.hasKills ].savageRole ) 
                 {
-                    mapsline += ", ";
-                }
-                else
-                {
-                    mapsline += " ";
+                    const targetTranslated = this.getLoc( role.toLocaleLowerCase(), targetLocale );
+                    target += `${ targetTranslated } `;
                 }
             }
-            line += mapsline;
-        }
-
-        //Gear
-        if ( flags.hasEquipment >= 0 )
-        {
-            line += `${ this.getSLoc( "wearingGear" ) }:\n`;
-            let tempCount = 0;
-            for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
+            else
             {
-                line += "[";
-                for ( const gearID of gearGroup )
-                {
-                    let name = this.leavesUtils.getLocale( this.config.targetLocale, gearID, " Name" );
-                    line += `${ name }`;
-                }
-                line += "]";
-
-                //Check if we're on the last line, so to not add extra |
-                if ( tempCount < conditions.length - 1 )
-                {
-                    line += "|"
-                }
-                else
-                {
-                    line += " ";
-                }
-
-                tempCount++;
+                target = conditions[ flags.hasKills ].target as string;
+                target = this.getLoc( target.toLocaleLowerCase(), targetLocale ) + " ";
             }
-        }
 
-        return line;
+
+
+            let line: string = `${ this.getLoc( "Kill", targetLocale ) } ${ kills } ${ target }`;
+
+            //Distance
+            if ( flags.hasDistance >= 0 )
+            {
+                const distance = conditions[ flags.hasKills ].distance.compareMethod as string + " " + conditions[ flags.hasKills ].distance.value as string;
+                line += `${ this.getLoc( "AtDistance", targetLocale ) } ${ distance }m `;
+            }
+
+            //Time of day //Skip if labs or factory
+            if ( flags.hasTime >= 0 )
+            {
+                const start: string = ( conditions[ flags.hasKills ].daytime.from ).toString().padStart( 2, `0` );
+                const finish: string = ( conditions[ flags.hasKills ].daytime.to ).toString().padStart( 2, `0` );
+                line += `${ this.getLoc( "DuringTimeOfDay", targetLocale ) } ${ start }-${ finish } `;
+            }
+
+            //Weapon requirements
+            if ( flags.hasWeapon >= 0 )
+            {
+                line += `${ this.getLoc( "usingWeaponGroup", targetLocale ) } ${ flags.whatWeaponGroup } `;
+            }
+
+            //Body part hit requirement
+            if ( flags.hasBodyparts >= 0 )
+            {
+                let bodypartsline = `${ this.getLoc( "inBodyPart", targetLocale ) }: `;
+                //for ( let partindex = 0; partindex < conditions[ flags.hasKills ].bodyPart.length; partindex++ )
+                for ( const bodyPart of conditions[ flags.hasKills ].bodyPart )
+                {
+                    bodypartsline += `${ this.getLoc( bodyPart, targetLocale ) } `
+                }
+                line += bodypartsline;
+            }
+
+            //Location
+            if ( flags.hasLocation >= 0 )
+            {
+                let hasAddedGz = false;
+                let mapsline = `${ this.getLoc( "atLocation", targetLocale ) } `;
+                for ( const map of conditions[ flags.hasLocation ].target )
+                {
+                    if (  map.toLowerCase() === "sandbox" || map.toLowerCase() === "sandbox_high"  )
+                    {
+                        if ( !hasAddedGz )
+                        {
+                            mapsline += `${ this.getLoc( "sandbox", targetLocale ) } `;
+                            hasAddedGz = true;
+                        }
+                    }
+                    else
+                    {
+                        mapsline += `${ this.getLoc( map.toLowerCase(), targetLocale ) } `;
+                    }
+                }
+                line += mapsline;
+            }
+
+            //Gear
+            if ( flags.hasEquipment >= 0 )
+            {
+                line += `${ this.getLoc( "wearingGear", targetLocale ) }:\n`;
+                let tempCount = 0;
+                for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
+                {
+                    line += "[";
+                    for ( const gearID of gearGroup )
+                    {
+                        let name = this.leavesUtils.getLocale( targetLocale, gearID, " Name" );
+                        line += `${ name }`;
+                    }
+                    line += "]";
+
+                    //Check if we're on the last line, so to not add extra |
+                    if ( tempCount < conditions.length - 1 )
+                    {
+                        line += "|"
+                    }
+                    else
+                    {
+                        line += " ";
+                    }
+
+                    tempCount++;
+                }
+            }
+
+            this.editTaskLocale( task, line, targetLocale );
+        }
     }
 
     private editKillsDetails( killsCondition: IQuestConditionCounterCondition, flags: any )

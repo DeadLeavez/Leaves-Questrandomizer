@@ -13,7 +13,7 @@ import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 @injectable()
 export class LeavesUtils
 {
-    private outputFolder: string;
+    private modFolder: string;
     private tierList: any;
     private itemTiers: number[];
 
@@ -25,13 +25,13 @@ export class LeavesUtils
         @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper
     )
     {
-        this.outputFolder = "";
+        this.modFolder = path.resolve( __dirname, `../` );;
     }
 
 
-    public setOutputFolder( folder: string )
+    public setModFolder( folder: string )
     {
-        this.outputFolder = folder;
+        this.modFolder = folder;
     }
 
     public setTierList( list: any )
@@ -42,21 +42,26 @@ export class LeavesUtils
 
     public loadFile( file: string ): any
     {
-        const directoryFile = path.resolve( __dirname, `../${ file }` );
+        //const directoryFile = path.resolve( __dirname, `../${ file }` );
         //this.printColor( `${directoryFile }` );
-        return jsonc.parse( this.vfs.readFile( directoryFile ) );
+        return jsonc.parse( this.vfs.readFile( this.modFolder + file ) );
+    }
+
+    public getFilesInFolder( folder: string ): string[]
+    {
+        return this.vfs.getFiles( this.modFolder + folder );
     }
 
     public saveFile( data: any, file: string, serialize: boolean = true )
     {
         let dataCopy = structuredClone( data );
-        
+
         if ( serialize )
         {
             dataCopy = this.jsonUtil.serialize( data, true );
         }
 
-        this.vfs.writeFile( `${ this.outputFolder }${ file }`, dataCopy );
+        this.vfs.writeFile( `${ this.modFolder }${ file }`, dataCopy );
     }
 
     public dataDump()
@@ -80,8 +85,9 @@ export class LeavesUtils
 
     public printColor( message: string, color: LogTextColor = LogTextColor.GREEN )
     {
-        this.logger.logWithColor( message, color );
-        this.logger.debug( message );
+        //this.logger.logWithColor( message, color );
+        //this.logger.debug( message );
+        this.logger.log( message, color );
     }
 
     public debugJsonOutput( jsonObject: any, label: string = "" )
@@ -195,7 +201,21 @@ export class LeavesUtils
 
     public getLocale( locale: string, id: string, type: string = "" )
     {
-        const localeDB = this.databaseServer.getTables().locales.global[ locale ];
+        let localeDB;
+        if ( this.databaseServer.getTables().locales.global[ locale ]  )
+        {
+            localeDB = this.databaseServer.getTables().locales.global[ locale ];
+        }
+        else
+        {
+            localeDB = this.databaseServer.getTables().locales.global[ "en" ];
+        }
+
+        if ( !localeDB[ `${ id }${ type }` ] )
+        {
+            localeDB = this.databaseServer.getTables().locales.global[ "en" ];
+        }
+            
         return localeDB[ `${ id }${ type }` ];
     }
 }
