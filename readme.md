@@ -30,3 +30,7 @@ Will change the following:
 - Added config on how many maps should be for kill quests. 
 - Looking for translators, for all tarkov languages except: EN, RU, PL, NL, SE, UA, DE, FR
 - Actually made the new locale system load. Oops. 
+
+## 0.0.4
+- Quest whitelist toggle in config, in case other mods get angy. (Default Off)
+- Fix incompatibility with TRAP Custom Quests (Technically the issue is with their mod. But whatever.)

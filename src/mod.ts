@@ -94,6 +94,7 @@ class Questrandomizer implements IPreSptLoadMod
         for ( const file of this.leavesUtils.getFilesInFolder( "assets/data/localization/" ) )
         {
             const fileWithoutExtension = file.split( '.' )[ 0 ];
+            //this.leavesUtils.printColor( fileWithoutExtension );
             this.localization[ fileWithoutExtension ] = this.leavesUtils.loadFile( `assets/data/localization/${ file }` );
         }
 
@@ -516,6 +517,7 @@ class Questrandomizer implements IPreSptLoadMod
 
     private editTaskLocale( task: IQuestCondition, newLocale: string, targetLocale: string )
     {
+        
         const taskId = task.id;
         if ( !this.localizationChanges[ targetLocale ] )
         {
