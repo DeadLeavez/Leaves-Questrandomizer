@@ -66,7 +66,8 @@ export class LeavesUtils
 
     public dataDump()
     {
-        const parents =
+        //Dump gear
+        /*const parents =
             [
                 "-5448e54d4bdc2dcc718b4568", //Armor
                 "5a341c4086f77401f2541505", //Headwear
@@ -80,6 +81,11 @@ export class LeavesUtils
             {
                 this.printColor( `"${ item }", //${ locale[ item + " Name" ] }` );
             }
+        }*/
+        const questDB = this.databaseServer.getTables().templates.quests;
+        for ( const quest in questDB )
+        {
+            this.printColor( `"${ quest }", //${ questDB[ quest ].QuestName }` );
         }
     }
 
@@ -202,7 +208,7 @@ export class LeavesUtils
     public getLocale( locale: string, id: string, type: string = "" )
     {
         let localeDB;
-        if ( this.databaseServer.getTables().locales.global[ locale ]  )
+        if ( this.databaseServer.getTables().locales.global[ locale ] )
         {
             localeDB = this.databaseServer.getTables().locales.global[ locale ];
         }
@@ -215,7 +221,7 @@ export class LeavesUtils
         {
             localeDB = this.databaseServer.getTables().locales.global[ "en" ];
         }
-            
+
         return localeDB[ `${ id }${ type }` ];
     }
 }

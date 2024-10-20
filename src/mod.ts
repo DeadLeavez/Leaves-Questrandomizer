@@ -228,9 +228,24 @@ class Questrandomizer implements IPreSptLoadMod
             this.targetLocales.add( language );
         }
 
-        //Iterate the regular quest database see if any new quests are added.
-        for ( const originalQuest in this.databaseServer.getTables().templates.quests )
+
+        let questWhitelist: string[] = [];
+        if ( this.config.enableQuestWhilelist )
         {
+            questWhitelist = this.leavesUtils.loadFile( "config/questwhitelist.jsonc" ).whitelist;
+        }
+
+        //Iterate the regular quest database see if any new quests are added.
+        const serverQuestDB = this.databaseServer.getTables().templates.quests;
+        for ( const originalQuest in serverQuestDB )
+        {
+            //Check whitelist.
+            if ( !questWhitelist.includes( originalQuest ) )
+            {
+                this.leavesUtils.printColor( `Ignoring:${ originalQuest } - ${ serverQuestDB[ originalQuest ].QuestName } due to not being on whitelist.` );
+                continue;
+            }
+
             //Check if quest has been generated before.
             if ( !this.QuestDB[ originalQuest ] )
             {
@@ -247,7 +262,7 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Generate a category list
         this.generateWeaponCategorySheet();
-        //this.dataDump();
+        //this.leavesUtils.dataDump();
     }
 
     private editQuest( quest: IQuest ): IQuest
@@ -441,7 +456,7 @@ class Questrandomizer implements IPreSptLoadMod
             else if ( conditions[ counterConditionIndex ].conditionType === "Equipment" )
             {
                 flags.hasEquipment = counterConditionIndex;
-            } 
+            }
         }
 
         if ( flags.hasKills >= 0 && flags.hasKillFailstate < 0 )
@@ -518,8 +533,6 @@ class Questrandomizer implements IPreSptLoadMod
             this.leavesUtils.printColor( newLocale, LogTextColor.MAGENTA );
         }
     }
-
-
 
     private editLocations( locations: IQuestConditionCounterCondition, flags: any )
     {

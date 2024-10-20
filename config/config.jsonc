@@ -28,5 +28,6 @@
         "5696686a4bdc2da3298b456a", //Dollars
         "5449016a4bdc2d6f028b456f", //Roubles
         "569668774bdc2da2298b4568" //Euros
-    ]
+    ],
+    "enableQuestWhilelist": false //When enabled, will only modify quests from the questwhitelist.jsonc. By default this is all the vanilla quests. Only enable this if you suspect another mod is playing bad with this one.
 }
