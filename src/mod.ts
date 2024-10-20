@@ -441,7 +441,7 @@ class Questrandomizer implements IPreSptLoadMod
             else if ( conditions[ counterConditionIndex ].conditionType === "Equipment" )
             {
                 flags.hasEquipment = counterConditionIndex;
-            }
+            } 
         }
 
         if ( flags.hasKills >= 0 && flags.hasKillFailstate < 0 )
