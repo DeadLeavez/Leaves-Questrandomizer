@@ -32,9 +32,9 @@ class Questrandomizer implements IPreSptLoadMod
     private localization: any;
     private QuestDB: any;
 
-    private bodyParts:string[];
-    private validTargets:string[];
-    private validMaps:string[];
+    private bodyParts: string[];
+    private validTargets: string[];
+    private validMaps: string[];
     private locationIdMap;
     private targetLocales: Set<string>;
 
@@ -181,15 +181,18 @@ class Questrandomizer implements IPreSptLoadMod
         this.localizationChanges = this.leavesUtils.loadFile( "assets/generated/locale.jsonc" );
 
         //Load into database.
-        for ( const change in this.localizationChanges )
+        let localeDB = this.databaseServer.getTables().locales.global;
+        for ( const language in this.localizationChanges )
         {
-            if ( this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] )
+            //this.leavesUtils.debugJsonOutput( this.localizationChanges );
+            //this.leavesUtils.printColor( `Language:${ language }` );
+            for ( const changeID in this.localizationChanges[ language ] )
             {
-                this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] = this.localizationChanges[ change ];
-            }
-            else
-            {
-                this.databaseServer.getTables().locales.global[ this.config.targetLocale ][ change ] = this.localizationChanges[ change ];
+                if ( !localeDB[ language ] )
+                {
+                    localeDB[ language ] = {};
+                }
+                localeDB[ language ][ changeID ] = this.localizationChanges[ language ][ changeID ];
             }
         }
 
@@ -446,7 +449,7 @@ class Questrandomizer implements IPreSptLoadMod
             //Add location to quest potentially.
             if ( flags.hasLocation === -1 && Math.random() < this.config.chanceToAddLocations && flags.hasSavageRole < 0 )
             {
-                const tempMaps:string[] = this.leavesUtils.getUniqueValues<string>( this.validMaps, this.config.locationCount );
+                const tempMaps: string[] = this.leavesUtils.getUniqueValues<string>( this.validMaps, this.config.locationCount );
                 flags.hasLocation = this.leavesQuestTools.addLocationToQuest( conditions, tempMaps );
             }
             else if ( flags.hasLocation >= 0 ) //Edit location
@@ -591,7 +594,7 @@ class Questrandomizer implements IPreSptLoadMod
                 line += `${ this.getLoc( "usingWeaponGroup", targetLocale ) } `;
                 if ( flags.hasSpecificWeapon >= 0 )
                 {
-                    line += `${this.leavesUtils.getLocale(targetLocale,flags.whatWeaponOrGroup," Name")} `;
+                    line += `${ this.leavesUtils.getLocale( targetLocale, flags.whatWeaponOrGroup, " Name" ) } `;
                 }
                 else
                 {
@@ -618,7 +621,7 @@ class Questrandomizer implements IPreSptLoadMod
                 let mapsline = `${ this.getLoc( "atLocation", targetLocale ) } `;
                 for ( const map of conditions[ flags.hasLocation ].target )
                 {
-                    if (  map.toLowerCase() === "sandbox" || map.toLowerCase() === "sandbox_high"  )
+                    if ( map.toLowerCase() === "sandbox" || map.toLowerCase() === "sandbox_high" )
                     {
                         if ( !hasAddedGz )
                         {
