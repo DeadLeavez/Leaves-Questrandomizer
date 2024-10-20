@@ -4,18 +4,14 @@
         "5c0d190cd09282029f5390d8", //Grenadier
         "60e729cf5698ee7b05057439" //Swift one
     ],
-    
-    //Locales will be replaced eventually by generating locales for everything.
-    "targetLocale": "en", //The locale from the database of mod items.
-    "generatedLocale": "en", //The locale for this mod.
 
-    "chanceToAddLocations": 1,//0.5, //Chance to add a location requirement to kill quests.
-    "locationCount": 1, //Total locations that the quest will be valid on. 
-    "chanceToAddTimeOfDay": 1,//0.05, //CHance to add a time of day requirement to kill quests.
-    "chanceToAddBodypart": 1,//0.05, //Chance to add having to target specific body parts to kill quests.
-    "chanceToAddDistance": 1,//0.05, //Chance to add a distance requirement to kill quests. (Currently >=/<= 20-100m, Might add options for this later)
-    "chanceToAddWeapon": 1,//0.5, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
-    "chanceToAddGear": 1,//0.05, //Chance to add gear requirement to kill quest. Will do a weighted selection from the gearlist.jsonc file.
+    "chanceToAddLocations": 0.15, //Chance to add a location requirement to kill quests.
+    "locationCount": 2, //Total locations that the quest will be valid on. 
+    "chanceToAddTimeOfDay": 0.05, //CHance to add a time of day requirement to kill quests.
+    "chanceToAddBodypart": 0.05, //Chance to add having to target specific body parts to kill quests.
+    "chanceToAddDistance": 0.05, //Chance to add a distance requirement to kill quests. (Currently >=/<= 20-100m, Might add options for this later)
+    "chanceToAddWeapon": 0.5, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
+    "chanceToAddGear": 0.05, //Chance to add gear requirement to kill quest. Will do a weighted selection from the gearlist.jsonc file.
     "addGearCount": 3, //How many different gear pieces will be selected. Every gear piece is an alternative. You only ever need to wear 1 of them.
 
     "chanceForSpecificWeapon": 0.15, //Chance to instead of a weapon group, select a specific weapon from the "SpecificWeapon" array in weaponcategories.jsonc
@@ -34,26 +30,3 @@
         "569668774bdc2da2298b4568" //Euros
     ]
 }
-
-    //All listed locales below exist for targetLocale. The ones not marked "Not implemented" exist as generated locale.
-    //List of available locales: 
-    /*
-    "ch": "Chinese", //NOT IMPLEMENTED
-    "cz": "Czech",   //NOT IMPLEMENTED
-    "en": "English",
-    "es": "Spanish", //NOT IMPLEMENTED
-    "es-mx": "Spanish (Mexico)", //NOT IMPLEMENTED
-    "fr": "French", //NOT IMPLEMENTED
-    "ge": "German", //NOT IMPLEMENTED
-    "hu": "Hungarian", //NOT IMPLEMENTED
-    "it": "Italian", //NOT IMPLEMENTED
-    "jp": "Japanese", //NOT IMPLEMENTED
-    "kr": "Korean", //NOT IMPLEMENTED
-    "pl": "Polish", //NOT IMPLEMENTED
-    "po": "Portuguese", //NOT IMPLEMENTED
-    "ro": "Romanian", //NOT IMPLEMENTED
-    "ru": "Russian", //NOT IMPLEMENTED
-    "sk": "Slovak", //NOT IMPLEMENTED
-    "tu": "Turkish" //NOT IMPLEMENTED
-    "se": "Swedish" //ONLY AS GENERATED LOCALE
-    */
