@@ -25,15 +25,16 @@ class Questrandomizer implements IPreSptLoadMod
     private leavesQuestTools: LeavesQuestTools;
     private config: any;
     private weaponCategories: any;
+    private weaponIndivualWeapons: string[];
     private weaponCategoriesWeighting: any;
     private gearList: any;
     private localizationChanges: any;
     private localization: any;
     private QuestDB: any;
 
-    private bodyParts;
-    private validTargets;
-    private validMaps;
+    private bodyParts:string[];
+    private validTargets:string[];
+    private validMaps:string[];
     private locationIdMap;
     private targetLocales: Set<string>;
 
@@ -43,9 +44,11 @@ class Questrandomizer implements IPreSptLoadMod
         const categoriesConfig = this.leavesUtils.loadFile( "config/weaponcategories.jsonc" );
         this.weaponCategories = {};
 
+
+        //Load the individualWeapons
+        this.weaponIndivualWeapons = categoriesConfig.SpecificWeapon;
+
         //Load the weightings
-
-
         this.weaponCategoriesWeighting = categoriesConfig.weightings;
         for ( let weighting in this.weaponCategoriesWeighting )
         {
@@ -71,8 +74,16 @@ class Questrandomizer implements IPreSptLoadMod
 
     private getWeaponGroup( flags: any ): string[]
     {
+        if ( Math.random() < this.config.chanceForSpecificWeapon )
+        {
+            const count = this.weaponIndivualWeapons.length;
+            let weapon: string = this.weaponIndivualWeapons[ randomInt( count ) ];
+            flags.hasSpecificWeapon = 1;
+            flags.whatWeaponOrGroup = weapon;
+            return [ weapon ];
+        }
         let group = this.weightedRandomHelper.getWeightedValue<string>( this.weaponCategoriesWeighting );
-        flags.whatWeaponGroup = group;
+        flags.whatWeaponOrGroup = group;
         return this.weaponCategories[ group ];
     }
 
@@ -154,7 +165,7 @@ class Questrandomizer implements IPreSptLoadMod
 
             this.QuestDB[ questID ] = this.editQuest( structuredClone( this.databaseServer.getTables().templates.quests[ questID ] ) );
 
-            this.leavesUtils.printColor( `[Questrandomizer] ${ questID }, created` )
+            //this.leavesUtils.printColor( `[Questrandomizer] ${ questID }, created` )
         }
 
         return this.QuestDB[ questID ];
@@ -257,8 +268,10 @@ class Questrandomizer implements IPreSptLoadMod
         //Check if quest has kill type
         if ( !this.leavesUtils.searchObject( "Kills", quest.conditions.AvailableForFinish ) && Math.random() < this.config.addKillObjectiveToQuestChance && !hasKillsFailstate )
         {
-            this.addKillObjectiveToQuest( quest );
-            this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW );
+            const tempTarget = this.validTargets[ randomInt( this.validTargets.length ) ];
+            const tempKillcount = this.config.addKillObjectiveKillCount;
+            this.leavesQuestTools.addKillObjectiveToQuest( quest, tempTarget, tempKillcount );
+            //this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW );
         }
 
         let editedHandoverItemTask = false;
@@ -395,7 +408,8 @@ class Questrandomizer implements IPreSptLoadMod
             hasTime: -1,
             hasBodyparts: -1,
             hasWeapon: -1,
-            whatWeaponGroup: "",
+            hasSpecificWeapon: -1,
+            whatWeaponOrGroup: "",
             hasSavageRole: -1,
             hasKillFailstate: hasKillsFailstate ? 1 : -1,
             hasEquipment: -1
@@ -432,7 +446,8 @@ class Questrandomizer implements IPreSptLoadMod
             //Add location to quest potentially.
             if ( flags.hasLocation === -1 && Math.random() < this.config.chanceToAddLocations && flags.hasSavageRole < 0 )
             {
-                this.addLocationToQuest( conditions, flags );
+                const tempMaps:string[] = this.leavesUtils.getUniqueValues<string>( this.validMaps, this.config.locationCount );
+                flags.hasLocation = this.leavesQuestTools.addLocationToQuest( conditions, tempMaps );
             }
             else if ( flags.hasLocation >= 0 ) //Edit location
             {
@@ -455,7 +470,8 @@ class Questrandomizer implements IPreSptLoadMod
             //Add gear
             if ( flags.hasEquipment < 0 && Math.random() < this.config.chanceToAddGear )
             {
-                flags.hasEquipment = this.addGearToQuest( conditions );
+                const tempGearPieces = this.leavesUtils.getUniqueWeightedValues<string>( this.gearList, this.config.addGearCount );
+                flags.hasEquipment = this.leavesQuestTools.addGearToQuest( conditions, tempGearPieces );
             }
 
             //Edit zones possibly (PROBABLY WONT DO)
@@ -480,27 +496,6 @@ class Questrandomizer implements IPreSptLoadMod
         return;
     }
 
-    private addGearToQuest( condition: IQuestConditionCounterCondition[] ): number
-    {
-        let gearPieces = this.leavesUtils.getUniqueWeightedValues<string>( this.gearList, this.config.addGearCount );
-        let tempGear =
-        {
-            "IncludeNotEquippedItems": false,
-            "conditionType": "Equipment",
-            "dynamicLocale": false,
-            "equipmentExclusive": [],
-            "equipmentInclusive": [],
-            "id": this.hashUtil.generate()
-        };
-        for ( const piece of gearPieces )
-        {
-            tempGear.equipmentInclusive.push( [ piece ] );
-        }
-
-        //return the index of the new entry
-        return condition.push( tempGear ) - 1;
-    }
-
     private editTaskLocale( task: IQuestCondition, newLocale: string, targetLocale: string )
     {
         const taskId = task.id;
@@ -514,86 +509,14 @@ class Questrandomizer implements IPreSptLoadMod
             this.databaseServer.getTables().locales.global[ targetLocale ] = {};
         }
         this.databaseServer.getTables().locales.global[ targetLocale ][ taskId ] = newLocale;
-        this.leavesUtils.printColor( newLocale, LogTextColor.MAGENTA );
-    }
 
-    private addLocationToQuest( conditions: IQuestConditionCounterCondition[], flags: any )
-    {
-        let locationData =
+        if ( targetLocale === "en" )
         {
-            "conditionType": "Location",
-            "dynamicLocale": false,
-            "id": this.hashUtil.generate(),
-            "target": []
+            this.leavesUtils.printColor( newLocale, LogTextColor.MAGENTA );
         }
-        //Generate a random amount of new locations
-        let mapCount = 1;
-
-        //Add new maps to location
-        locationData.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
-
-        //Index will be the length minus 1
-        flags.hasLocation = conditions.push( locationData ) - 1;
     }
 
-    private addKillObjectiveToQuest( quest: IQuest ): number
-    {
-        //SPT, YOUR TYPES SUCK!
-        let objectiveData: any =
-        {
-            "completeInSeconds": 0,
-            "conditionType": "CounterCreator",
-            "counter": {
-                "conditions": [
-                    {
-                        "bodyPart": [],
-                        "compareMethod": ">=",
-                        "conditionType": "Kills",
-                        "daytime": {
-                            "from": 0,
-                            "to": 0
-                        },
-                        "distance": {
-                            "compareMethod": ">=",
-                            "value": 0
-                        },
-                        "dynamicLocale": false,
-                        "enemyEquipmentExclusive": [],
-                        "enemyEquipmentInclusive": [],
-                        "enemyHealthEffects": [],
-                        "id": this.hashUtil.generate(),
-                        "resetOnSessionEnd": false,
-                        "savageRole": [],
-                        "target": this.validTargets[ randomInt( this.validTargets.length ) ],
-                        "value": 1,
-                        "weapon": [],
-                        "weaponCaliber": [],
-                        "weaponModsExclusive": [],
-                        "weaponModsInclusive": []
-                    },
-                    {
-                        "conditionType": "Location",
-                        "dynamicLocale": false,
-                        "id": this.hashUtil.generate(),
-                        "target": []
-                    }
-                ],
-                "id": this.hashUtil.generate()
-            },
-            "doNotResetIfCounterCompleted": false,
-            "dynamicLocale": false,
-            "globalQuestCounterId": "",
-            "id": this.hashUtil.generate(),
-            "index": 0,
-            "oneSessionOnly": false,
-            "parentId": "",
-            "type": "Elimination",
-            "value": this.config.addKillObjectiveKillCount,
-            "visibilityConditions": []
-        };
 
-        return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
-    }
 
     private editLocations( locations: IQuestConditionCounterCondition, flags: any )
     {
@@ -665,7 +588,15 @@ class Questrandomizer implements IPreSptLoadMod
             //Weapon requirements
             if ( flags.hasWeapon >= 0 )
             {
-                line += `${ this.getLoc( "usingWeaponGroup", targetLocale ) } ${ flags.whatWeaponGroup } `;
+                line += `${ this.getLoc( "usingWeaponGroup", targetLocale ) } `;
+                if ( flags.hasSpecificWeapon >= 0 )
+                {
+                    line += `${this.leavesUtils.getLocale(targetLocale,flags.whatWeaponOrGroup," Name")} `;
+                }
+                else
+                {
+                    line += `${ flags.whatWeaponOrGroup } `;
+                }
             }
 
             //Body part hit requirement

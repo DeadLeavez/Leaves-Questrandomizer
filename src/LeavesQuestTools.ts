@@ -2,19 +2,21 @@ import { inject, injectable } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
+import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest} from "@spt/models/eft/common/tables/IQuest";
+import { IQuest, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
 import { LeavesUtils } from "./LeavesUtils";
 
 @injectable()
 export class LeavesQuestTools
 {
-    private questPoints:any;
+    private questPoints: any;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
         @inject( "VFS" ) protected vfs: VFS,
         @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
+        @inject( "HashUtil" ) protected hashUtil: HashUtil,
         @inject( "WinstonLogger" ) protected logger: ILogger,
         @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils
     )
@@ -35,6 +37,99 @@ export class LeavesQuestTools
             }
         }
         return "unknown";
+    }
+
+    public addKillObjectiveToQuest( quest: IQuest, target: string, count: number ): number
+    {
+        //SPT, YOUR TYPES SUCK!
+        let objectiveData: any =
+        {
+            "completeInSeconds": 0,
+            "conditionType": "CounterCreator",
+            "counter": {
+                "conditions": [
+                    {
+                        "bodyPart": [],
+                        "compareMethod": ">=",
+                        "conditionType": "Kills",
+                        "daytime": {
+                            "from": 0,
+                            "to": 0
+                        },
+                        "distance": {
+                            "compareMethod": ">=",
+                            "value": 0
+                        },
+                        "dynamicLocale": false,
+                        "enemyEquipmentExclusive": [],
+                        "enemyEquipmentInclusive": [],
+                        "enemyHealthEffects": [],
+                        "id": this.hashUtil.generate(),
+                        "resetOnSessionEnd": false,
+                        "savageRole": [],
+                        "target": target,
+                        "value": 1,
+                        "weapon": [],
+                        "weaponCaliber": [],
+                        "weaponModsExclusive": [],
+                        "weaponModsInclusive": []
+                    },
+                    {
+                        "conditionType": "Location",
+                        "dynamicLocale": false,
+                        "id": this.hashUtil.generate(),
+                        "target": []
+                    }
+                ],
+                "id": this.hashUtil.generate()
+            },
+            "doNotResetIfCounterCompleted": false,
+            "dynamicLocale": false,
+            "globalQuestCounterId": "",
+            "id": this.hashUtil.generate(),
+            "index": 0,
+            "oneSessionOnly": false,
+            "parentId": "",
+            "type": "Elimination",
+            "value": count,
+            "visibilityConditions": []
+        };
+
+        return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
+    }
+
+    public addGearToQuest( condition: IQuestConditionCounterCondition[], gearPieces: string[] ): number
+    {
+        let tempGear =
+        {
+            "IncludeNotEquippedItems": false,
+            "conditionType": "Equipment",
+            "dynamicLocale": false,
+            "equipmentExclusive": [],
+            "equipmentInclusive": [],
+            "id": this.hashUtil.generate()
+        };
+        for ( const piece of gearPieces )
+        {
+            tempGear.equipmentInclusive.push( [ piece ] );
+        }
+
+        //return the index of the new entry
+        return condition.push( tempGear ) - 1;
+    }
+
+    public addLocationToQuest( conditions: IQuestConditionCounterCondition[], maps:string[] ):number
+    {
+        let locationData =
+        {
+            "conditionType": "Location",
+            "dynamicLocale": false,
+            "id": this.hashUtil.generate(),
+            "target": maps
+        }
+        
+        //Index will be the length minus 1
+        return conditions.push( locationData ) - 1;
     }
 
     public getQuestLocationText( quest: IQuest ): string 
