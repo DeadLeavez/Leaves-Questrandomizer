@@ -41,4 +41,4 @@ Will change the following:
 ## 0.0.5
 - Korean Translation - Many thanks to Rising_Star
 - Spanish Translation - Many thanks to Strungerman
-- Add a list of maps that can't get Laboratory as a map.
+- Add a list of quests that can't get Laboratory as a map. Configurable in config.
