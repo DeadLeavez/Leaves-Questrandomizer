@@ -14,6 +14,7 @@ import { LeavesQuestTools } from "./LeavesQuestTools";
 // TODO:
 // Forbid usage of meds?
 // Have enemy be stunned?
+// FIR?
 
 class Questrandomizer implements IPreSptLoadMod
 {
@@ -136,7 +137,6 @@ class Questrandomizer implements IPreSptLoadMod
         this.validTargets = miscData.validTargets;
         this.bodyParts = miscData.bodyParts;
         this.easyMaps = miscData.easyMaps;
-
 
         //Process data
         this.loadWeaponCategories();
@@ -266,7 +266,7 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Generate a category list
         this.generateWeaponCategorySheet();
-        this.leavesUtils.dataDump();
+        //this.leavesUtils.dataDump();
     }
 
     private editQuest( quest: IQuest ): IQuest
@@ -553,10 +553,12 @@ class Questrandomizer implements IPreSptLoadMod
         //Generate new map
         if ( this.config.easierMapsQuestList.includes( flags.questID ) ) //If a quest is on the list, we use the easy map setup.
         {
+            //this.leavesUtils.printColor( `Using easier map for this quest. QUID: ${flags.questID}` );
             locations.target = this.leavesUtils.getUniqueValues( this.easyMaps, mapCount );
         }
         else //Else we just use any map.
         {
+            //this.leavesUtils.printColor( `Using hard map for this quest. QUID: ${flags.questID}` );
             locations.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
         }
     }
