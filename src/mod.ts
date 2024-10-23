@@ -11,8 +11,9 @@ import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 import { LeavesUtils } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 
-// ISSUES:
-//Locale generation
+// TODO:
+// Forbid usage of meds?
+// Have enemy be stunned?
 
 class Questrandomizer implements IPreSptLoadMod
 {
@@ -35,6 +36,7 @@ class Questrandomizer implements IPreSptLoadMod
     private bodyParts: string[];
     private validTargets: string[];
     private validMaps: string[];
+    private easyMaps: string[];
     private locationIdMap;
     private targetLocales: Set<string>;
 
@@ -133,6 +135,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.validMaps = miscData.validMaps;
         this.validTargets = miscData.validTargets;
         this.bodyParts = miscData.bodyParts;
+        this.easyMaps = miscData.easyMaps;
 
 
         //Process data
@@ -241,7 +244,7 @@ class Questrandomizer implements IPreSptLoadMod
         for ( const originalQuest in serverQuestDB )
         {
             //Check whitelist.
-            if ( !questWhitelist.includes( originalQuest ) )
+            if ( !questWhitelist.includes( originalQuest ) && this.config.enableQuestWhilelist )
             {
                 this.leavesUtils.printColor( `Ignoring:${ originalQuest } - ${ serverQuestDB[ originalQuest ].QuestName } due to not being on whitelist.` );
                 continue;
@@ -263,7 +266,7 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Generate a category list
         this.generateWeaponCategorySheet();
-        //this.leavesUtils.dataDump();
+        this.leavesUtils.dataDump();
     }
 
     private editQuest( quest: IQuest ): IQuest
@@ -307,7 +310,7 @@ class Questrandomizer implements IPreSptLoadMod
             }
             else if ( task.conditionType === "CounterCreator" )
             {
-                this.editCounterCreatorTask( task, hasKillsFailstate );
+                this.editCounterCreatorTask( task, hasKillsFailstate, quest._id );
             }
             else if ( task.conditionType === "HandoverItem" )
             {
@@ -413,7 +416,7 @@ class Questrandomizer implements IPreSptLoadMod
         }
     }
 
-    private editCounterCreatorTask( task: IQuestCondition, hasKillsFailstate: boolean )
+    private editCounterCreatorTask( task: IQuestCondition, hasKillsFailstate: boolean, questID: string )
     {
         const conditions = task.counter.conditions;
 
@@ -431,7 +434,8 @@ class Questrandomizer implements IPreSptLoadMod
             whatWeaponOrGroup: "",
             hasSavageRole: -1,
             hasKillFailstate: hasKillsFailstate ? 1 : -1,
-            hasEquipment: -1
+            hasEquipment: -1,
+            questID: questID
         }
 
         //Check what countercreator conditions exist
@@ -517,7 +521,7 @@ class Questrandomizer implements IPreSptLoadMod
 
     private editTaskLocale( task: IQuestCondition, newLocale: string, targetLocale: string )
     {
-        
+
         const taskId = task.id;
         if ( !this.localizationChanges[ targetLocale ] )
         {
@@ -536,7 +540,7 @@ class Questrandomizer implements IPreSptLoadMod
         }
     }
 
-    private editLocations( locations: IQuestConditionCounterCondition, flags: any )
+    private editLocations( locations: IQuestConditionCounterCondition, flags: any, )
     {
         //If we have special enemies, we don't want to fuck with the location.
         if ( flags.hasSavageRole >= 0 )
@@ -547,7 +551,14 @@ class Questrandomizer implements IPreSptLoadMod
         let mapCount = 1
 
         //Generate new map
-        locations.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
+        if ( this.config.easierMapsQuestList.includes( flags.questID ) ) //If a quest is on the list, we use the easy map setup.
+        {
+            locations.target = this.leavesUtils.getUniqueValues( this.easyMaps, mapCount );
+        }
+        else //Else we just use any map.
+        {
+            locations.target = this.leavesUtils.getUniqueValues( this.validMaps, mapCount );
+        }
     }
 
     private getLoc( original: string, targetLocale ): string
@@ -758,13 +769,13 @@ class Questrandomizer implements IPreSptLoadMod
             else if ( killsCondition.distance.value > 0 ) //If there is a range requirement
             {
                 killsCondition.distance.compareMethod = randomInt( 2 ) > 0 ? ">=" : "<=";
-                killsCondition.distance.value = ( randomInt( 8 ) + 2 ) * 10;
+                killsCondition.distance.value = ( randomInt( 4 ) + 2 ) * 10;
                 flags.hasDistance = 1;
             }
             else if ( Math.random() < this.config.chanceToAddDistance ) //We add it by chance
             {
                 killsCondition.distance.compareMethod = randomInt( 2 ) > 0 ? ">=" : "<=";
-                killsCondition.distance.value = ( randomInt( 8 ) + 2 ) * 10;
+                killsCondition.distance.value = ( randomInt( 4 ) + 2 ) * 10;
                 flags.hasDistance = 1;
             }
         }

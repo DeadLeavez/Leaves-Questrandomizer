@@ -2,6 +2,8 @@
     "questBlacklist": //These quests wont be edited
     [
         "5c0d190cd09282029f5390d8", //Grenadier
+        "5d25aed386f77442734d25d2", //The Survivalist Path - Unprotected but Dangerous
+        "5d25e2d886f77442734d335e", //The Huntsman Path - Controller
         "60e729cf5698ee7b05057439" //Swift one
     ],
 
@@ -29,5 +31,23 @@
         "5449016a4bdc2d6f028b456f", //Roubles
         "569668774bdc2da2298b4568" //Euros
     ],
-    "enableQuestWhilelist": false //When enabled, will only modify quests from the questwhitelist.jsonc. By default this is all the vanilla quests. Only enable this if you suspect another mod is playing bad with this one.
+    "enableQuestWhilelist": false, //When enabled, will only modify quests from the questwhitelist.jsonc. By default this is all the vanilla quests. Only enable this if you suspect another mod is playing bad with this one.
+
+    "easierMapsQuestList": //List of quests that use the easierMaps list in ``assets/data/misc.jsonc - earlyMaps`` as kill quest. To prevent some (default early) quests to use that maplist, but any quest can technically be put there.
+    [
+        "5936d90786f7742b1420ba5b", //Debut
+        "5936da9e86f7742d65037edf", //Background Check
+        "657315ddab5a49b71f098853", //First in Line
+        "657315df034d76585f032e01", //Shooting Cans
+        "657315e270bb0b8dba00cc48", //Burning Rubber
+        "657315e1dccd301f1301416a", //Luxurious Life
+        "5967733e86f774602332fc84", //Shortage
+        "59689ee586f7740d1570bbd5", //Sanitary Standards - Part 1
+        "59689fbd86f7740d137ebfc4", //Operation Aquarius - Part 1
+        "596b36c586f77450d6045ad2", //Supplier
+        "596b43fb86f77457ca186186", //The Extortionist
+        "657315e4a6af4ab4b50f3459", //Saving the Mole
+        "5d2495a886f77425cd51e403", //Introduction
+        "5d24b81486f77439c92d6ba8" //Acquaintance
+    ]
 }

@@ -1,0 +1,87 @@
+{
+    //Examples
+    /*
+    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
+    Hand over 2 counts of IFAK individual first aid kit
+
+    Replace the right hand side of each entry to translate.
+    */
+    //Generation
+    "Kill": "사살하기",
+    "AtDistance": "거리에서",
+    "DuringTimeOfDay": "시간 동안",
+    "usingWeaponGroup": "사용하여",
+    "inBodyPart": "을(를) 사격하여",
+    "atLocation": "에서",
+    "wearingGear": "착용하여",
+    "HandoverItem": "제출하기",
+    "ofItem": "개의",
+    "Category": "카테고리",
+
+    //Maps
+    "bigmap": "세관",
+    "factory4_day": "공장 - 주간",
+    "factory4_night": "공장 - 야간",
+    "interchange": "인터체인지",
+    "laboratory": "연구소",
+    "lighthouse": "등대",
+    "rezervbase": "리저브",
+    "shoreline": "해안선",
+    "tarkovstreets": "스트리트 오브 타르코프",
+    "woods": "삼림",
+    "sandbox": "그라운드 제로",
+    "sandbox_high": "그라운드 제로",
+
+    //Body parts
+    "Head": "머리",
+    "Chest": "흉부",
+    "Stomach": "복부",
+    "LeftLeg": "왼다리",
+    "RightLeg": "오른다리",
+    "LeftArm": "왼팔",
+    "RightArm": "오른팔",
+
+    //Targets
+    "anypmc": "PMC",
+    "savage": "스캐브",
+    "any": "아무나",
+    "marksman": "저격 스캐브",
+    "assault": "스캐브",
+    "bossbully": "르샬라",
+    "followerbully": "르샬라 경호원",
+    "bosskilla": "킬라",
+    "bosskojaniy": "슈트르만",
+    "followerkojaniy": "슈트르만 경호원",
+    "bossgluhar": "글루하",
+    "followergluharassault": "글루하 돌격대",
+    "followergluharsecurity": "글루하 호위대",
+    "followergluharscout": "글루하 정찰대",
+    "followergluharsniper": "글루하 저격수",
+    "followersanitar": "세니타 경호원",
+    "bosssanitar": "세니타",
+    "sectantwarrior": "컬티스트 전사",
+    "sectantpriest": "컬티스트 사제",
+    "sectantoni": "컬티스트 오니",
+    "sectantpredvestnik": "컬티스트 하르빙어",
+    "sectantprizrak": "컬티스트 유령",
+    "bosstagilla": "타길라",
+    "followertagilla": "타길라 경호원",
+    "exusec": "로그",
+    "bossknight": "나이트",
+    "followerbigpipe": "빅 파이프",
+    "followerbirdeye": "버드아이",
+    "bosszryachiy": "지랴키",
+    "followerzryachiy": "지랴키 경호원",
+    "bossboar": "카반",
+    "followerboar": "카반 경호원",
+    "bossboarsniper": "카반 저격수",
+    "followerboarclose1": "카반 경호원 C.",
+    "followerboarclose2": "카반 경호원 C.2",
+    "bosskolontay": "콜론타이",
+    "followerkolontayassault": "콜론타이 돌격대",
+    "followerkolontaysecurity": "콜론타이 호위대",
+    "bosspartisan": "파르티잔",
+    "pmcbear": "베어 PMC",
+    "pmcusec": "USEC PMC",
+    "pmcbot": "레이더"
+}

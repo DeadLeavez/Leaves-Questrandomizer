@@ -34,3 +34,11 @@ Will change the following:
 ## 0.0.4
 - Quest whitelist toggle in config, in case other mods get angy. (Default Off)
 - Fix incompatibility with TRAP Custom Quests (Technically the issue is with their mod. But whatever.)
+
+## 0.0.4h1
+- Fix whitelist preventing quests from generating when turned off. rofl. 
+
+## 0.0.5
+- Korean Translation - Many thanks to Rising_Star
+- Spanish Translation - Many thanks to Strungerman
+- Add a list of maps that can't get Laboratory as a map.

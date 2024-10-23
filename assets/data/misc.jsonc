@@ -13,6 +13,18 @@
         "Woods",
         "Lighthouse"
     ],
+    "easyMaps": //Maps that will be used if a quest is early.
+    [
+        "factory4_day",
+        "TarkovStreets",
+        "bigmap",
+        "Sandbox",
+        "Interchange",
+        "RezervBase",
+        "Shoreline",
+        "Woods",
+        "Lighthouse"
+    ],
     "locationIdMap":
     {
         "any": "any",

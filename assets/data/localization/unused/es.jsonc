@@ -1,0 +1,87 @@
+{
+    //Examples
+    /*
+    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: El Brazo izquierdo, el Brazo derecho o en la Cabeza en Aduanas mientras llevas puesto: [Module 3M]
+    Entrega 2 botiquines individuales de primeros auxilios IFAK
+
+    Replace the right hand side of each entry to translate.
+    */
+    //Generation
+    "Kill": "Mata",
+    "AtDistance": "a",
+    "DuringTimeOfDay": "durante",
+    "usingWeaponGroup": "usando",
+    "inBodyPart": "en",
+    "atLocation": "en",
+    "wearingGear": "mientras llevas puesto",
+    "HandoverItem": "Entrega",
+    "ofItem": "\b",
+    "Category": "Categoría",
+
+    //Maps
+    "bigmap": "Aduanas",
+    "factory4_day": "La Fábrica - De día",
+    "factory4_night": "La Fábrica - De noche",
+    "interchange": "Intercambio",
+    "laboratory": "Laboratorios",
+    "lighthouse": "El Faro",
+    "rezervbase": "Reserva",
+    "shoreline": "Orilla",
+    "tarkovstreets": "Calles de Tarkov",
+    "woods": "El Bosque",
+    "sandbox": "Zona Zero",
+    "sandbox_high": "Zona Zero",
+
+    //Body parts
+    "Head": "Cabeza",
+    "Chest": "Pecho",
+    "Stomach": "Estómago",
+    "LeftLeg": "Pierna Izquierda",
+    "RightLeg": "Pierna Derecha",
+    "LeftArm": "Brazo Izquierdo",
+    "RightArm": "Brazo Derecho",
+
+    //Targets
+    "anypmc": "PMCs",
+    "savage": "Scavs",
+    "any": "Cualquier Enemigo",
+    "marksman": "Francotirador Scav",
+    "assault": "Scav",
+    "bossbully": "Reshala",
+    "followerbully": "Seguidor de Reshala",
+    "bosskilla": "Killa",
+    "bosskojaniy": "Shturman",
+    "followerkojaniy": "Seguidor de Shturman",
+    "bossgluhar": "Gluhar",
+    "followergluharassault": "Seguidor de Gluhar Asalto",
+    "followergluharsecurity": "Seguidor de Gluhar Seguridad",
+    "followergluharscout": "Seguidor de Gluhar Observador",
+    "followergluharsniper": "Seguidor de Gluhar Francotirador",
+    "followersanitar": "Seguidor de Sanitar",
+    "bosssanitar": "Sanitar",
+    "sectantwarrior": "Guerrero Cultista",
+    "sectantpriest": "Sacerdote Cultista",
+    "sectantoni": "Oni Cultista",
+    "sectantpredvestnik": "Heraldo Cultista",
+    "sectantprizrak": "Fantasma Cultista",
+    "bosstagilla": "Tagilla",
+    "followertagilla": "Seguidor de Tagilla",
+    "exusec": "Desertor",
+    "bossknight": "Knight",
+    "followerbigpipe": "Big Pipe",
+    "followerbirdeye": "Birdeye",
+    "bosszryachiy": "Zryachiy",
+    "followerzryachiy": "Seguidor de Zryachiy",
+    "bossboar": "Kaban",
+    "followerboar": "Seguidor de Kaban",
+    "bossboarsniper": "Francotirador de Kaban",
+    "followerboarclose1": "Seguidor de Kaban C.",
+    "followerboarclose2": "Seguidor de Kaban C.2",
+    "bosskolontay": "Kolontay",
+    "followerkolontayassault": "Seguidor de Kolontay Asalto",
+    "followerkolontaysecurity": "Seguidor de Kolontay Seguridad",
+    "bosspartisan": "Partisan",
+    "pmcbear": "Bear PMC",
+    "pmcusec": "USEC PMC",
+    "pmcbot": "Asaltante"
+}
