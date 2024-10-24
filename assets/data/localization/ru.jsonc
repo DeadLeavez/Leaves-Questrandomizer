@@ -1,38 +1,43 @@
 {
+    //Examples
+    /*
+    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
+    Hand over 2 counts of IFAK individual first aid kit
+    */
     //Generation
     "Kill": "Убей",
     "AtDistance": "с растояния",
-    "DuringTimeOfDay": "в течении",
+    "DuringTimeOfDay": "в течение",
     "usingWeaponGroup": "используя",
     "inBodyPart": "в",
-    "atLocation": "на",
-    "wearingGear": "одев",
+    "atLocation": "\b",
+    "wearingGear": "надев",
     "HandoverItem": "Передай",
     "ofItem": "\b",
     "Category": "Категория",
 
     //Maps
-    "bigmap": "Таможне",
-    "factory4_day": "Заводе - Днем",
-    "factory4_night": "Заводе - Ночью",
-    "interchange": "Развязке",
-    "laboratory": "Лаборатории",
-    "lighthouse": "Маяке",
-    "rezervbase": "Резерве",
-    "shoreline": "Берегу",
-    "tarkovstreets": "Улицах Таркова",
-    "woods": "Лесу",
-    "sandbox": "Эпицентре",
-    "sandbox_high": "Эпицентре",
+    "bigmap": "на Таможне",
+    "factory4_day": "на Заводе - Днем",
+    "factory4_night": " на Заводе - Ночью",
+    "interchange": "на Развязке",
+    "laboratory": "в Лаборатории",
+    "lighthouse": "на Маяке",
+    "rezervbase": "на Резерве",
+    "shoreline": "на Берегу",
+    "tarkovstreets": "на Улицах Таркова",
+    "woods": "в Лесу",
+    "sandbox": "на Эпицентре",
+    "sandbox_high": "на Эпицентре",
 
-    //Body parts
-    "Head": "Голова",
-    "Chest": "Грудная клетка",
+    //Body parts 
+    "Head": "Голову", 
+    "Chest": "Грудную клетку",
     "Stomach": "Живот",
-    "LeftLeg": "Левая нога",
-    "RightLeg": "Правая нога",
-    "LeftArm": "Левая рука",
-    "RightArm": "Правая рука",
+    "LeftLeg": "Левую ногу",
+    "RightLeg": "Правую ногу",
+    "LeftArm": "Левую руку",
+    "RightArm": "Правую руку",
 
     //Targets
     "anypmc": "ЧВК",
@@ -52,11 +57,11 @@
     "followergluharsniper": "Снайпер Глухаря",
     "followersanitar": "Свита Санитара",
     "bosssanitar": "Санитар",
-    "sectantwarrior": "Культист",
+    "sectantwarrior": "Сектант",
     "sectantpriest": "Жрец",
-    "sectantoni": "Культист - Они",
-    "sectantpredvestnik": "Культист - Предвестник",
-    "sectantprizrak": "Культист - Призрак",
+    "sectantoni": "Сектант - Они",
+    "sectantpredvestnik": "Сектант - Предвестник",
+    "sectantprizrak": "Сектант - Призрак",
     "bosstagilla": "Тагилла",
     "followertagilla": "Свита Тагиллы",
     "exusec": "Отступники",
@@ -76,5 +81,6 @@
     "bosspartisan": "Партизан",
     "pmcbear": "ЧВК Bear",
     "pmcusec": "ЧВК USEC",
-    "pmcbot": "Рейдер"
+    "pmcbot": "Рейдер",
+    "arenaFighterEvent": "Погоня"
 }

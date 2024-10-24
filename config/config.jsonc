@@ -25,11 +25,12 @@
 
     "handoverItemUnknownItemValueDivider": 15000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. 
     "adjustHandoverCountFactorsUpDown": [0.2,0.2], //Adjusts how many items are needed for a handover quest. See how it works above.
-    "handoverItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entierly and left alone.
+    "handoverItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entirely and left alone. Parent categories also work.
     [
         "5696686a4bdc2da3298b456a", //Dollars
         "5449016a4bdc2d6f028b456f", //Roubles
-        "569668774bdc2da2298b4568" //Euros
+        "569668774bdc2da2298b4568", //Euros
+        "5485a8684bdc2da71d8b4567" //Ammo - Parent
     ],
     "enableQuestWhilelist": false, //When enabled, will only modify quests from the questwhitelist.jsonc. By default this is all the vanilla quests. Only enable this if you suspect another mod is playing bad with this one.
 

@@ -6,7 +6,6 @@ import type { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
 import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { randomInt } from "crypto";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
-import { HashUtil } from "@spt/utils/HashUtil";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 import { LeavesUtils } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
@@ -16,10 +15,10 @@ import { LeavesQuestTools } from "./LeavesQuestTools";
 // Have enemy be stunned?
 // FIR?
 
+
 class Questrandomizer implements IPreSptLoadMod
 {
     private databaseServer: DatabaseServer;
-    private hashUtil: HashUtil;
     private weightedRandomHelper: WeightedRandomHelper;
     private handbookHelper: HandbookHelper;
 
@@ -106,7 +105,6 @@ class Questrandomizer implements IPreSptLoadMod
 
     public preSptLoad( container: DependencyContainer ): void
     {
-        this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
@@ -370,7 +368,8 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         //Item blacklist
-        if ( this.config.handoverItemBlacklist.includes( originalItem ) )
+        const originalItemParent = itemDB[ originalItem ]._parent;
+        if ( this.config.handoverItemBlacklist.includes( originalItem ) || this.config.handoverItemBlacklist.includes( originalItemParent) )
         {
             return;
         }

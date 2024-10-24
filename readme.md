@@ -39,6 +39,12 @@ Will change the following:
 - Fix whitelist preventing quests from generating when turned off. rofl. 
 
 ## 0.0.5
-- Korean Translation - Many thanks to Rising_Star
-- Spanish Translation - Many thanks to Strungerman
-- Add a list of quests that can't get Laboratory as a map. Configurable in config.
+- Korean Translation - Many thanks to ``Rising_Star``
+- Spanish Translation - Many thanks to ``Strungerman``
+- Add a list of quests that can't get "harder" maps. Configurable in config.
+
+## 0.0.6
+- Added missing "Bloodhound" to name list. 
+- Updated RU translation
+- Allow parents to be used in the ``handoverItemBlacklist`` and added "Ammo" parent to that list as a default.
+- Added ES-MX Translation - Many thanks to ``UralreadyDead``

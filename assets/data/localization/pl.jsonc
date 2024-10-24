@@ -1,4 +1,9 @@
 {
+    //Examples
+    /*
+    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
+    Hand over 2 counts of IFAK individual first aid kit
+    */
     //Generation
     "Kill": "zlikwiduj",
     "AtDistance": "na",
@@ -76,5 +81,6 @@
     "bosspartisan": "Partisan",
     "pmcbear": "Bear PMC",
     "pmcusec": "USEC PMC",
-    "pmcbot": "Bandyta"
+    "pmcbot": "Bandyta",
+    "arenaFighterEvent": "Psy Wojny"
 }

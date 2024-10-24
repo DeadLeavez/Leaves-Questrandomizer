@@ -23,5 +23,5 @@
 /src/*.js.map
 /output/*
 /redirect.jsonc
-/Example_Quests
+/example_stuff
 /user
