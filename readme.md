@@ -47,4 +47,4 @@ Will change the following:
 - Added missing "Bloodhound" to name list. 
 - Updated RU translation
 - Allow parents to be used in the ``handoverItemBlacklist`` and added "Ammo" parent to that list as a default.
-- Added ES-MX Translation - Many thanks to ``UralreadyDead``
+- Added ES-MX Translation - Many thanks to ``UralreadyDead`` (NOT DONE YET)
