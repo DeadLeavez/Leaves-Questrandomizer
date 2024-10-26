@@ -26,7 +26,7 @@ class Questrandomizer implements IPreSptLoadMod
     private leavesQuestTools: LeavesQuestTools;
     private config: any;
     private weaponCategories: any;
-    private weaponIndivualWeapons: string[];
+    private weaponIndividualWeapons: string[];
     private weaponCategoriesWeighting: any;
     private gearList: any;
     private localizationChanges: any;
@@ -48,7 +48,7 @@ class Questrandomizer implements IPreSptLoadMod
 
 
         //Load the individualWeapons
-        this.weaponIndivualWeapons = categoriesConfig.SpecificWeapon;
+        this.weaponIndividualWeapons = categoriesConfig.SpecificWeapon;
 
         //Load the weightings
         this.weaponCategoriesWeighting = categoriesConfig.weightings;
@@ -78,8 +78,8 @@ class Questrandomizer implements IPreSptLoadMod
     {
         if ( Math.random() < this.config.chanceForSpecificWeapon )
         {
-            const count = this.weaponIndivualWeapons.length;
-            let weapon: string = this.weaponIndivualWeapons[ randomInt( count ) ];
+            const count = this.weaponIndividualWeapons.length;
+            let weapon: string = this.weaponIndividualWeapons[ randomInt( count ) ];
             flags.hasSpecificWeapon = 1;
             flags.whatWeaponOrGroup = weapon;
             return [ weapon ];
