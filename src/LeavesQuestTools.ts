@@ -118,7 +118,31 @@ export class LeavesQuestTools
         return condition.push( tempGear ) - 1;
     }
 
-    public addLocationToQuest( conditions: IQuestConditionCounterCondition[], maps:string[] ):number
+    public addHandOverObjectiveToQuest( quest: IQuest, count: number ): number
+    {
+        let objectiveData = {
+            "conditionType": "HandoverItem",
+            "dogtagLevel": 0,
+            "dynamicLocale": false,
+            "globalQuestCounterId": "",
+            "id":  this.hashUtil.generate(),
+            "index": 1,
+            "isEncoded": false,
+            "maxDurability": 15,
+            "minDurability": 0,
+            "onlyFoundInRaid": true,
+            "parentId": "",
+            "target": [
+                "5447a9cd4bdc2dbd208b4567"
+            ],
+            "value": count,
+            "visibilityConditions": []
+        }
+
+        return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
+    }
+
+    public addLocationToQuest( conditions: IQuestConditionCounterCondition[], maps: string[] ): number
     {
         let locationData =
         {
@@ -127,7 +151,7 @@ export class LeavesQuestTools
             "id": this.hashUtil.generate(),
             "target": maps
         }
-        
+
         //Index will be the length minus 1
         return conditions.push( locationData ) - 1;
     }

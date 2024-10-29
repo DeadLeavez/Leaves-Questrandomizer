@@ -17,6 +17,11 @@ Will change the following:
         - Once the server has started once with this mod. You can find an auto-generated category list in all supported languages in the ``categories/`` folder of this mod.
     - Add/Randomize the body part requirement.
 
+Current Shortcomings
+- Removes durability for handover quests.
+- Doesn't have a counter for "found" items for handover quests. (The thing most, but not all bsg handover quests have.) Just a visual thing. Minor.
+- No Localization for category names (Due to them being very adjustable by end-users.)
+
 # Changelog
 ## 0.0.1
 - Initial beta release
@@ -47,4 +52,17 @@ Will change the following:
 - Added missing "Bloodhound" to name list. 
 - Updated RU translation
 - Allow parents to be used in the ``handoverItemBlacklist`` and added "Ammo" parent to that list as a default.
-- Added ES-MX Translation - Many thanks to ``UralreadyDead`` (NOT DONE YET)
+- Added ES-MX Translation - Many thanks to ``UralreadyDead`
+- Added ``chanceHandoverNeedsFIR`` property to decide if handover quest items needs to be found in raid.
+- Added ``chanceToEditHandoverCondition`` property to decide if we even want to edit handover stuff.
+- Added ``chanceToEditKillConditions`` property to decide if we even want to edit kill  stuff.
+- Easy quests now also don't randomize as much for kill quests. (renamed config property to ``easierQuestList``)
+- - Uses Easier map list
+- - Does not ADD body part requirements
+- - Does not ADD time of day requirements 
+- - Does not ADD distance requirements
+- - Does not ADD/EDIT gear requirements
+- - Does not EDIT weapon requirements 
+- Added chance and config for handover quests requiring from categories rather than individual items. 
+- Added ``chanceToAddHandoverCondition`` which is a chance to add a handover condition to quests.
+- Localization for handover categories. (Working on doing the same for weapon categories.)

@@ -1,0 +1,50 @@
+{
+    "categoryWhitelist":
+    [
+        "57864c8c245977548867e7f1", //Medical Supplies
+        "57864bb7245977548b3b66c2", //Tool
+        "57864c322459775490116fbf", //Household Goods
+        "57864ada245977548638de91", //Building Material
+        "57864a3d24597754843f8721", //Jewelry
+        "57864e4c24597754843f8723", //Lubricant (Yes. LUBE!)
+        "57864a66245977548f04a81f", //Electronics
+        "57864ee62459775490116fc1", //Battery 
+        "5448f3a64bdc2d60728b456a", //Stimulator
+        "5448f39d4bdc2d0a728b4568", //Medikit
+        "5448f3a14bdc2d27728b4569", //Painkillers
+        "5448f3ac4bdc2dce718b4569", //Medical
+        "5447e1d04bdc2dff2f8b4567", //Melee Weapons
+        "5448e8d04bdc2ddf718b4569", //Food
+        "5448e8d64bdc2dce718b4568", //Drink 
+        "543be6564bdc2df4348b4568", //Grenade
+        "5c99f98d86f7745c314214b3", //Mechanical Key
+        "5645bcb74bdc2ded0b8b4578", //Headphones
+        "5a341c4686f77469e155819e", //Facewear
+        "5a341c4086f77401f2541505", //Headgear
+        "5448e5724bdc2ddf718b4568", //Visors (Glasses)
+        "5447b5cf4bdc2d65278b4567" //Pistol
+    ],
+    "customCategories":
+    {
+        "Cigarettes":
+        [
+            "573475fb24597737fb1379e1", //"Apollo Soyuz cigarettes",
+            "573476d324597737da2adc13", //"Malboro Cigarettes",
+            "573476f124597737e04bf328", //"Wilston cigarettes",
+            "5734770f24597738025ee254" //"Strike Cigarettes",
+        ],
+        "Info":
+        [
+            "590c392f86f77444754deb29", //"SSD drive",
+            "590c621186f774138d11ea29", //"Secure Flash drive",
+            "590c639286f774151567fa95", //"Tech manual",
+            "590c645c86f77412b01304d9", //"Diary",
+            "590c651286f7741e566b6461", //"Slim diary",
+            "5c12613b86f7743bbe2c3f76", //"Intelligence folder",
+            "62a09e73af34e73a266d932a", //"BakeEzy cook book",
+            "62a0a16d0b9d3c46de5b6e97", //"Military flash drive",
+            "6389c8fb46b54c634724d847", //"Silicon Optoelectronic Integrated Circuits textbook",
+            "6389c92d52123d5dd17f8876" //"Advanced Electronic Materials textbook",
+        ]
+    }
+}

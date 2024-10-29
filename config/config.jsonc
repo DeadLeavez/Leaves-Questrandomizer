@@ -7,34 +7,43 @@
         "60e729cf5698ee7b05057439" //Swift one
     ],
 
+    "chanceToEditKillConditions": 1.00, //Chance that we want to edit kill requirement on a quest. 1 for always. 0 for never. Decimal values are ok.
     "chanceToAddLocations": 0.15, //Chance to add a location requirement to kill quests.
     "locationCount": 2, //Total locations that the quest will be valid on. 
     "chanceToAddTimeOfDay": 0.05, //CHance to add a time of day requirement to kill quests.
     "chanceToAddBodypart": 0.05, //Chance to add having to target specific body parts to kill quests.
     "chanceToAddDistance": 0.05, //Chance to add a distance requirement to kill quests. (Currently >=/<= 20-100m, Might add options for this later)
-    "chanceToAddWeapon": 0.5, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
+    "chanceToAddWeapon": 0.50, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
     "chanceToAddGear": 0.05, //Chance to add gear requirement to kill quest. Will do a weighted selection from the gearlist.jsonc file.
     "addGearCount": 3, //How many different gear pieces will be selected. Every gear piece is an alternative. You only ever need to wear 1 of them.
 
     "chanceForSpecificWeapon": 0.15, //Chance to instead of a weapon group, select a specific weapon from the "SpecificWeapon" array in weaponcategories.jsonc
 
-    "adjustKillCountFactorsUpDown": [0.2,0.2], //How many kills a quest will need. It's randomly increased/decreased by a multiplier between the factors. So default settings makes the multiplier between 0.8-1.2
+    "adjustKillCountFactorsUpDown": [ 0.20, 0.20 ], //How many kills a quest will need. It's randomly increased/decreased by a multiplier between the factors. So default settings makes the multiplier between 0.8-1.2
 
-    "addKillObjectiveToQuestChance": 0.5, //Chance to add a kill objective to quests that dont naturally have them.
-    "addKillObjectiveKillCount": 5,    //Base kill count to added objectives. Then multiplied by the factors above.
+    "addKillObjectiveToQuestChance": 0.50, //Chance to add a kill objective to quests that dont naturally have them.
+    "addKillObjectiveKillCount": 5, //Base kill count to added objectives. Then multiplied by the factors above.
 
-    "handoverItemUnknownItemValueDivider": 15000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. 
-    "adjustHandoverCountFactorsUpDown": [0.2,0.2], //Adjusts how many items are needed for a handover quest. See how it works above.
+    "addHandOverObjectiveToQuestChance": 0.15, //CHance to ADD a handover condition to a quest that does not have it.
+    "addHandOverObjectiveBaseCount": 4.00, //Number of items that need to be handed over by default.
+    "chanceToEditHandoverCondition": 0.80, //Chance that the handover part of a quest will be randomized. 1 for always. 0 for never. Decimal values are ok.
+    "chanceToRequireItemCategory": 0.15, //Chance that instead of a specific item, the quest requires a bunch of items from a category instead.
+    "itemCategoryMultiplier": 2.00, //If it's a category we multiply the needed item count with this. With default settings if a quest normally requires 5 Duct Tape, it now might require 10 medikits.
+    "handoverItemUnknownItemValueDivider": 15000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. Lower value means harder quests.
+    "adjustHandoverCountFactorsUpDown": [ 0.25, 0.40 ], //Adjusts how many items are needed for a handover quest. See how it works above.
+    "chanceHandoverNeedsFIR": 0.50, //Chance for a quest to require the handover items to be Found In Raid. 1 is always. 0 is never.
     "handoverItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entirely and left alone. Parent categories also work.
     [
         "5696686a4bdc2da3298b456a", //Dollars
         "5449016a4bdc2d6f028b456f", //Roubles
         "569668774bdc2da2298b4568", //Euros
+        "59f32bb586f774757e1e8442", //Dogtag Bear
+        "59f32c3b86f77472a31742f0", //Dogtag USEC
         "5485a8684bdc2da71d8b4567" //Ammo - Parent
     ],
     "enableQuestWhilelist": false, //When enabled, will only modify quests from the questwhitelist.jsonc. By default this is all the vanilla quests. Only enable this if you suspect another mod is playing bad with this one.
 
-    "easierMapsQuestList": //List of quests that use the easierMaps list in ``assets/data/misc.jsonc - earlyMaps`` as kill quest. To prevent some (default early) quests to use that maplist, but any quest can technically be put there.
+    "easierQuestList": //List of quests that use the easierMaps list in ``assets/data/misc.jsonc - earlyMaps`` as kill quest. To prevent some (default early) quests to use that maplist, but any quest can technically be put there.
     [
         "5936d90786f7742b1420ba5b", //Debut
         "5936da9e86f7742d65037edf", //Background Check

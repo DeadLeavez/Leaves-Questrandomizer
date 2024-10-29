@@ -25,7 +25,7 @@ export class LeavesUtils
         @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper
     )
     {
-        this.modFolder = path.resolve( __dirname, `../` );;
+        this.modFolder = path.resolve( __dirname, `../` );
     }
 
 
@@ -223,5 +223,43 @@ export class LeavesUtils
         }
 
         return localeDB[ `${ id }${ type }` ];
+    }
+    public addLocaleToAll( targetLocale: Set<String>, text: string, id: string )
+    {
+        for ( const locale in targetLocale.keys )
+        {
+            this.databaseServer.getTables().locales.global[ locale ][ id ] = text;
+        }
+    }
+    public addLocaleTo( targetLocale: string, text: string, id: string )
+    {
+        this.databaseServer.getTables().locales.global[ targetLocale ][ id ] = text;
+    }
+    public isProperItem( item: string ): boolean
+    {
+        const itemDB = this.databaseServer.getTables().templates.items;
+
+        //Does it even exist?
+        if ( !itemDB[ item ] )
+        {
+            return false;
+        }
+        const itemObject = itemDB[ item ];
+        //Does is it a type of item even?
+        if ( itemObject._type !== "Item" )
+        {
+            return false;
+        }
+        //Does it have props?
+        if ( !itemObject._props )
+        {
+            return false;
+        }
+        //Is it a quest item?
+        if( itemObject._props.QuestItem)
+        {
+            return false;
+        }
+        return true;
     }
 }

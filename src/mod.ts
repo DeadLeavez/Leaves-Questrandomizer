@@ -9,11 +9,15 @@ import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 import { LeavesUtils } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
+import { HashUtil } from "@spt/utils/HashUtil";
 
 // TODO:
-// Forbid usage of meds?
+// Locale to weapon categories?
+// Weapon Category Mods? / Restructure Weapon categories (HALF DONE)
+// Category Items at a vendor perhaps?
+// Randomize gear if its already there (NOT DONE)
 // Have enemy be stunned?
-// FIR?
+// Forbid usage of meds?
 
 
 class Questrandomizer implements IPreSptLoadMod
@@ -21,11 +25,13 @@ class Questrandomizer implements IPreSptLoadMod
     private databaseServer: DatabaseServer;
     private weightedRandomHelper: WeightedRandomHelper;
     private handbookHelper: HandbookHelper;
+    private hashUtil: HashUtil;
 
     private leavesUtils: LeavesUtils;
     private leavesQuestTools: LeavesQuestTools;
     private config: any;
     private weaponCategories: any;
+    private handoverCategories: any;
     private weaponIndividualWeapons: string[];
     private weaponCategoriesWeighting: any;
     private gearList: any;
@@ -73,9 +79,49 @@ class Questrandomizer implements IPreSptLoadMod
             }
         }
     }
+    private loadHandoverCategories()
+    {
+        //Load the file
+        const categoriesConfig = this.leavesUtils.loadFile( "config/handovercategories.jsonc" );
+
+        //Populate handover categories.
+        this.handoverCategories = {};
+
+        //Add the whitelist
+        for ( const category of categoriesConfig.categoryWhitelist )
+        {
+            this.handoverCategories[ category ] = [];
+        }
+
+        //Add the custom lists
+        for ( const customCategory in categoriesConfig.customCategories )
+        {
+            this.handoverCategories[ customCategory ] = categoriesConfig.customCategories[ customCategory ];
+        }
+
+        const itemDB = this.databaseServer.getTables().templates.items;
+
+        //Get all items from categories
+        for ( let item in itemDB )
+        {
+            //Check if its a bad item
+            if ( !this.leavesUtils.isProperItem( item ) )
+            {
+                continue;
+            }
+            const itemObject = itemDB[ item ];
+            if ( this.handoverCategories.hasOwnProperty( itemObject._parent ) )
+            {
+                this.handoverCategories[ itemObject._parent ].push( itemObject._id );
+            }
+        }
+
+        this.leavesUtils.debugJsonOutput( this.handoverCategories );
+    }
 
     private getWeaponGroup( flags: any ): string[]
     {
+        //Check if were gonna use a category or specific weapon
         if ( Math.random() < this.config.chanceForSpecificWeapon )
         {
             const count = this.weaponIndividualWeapons.length;
@@ -107,6 +153,7 @@ class Questrandomizer implements IPreSptLoadMod
     {
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
+        this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
 
         //Helper Classes
@@ -156,6 +203,33 @@ class Questrandomizer implements IPreSptLoadMod
             }
             this.leavesUtils.saveFile( sheet, `categories/categories_${ language }.txt`, false );
         }
+        //Debug shit
+        /*if ( true )
+        {
+
+            let sheet = "";
+            for ( const category in this.weaponCategories )
+            {
+                sheet += `"${ category }":\n{\n\t"weight":${ this.weaponCategoriesWeighting[ category ] },\n"weapons":\n[\n`;
+                for ( const weapon of this.weaponCategories[ category ] )
+                {
+                    let last = false;
+                    if ( weapon == this.weaponCategories[ category ][ this.weaponCategories[ category ].length - 1 ] )
+                    {
+                        last = true;
+                    }
+                    sheet += `"${ weapon }"${ last ? `` : `,` }//${ this.leavesUtils.getLocale( "en", weapon, " Name" ) }\n`;
+                }
+                sheet += `\t\n],\n"mods-inclusive":
+                        [
+                        ],
+                        "mods-exclusive":
+                        [
+                        ]\n},\n`;
+            }
+            this.leavesUtils.saveFile( sheet, `categories/categories_temp.txt`, false );
+
+        }*/
     }
 
     private getEditedQuest( questID: string ): IQuest
@@ -216,8 +290,8 @@ class Questrandomizer implements IPreSptLoadMod
         //Init questDB and load anything that might have been generated before.
         this.QuestDB = {};
         this.localizationChanges = {};
-
         this.loadEditedQuests();
+        this.loadHandoverCategories();
 
         //Set up locale system.
         this.targetLocales = new Set<string>();
@@ -265,6 +339,28 @@ class Questrandomizer implements IPreSptLoadMod
         //Generate a category list
         this.generateWeaponCategorySheet();
         //this.leavesUtils.dataDump();
+        //
+        /*const TempArr = [ "5447a9cd4bdc2dbd208b4567", "5bfd297f0db834001a669119", "5c0530ee86f774697952d952" ];
+        let target = {};
+        this.leavesUtils.printColor( "Starting dump of items" );
+        for ( let item in this.databaseServer.getTables().templates.items )
+        {
+            const type = this.databaseServer.getTables().templates.items[ item ]._type;
+            try
+            {
+                if ( type === "Item" )
+                {
+                    this.add( item, target );
+                }
+            }
+            catch ( e )
+            {
+                this.leavesUtils.debugJsonOutput( target );
+                return;
+            }
+        }
+        this.leavesUtils.debugJsonOutput( target );
+        */
     }
 
     private editQuest( quest: IQuest ): IQuest
@@ -293,6 +389,13 @@ class Questrandomizer implements IPreSptLoadMod
             this.leavesQuestTools.addKillObjectiveToQuest( quest, tempTarget, tempKillcount );
             //this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW );
         }
+        let editHandOverOverride = false;
+        if ( !this.leavesUtils.searchObject( "HandoverItem", quest.conditions.AvailableForFinish ) && Math.random() < this.config.addHandOverObjectiveToQuestChance )
+        {
+            this.leavesQuestTools.addHandOverObjectiveToQuest( quest, this.config.addHandOverObjectiveBaseCount );
+            editHandOverOverride = true;
+            this.leavesUtils.printColor( "Added Hand Over objective to quest", LogTextColor.YELLOW );
+        }
 
         let editedHandoverItemTask = false;
         //Loop all AvailableForFinish conditions
@@ -312,8 +415,7 @@ class Questrandomizer implements IPreSptLoadMod
             }
             else if ( task.conditionType === "HandoverItem" )
             {
-                this.editHandoverItemTask( task );
-                editedHandoverItemTask = true;
+                editedHandoverItemTask = this.editHandoverItemTask( task, editHandOverOverride );
             }
         }
         if ( editedHandoverItemTask )
@@ -357,59 +459,112 @@ class Questrandomizer implements IPreSptLoadMod
         }
     }
 
-    private editHandoverItemTask( task: IQuestCondition )
+    private editHandoverItemTask( task: IQuestCondition, IgnoreChance: boolean ): boolean
     {
+        //Chance to even do this.
+        if ( Math.random() > this.config.chanceToEditHandoverCondition || !IgnoreChance )
+        {
+            return false;
+        }
+
         const itemDB = this.databaseServer.getTables().templates.items;
         const originalItem = task.target[ 0 ];
         //Ignore quest items
         if ( itemDB[ originalItem ]._props.QuestItem )
         {
-            return;
+            return false;
         }
 
         //Item blacklist
         const originalItemParent = itemDB[ originalItem ]._parent;
-        if ( this.config.handoverItemBlacklist.includes( originalItem ) || this.config.handoverItemBlacklist.includes( originalItemParent) )
+        if ( this.config.handoverItemBlacklist.includes( originalItem ) || this.config.handoverItemBlacklist.includes( originalItemParent ) )
         {
-            return;
+            return false;
         }
 
         let newTarget = [];
-        let tier = this.leavesUtils.getTierFromID( originalItem );
-        if ( tier == -1 )
-        {
-            const cost = this.handbookHelper.getTemplatePrice( originalItem );
-            tier = this.leavesUtils.getClosestTier( Math.round( cost / this.config.handoverItemUnknownItemValueDivider ) );
-        }
+        let categoryName = "";
 
-        newTarget.push( this.leavesUtils.getRandomItemFromTier( tier ) );
+        if ( Math.random() < this.config.chanceToRequireItemCategory ) //Category
+        {
+            const keys = Object.keys( this.handoverCategories );
+            const category = keys[ randomInt( keys.length ) ];
+            newTarget = this.handoverCategories[ category ];
+            categoryName = category;
+
+            //Increase item handover count
+            task.value = task.value as number * this.config.itemCategoryMultiplier;
+        }
+        else //Single item
+        {
+            let tier = this.leavesUtils.getTierFromID( originalItem );
+            if ( tier == -1 )
+            {
+                const cost = this.handbookHelper.getTemplatePrice( originalItem );
+                tier = this.leavesUtils.getClosestTier( Math.round( cost / this.config.handoverItemUnknownItemValueDivider ) );
+            }
+
+            newTarget.push( this.leavesUtils.getRandomItemFromTier( tier ) );
+        }
 
         task.target = newTarget;
 
+
+        //Found in raid.
+        if ( Math.random() < this.config.chanceHandoverNeedsFIR )
+        {
+            task.onlyFoundInRaid = true;
+        }
 
         //Remove gear condition
         task.maxDurability = 100;
         task.minDurability = 0;
 
-        //Stip visibilityConditions
+        //Strip visibilityConditions
         task.visibilityConditions = [];
 
         const previousValue: number = task.value as number;
         task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.config.adjustHandoverCountFactorsUpDown );
 
-        this.generateHandoverItemLocale( task );
+        this.generateHandoverItemLocale( task, categoryName );
+
+        return true;
     }
 
-    private generateHandoverItemLocale( task: IQuestCondition )
+    private generateHandoverItemLocale( task: IQuestCondition, categoryName: string )
     {
         for ( const targetLocale of this.targetLocales )
         {
-            let line = `${ this.getLoc( "HandoverItem", targetLocale ) } `;
+            let line = `${ this.getLoc( "HandoverItem", targetLocale ) } `; //Hand over
+            line += `${ task.value } ${ this.getLoc( "ofItem", targetLocale ) } `; //x counts of
+            //No category
+            if ( categoryName === "" )
+            {
+                line += this.leavesUtils.getLocale( targetLocale, task.target[ 0 ], ` Name` );
+            }
+            else //We have a category
+            {
+                //Get category name.
 
-            line += `${ task.value } ${ this.getLoc( "ofItem", targetLocale ) } `;
+                //Try the official DB
+                let newName = this.leavesUtils.getLocale( targetLocale, categoryName, " Name" );
 
-            line += this.leavesUtils.getLocale( targetLocale, task.target[ 0 ], ` Name` );
+                //Else we check the local DB
+                if ( newName == null )
+                {
+                    newName = this.getLoc( `ITEMCATEGORY_${ categoryName }`, targetLocale );
+                }
 
+                //If the local DB fails, we use the category name, as is.
+                if ( newName == null )
+                {
+                    newName = categoryName;
+                }
+
+                line += `${ this.getLoc( "itemsFromThe", targetLocale ) } ` // items from the
+                line += `${ newName } `;
+                line += `${ this.getLoc( "Category", targetLocale ) }` // category
+            }
 
             this.editTaskLocale( task, line, targetLocale );
         }
@@ -434,8 +589,12 @@ class Questrandomizer implements IPreSptLoadMod
             hasSavageRole: -1,
             hasKillFailstate: hasKillsFailstate ? 1 : -1,
             hasEquipment: -1,
-            questID: questID
+            questID: questID,
+            isEasyQuest: false,
         }
+
+        //Check if its on the list of "easy" quests
+        flags.isEasyQuest = this.config.easierQuestList.includes( flags.questID );
 
         //Check what countercreator conditions exist
         for ( let counterConditionIndex = 0; counterConditionIndex < conditions.length; counterConditionIndex++ )
@@ -463,8 +622,10 @@ class Questrandomizer implements IPreSptLoadMod
             }
         }
 
-        if ( flags.hasKills >= 0 && flags.hasKillFailstate < 0 )
+        //Edit kill quests
+        if ( flags.hasKills >= 0 && flags.hasKillFailstate < 0 && Math.random() < this.config.chanceToEditKillConditions )
         {
+
             //Add location to quest potentially.
             if ( flags.hasLocation === -1 && Math.random() < this.config.chanceToAddLocations && flags.hasSavageRole < 0 )
             {
@@ -490,7 +651,7 @@ class Questrandomizer implements IPreSptLoadMod
             }
 
             //Add gear
-            if ( flags.hasEquipment < 0 && Math.random() < this.config.chanceToAddGear )
+            if ( flags.hasEquipment < 0 && Math.random() < this.config.chanceToAddGear && !flags.isEasyQuest )
             {
                 const tempGearPieces = this.leavesUtils.getUniqueWeightedValues<string>( this.gearList, this.config.addGearCount );
                 flags.hasEquipment = this.leavesQuestTools.addGearToQuest( conditions, tempGearPieces );
@@ -550,7 +711,7 @@ class Questrandomizer implements IPreSptLoadMod
         let mapCount = 1
 
         //Generate new map
-        if ( this.config.easierMapsQuestList.includes( flags.questID ) ) //If a quest is on the list, we use the easy map setup.
+        if ( flags.isEasyQuest ) //If a quest is on the list, we use the easy map setup.
         {
             //this.leavesUtils.printColor( `Using easier map for this quest. QUID: ${flags.questID}` );
             locations.target = this.leavesUtils.getUniqueValues( this.easyMaps, mapCount );
@@ -714,7 +875,7 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         //Body Parts
-        if ( killsCondition.bodyPart && flags.hasSavageRole === -1 )
+        if ( killsCondition.bodyPart && flags.hasSavageRole === -1 && !flags.isEasyQuest )
         {
             if ( killsCondition.bodyPart.length > 0 )
             {
@@ -731,7 +892,7 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         //Time of day
-        if ( killsCondition.daytime )
+        if ( killsCondition.daytime && flags.hasSavageRole < 0 )
         {
             //Disable time on the maps that don't do time.
             if ( flags.whatLoctations.includes( "factory4_day" ) || flags.whatLoctations.includes( "factory4_night" ) || flags.whatLoctations.includes( "laboratory" ) )            //Convert to array?
@@ -742,14 +903,14 @@ class Questrandomizer implements IPreSptLoadMod
             }
             else if ( killsCondition.daytime.from === 0 && killsCondition.daytime.to === 0 ) //Has no time of day requirement
             {
-                if ( Math.random() < this.config.chanceToAddTimeOfDay ) //And we add it by random chance.
+                if ( Math.random() < this.config.chanceToAddTimeOfDay && !flags.isEasyQuest ) //And we add it by random chance.
                 {
                     killsCondition.daytime.from = randomInt( 23 );
                     killsCondition.daytime.to = ( killsCondition.daytime.from + 6 ) % 24;
                     flags.hasTime = 1;
                 }
             }
-            else
+            else //Has time of day requirement. We randomize it
             {
                 //Might de-duplicate the code later.
                 killsCondition.daytime.from = randomInt( 23 );
@@ -761,7 +922,7 @@ class Questrandomizer implements IPreSptLoadMod
         //Distance
         if ( killsCondition.distance )
         {
-            if ( flags.whatLoctations.includes( "factory4_day" ) || flags.whatLoctations.includes( "factory4_night" ) || flags.whatLoctations.includes( "laboratory" ) )
+            if ( flags.whatLoctations.includes( "factory4_day" ) || flags.whatLoctations.includes( "factory4_night" ) || flags.whatLoctations.includes( "laboratory" ) || flags.isEasyQuest )
             {
                 killsCondition.distance.compareMethod = ">=";
                 killsCondition.distance.value = 0;
@@ -782,7 +943,7 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         //Weapon
-        if ( killsCondition.weapon )
+        if ( killsCondition.weapon && !flags.isEasyQuest )
         {
             if ( killsCondition.weapon.length > 0 )
             {
@@ -828,7 +989,53 @@ class Questrandomizer implements IPreSptLoadMod
         return newArray;
     }
 
+    private add( item: string, target: any )
+    {
+        let order: string[] = [];
+        let current = item;
+        const finalParent = this.databaseServer.getTables().templates.items[ item ]._parent;
 
+        //Generate order
+        do
+        {
+            current = this.databaseServer.getTables().templates.items[ current ]._parent;
+            if ( current === "" )
+            {
+                break;
+            }
+            order.unshift( current );
+        } while ( current != "" );
+
+        //Re-generate the stack
+        let tempTarget = target;
+        for ( const toCheck of order )
+        {
+            if ( toCheck === finalParent )
+            {
+                if ( !tempTarget[ toCheck ] )
+                {
+                    tempTarget[ toCheck ] = {};
+                }
+                tempTarget[ toCheck ][ item ] = `${ this.leavesUtils.getLocale( "en", item, " Name" ) }`;
+            }
+            if ( !tempTarget[ toCheck ] )
+            {
+                tempTarget[ toCheck ] = {};
+            }
+
+            tempTarget = tempTarget[ toCheck ];
+        }
+
+        //this.leavesUtils.debugJsonOutput( target )*/
+
+        const itemDB = this.databaseServer.getTables().templates.items;
+        let parentName = this.leavesUtils.getLocale( "en", itemDB[ item ]._parent, " Name" );
+        if ( !target[ parentName ] )
+        {
+            target[ parentName ] = {};
+        }
+        target[ parentName ][ item ] = `${ this.leavesUtils.getLocale( "en", item, " Name" ) }`;
+    }
 }
 
 module.exports = { mod: new Questrandomizer() }
