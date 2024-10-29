@@ -2,7 +2,8 @@
     //Examples
     /*
     Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
-    Hand over 2 counts of IFAK individual first aid kit
+    Hand over 2 IFAK individual first aid kit
+    Hand over 10 items from the Cigarettes category
     */
     //Generation
     "Kill": "Tuer",
@@ -13,7 +14,8 @@
     "atLocation": "à",
     "wearingGear": "portant",
     "HandoverItem": "Donner",
-    "ofItem": "de",
+    "ofItem": "de", //Might be used in some languages? IDK. Is after Hand over <of item> 10 IFAK individual first aid kit
+    "itemsFromThe": "items from the",
     "Category": "Catégorie",
 
     //Maps
@@ -82,5 +84,13 @@
     "pmcbear": "SMP Bear",
     "pmcusec": "SMP USEC",
     "pmcbot": "Raider",
-    "arenaFighterEvent": "Bloodhound"
+    "arenaFighterEvent": "Bloodhound",
+
+    //Category LOC
+    "ITEMCATEGORY_Cigarettes": "Cigarettes",
+    "ITEMCATEGORY_Info": "Information",
+
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key", //These are missing in the official locale :(
+    "ITEMCATEGORY_5a341c4686f77469e155819e": "Face Wear",
+    "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear"
 }
