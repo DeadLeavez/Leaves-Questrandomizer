@@ -1,11 +1,13 @@
 # Quest randomizer
 Tired of running the same quests every time you start a new playthrough? This mod might spice things up. Change the kill requirements for quests so you fight new enemies with new weapons in new places. Also changes the hand over item quests to require new items. Perhaps some items will be more useful now. You wont know until you encounter each quest.
+The mod is very configurable. See ``config/config.jsonc`` for a LOT more information.
 
 Will change the following:
 - Randomize the item hand over of quests.
-    - Uses a list of items in tiers similar to my Barter Economy mod. See the ``confg/itemtierlist.jsonc`` file for more details.
+    - Uses a list of items in tiers similar to my Barter Economy mod. See the ``config/itemtierlist.jsonc`` file for more details.
+    - Add hand over to quests that don't have them.
 - Randomize kill quests in the following ways (configurable in the config)
-    - Add kill objectives to quests that dont have them.
+    - Add kill objectives to quests that don't have them.
     - Add/Randomize gear requirements.
         - See the ``config/gearlist.jsonc`` file for more details.
     - Add/Randomize the kill targets.
@@ -19,7 +21,7 @@ Will change the following:
 
 Current Shortcomings
 - Removes durability for handover quests.
-- Doesn't have a counter for "found" items for handover quests. (The thing most, but not all bsg handover quests have.) Just a visual thing. Minor.
+- Doesn't have a counter for "found" items for handover quests. (The thing most- but not all BSG handover quests have.) Just a visual thing. Minor.
 - No Localization for category names (Due to them being very adjustable by end-users.)
 
 # Changelog

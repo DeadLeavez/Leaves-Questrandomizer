@@ -339,28 +339,7 @@ class Questrandomizer implements IPreSptLoadMod
         //Generate a category list
         this.generateWeaponCategorySheet();
         //this.leavesUtils.dataDump();
-        //
-        /*const TempArr = [ "5447a9cd4bdc2dbd208b4567", "5bfd297f0db834001a669119", "5c0530ee86f774697952d952" ];
-        let target = {};
-        this.leavesUtils.printColor( "Starting dump of items" );
-        for ( let item in this.databaseServer.getTables().templates.items )
-        {
-            const type = this.databaseServer.getTables().templates.items[ item ]._type;
-            try
-            {
-                if ( type === "Item" )
-                {
-                    this.add( item, target );
-                }
-            }
-            catch ( e )
-            {
-                this.leavesUtils.debugJsonOutput( target );
-                return;
-            }
-        }
-        this.leavesUtils.debugJsonOutput( target );
-        */
+
     }
 
     private editQuest( quest: IQuest ): IQuest
@@ -387,7 +366,7 @@ class Questrandomizer implements IPreSptLoadMod
             const tempTarget = this.validTargets[ randomInt( this.validTargets.length ) ];
             const tempKillcount = this.config.addKillObjectiveKillCount;
             this.leavesQuestTools.addKillObjectiveToQuest( quest, tempTarget, tempKillcount );
-            //this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW );
+            this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW );
         }
         let editHandOverOverride = false;
         if ( !this.leavesUtils.searchObject( "HandoverItem", quest.conditions.AvailableForFinish ) && Math.random() < this.config.addHandOverObjectiveToQuestChance )

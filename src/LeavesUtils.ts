@@ -87,6 +87,29 @@ export class LeavesUtils
         {
             this.printColor( `"${ quest }", //${ questDB[ quest ].QuestName }` );
         }
+
+                //
+        /*const TempArr = [ "5447a9cd4bdc2dbd208b4567", "5bfd297f0db834001a669119", "5c0530ee86f774697952d952" ];
+        let target = {};
+        this.leavesUtils.printColor( "Starting dump of items" );
+        for ( let item in this.databaseServer.getTables().templates.items )
+        {
+            const type = this.databaseServer.getTables().templates.items[ item ]._type;
+            try
+            {
+                if ( type === "Item" )
+                {
+                    this.add( item, target );
+                }
+            }
+            catch ( e )
+            {
+                this.leavesUtils.debugJsonOutput( target );
+                return;
+            }
+        }
+        this.leavesUtils.debugJsonOutput( target );
+        */
     }
 
     public printColor( message: string, color: LogTextColor = LogTextColor.GREEN )
