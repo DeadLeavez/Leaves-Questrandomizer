@@ -16,6 +16,8 @@
     "HandoverItem": "Передай",
     "ofItem": "\b", //Might be used in some languages? IDK. Is after Hand over <of item> 10 IFAK individual first aid kit
     "itemsFromThe": "предмета/ов из",
+
+    //Category in the weapon category document
     "Category": "Категории",
 
     //Maps

@@ -16,6 +16,8 @@
     "HandoverItem": "Entregar",
     "ofItem": "\b", //Might be used in some languages? IDK. Hand over <of item> 10 IFAK individual first aid kit
     "itemsFromThe":"itens da categoria",
+
+    //Category in the weapon category document
     "Category": "", //Omited from above
 
     //Maps
