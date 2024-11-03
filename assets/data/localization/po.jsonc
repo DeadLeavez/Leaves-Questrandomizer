@@ -1,0 +1,96 @@
+{
+    //Examples
+    /*
+    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
+    Hand over 2 IFAK individual first aid kit
+    Hand over 10 items from the Cigarettes category
+    */
+    //Generation
+    "Kill": "Mata",
+    "AtDistance": "a",
+    "DuringTimeOfDay": "durante",
+    "usingWeaponGroup": "utilizando um/a",
+    "inBodyPart": "na/no",
+    "atLocation": "no mapa",
+    "wearingGear": "vestindo",
+    "HandoverItem": "Entregar",
+    "ofItem": "\b", //Might be used in some languages? IDK. Hand over <of item> 10 IFAK individual first aid kit
+    "itemsFromThe":"itens da categoria",
+    "Category": "", //Omited from above
+
+    //Maps
+    "bigmap": "Customs",
+    "factory4_day": "Factory - Dia",
+    "factory4_night": "Factory - Noite",
+    "interchange": "Interchange",
+    "laboratory": "Labs",
+    "lighthouse": "Lighthouse",
+    "rezervbase": "Rezerv",
+    "shoreline": "Shoreline",
+    "tarkovstreets": "Streets of Tarkov",
+    "woods": "Woods",
+    "sandbox": "Ground Zero",
+    "sandbox_high": "Ground Zero",
+
+    //Body parts
+    "Head": "Cabeça",
+    "Chest": "Peito",
+    "Stomach": "Estômago",
+    "LeftLeg": "Perna Esquerda",
+    "RightLeg": "Perna Direita",
+    "LeftArm": "Braço Esquerdo",
+    "RightArm": "Braço Direito",
+
+    //Targets
+    "anypmc": "PMCs",
+    "savage": "Scavs",
+    "any": "Quaisquer",
+    "marksman": "Sniper Scav",
+    "assault": "Scav",
+    "bossbully": "Reshala",
+    "followerbully": "Reshala Follower",
+    "bosskilla": "Killa",
+    "bosskojaniy": "Shturman",
+    "followerkojaniy": "Shturman Follower",
+    "bossgluhar": "Gluhar",
+    "followergluharassault": "Gl. Fol. Assault",
+    "followergluharsecurity": "Gl. Fol. Security",
+    "followergluharscout": "Gl. Fol. Scout",
+    "followergluharsniper": "Gl. Fol. Snipe",
+    "followersanitar": "Sanitar Follower",
+    "bosssanitar": "Sanitar",
+    "sectantwarrior": "Cultista Warrior",
+    "sectantpriest": "Cultista Priest",
+    "sectantoni": "Cultista Oni",
+    "sectantpredvestnik": "Cultista Harbinger",
+    "sectantprizrak": "Cultista Ghost",
+    "bosstagilla": "Tagilla",
+    "followertagilla": "Tagilla Follower",
+    "exusec": "Rogue",
+    "bossknight": "Knight",
+    "followerbigpipe": "Big Pipe",
+    "followerbirdeye": "Birdeye",
+    "bosszryachiy": "Zryachiy",
+    "followerzryachiy": "Zryachiy Follower",
+    "bossboar": "Kaban",
+    "followerboar": "Kaban Follower",
+    "bossboarsniper": "Kaban Sniper",
+    "followerboarclose1": "Kaban Follower C.",
+    "followerboarclose2": "Kaban Follower C.2",
+    "bosskolontay": "Kolontay",
+    "followerkolontayassault": "Kolontay F. Assault.",
+    "followerkolontaysecurity": "Kolontay F. Security",
+    "bosspartisan": "Partisan",
+    "pmcbear": "Bear PMC",
+    "pmcusec": "USEC PMC",
+    "pmcbot": "Raider",
+    "arenaFighterEvent": "Bloodhound",
+
+    //Category LOC
+    "ITEMCATEGORY_Cigarettes": "Cigarros",
+    "ITEMCATEGORY_Info": "Informação",
+
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Chave Mecânica", //These are missing in the official locale :(
+    "ITEMCATEGORY_5a341c4686f77469e155819e": "Vestuário para Face",
+    "ITEMCATEGORY_5a341c4086f77401f2541505": "Armamento para Cabeça"
+}

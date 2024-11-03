@@ -116,7 +116,7 @@ class Questrandomizer implements IPreSptLoadMod
             }
         }
 
-        this.leavesUtils.debugJsonOutput( this.handoverCategories );
+        //this.leavesUtils.debugJsonOutput( this.handoverCategories );
     }
 
     private getWeaponGroup( flags: any ): string[]
