@@ -36,7 +36,6 @@ class Questrandomizer implements IPreSptLoadMod
     private config: any;
     private weaponCategories: any;
     private handoverCategories: any;
-    private weaponIndividualWeapons: string[];
     private weaponCategoriesWeighting: any;
     private gearList: any;
     private localizationChanges: any;
@@ -53,37 +52,16 @@ class Questrandomizer implements IPreSptLoadMod
     private loadWeaponCategories()
     {
         //Load the file
-        const categoriesConfig = this.leavesUtils.loadFile( "config/weaponcategories.jsonc" );
-        this.weaponCategories = {};
-
-
-        //Load the individualWeapons
-        this.weaponIndividualWeapons = categoriesConfig.SpecificWeapon;
+        this.weaponCategories = this.leavesUtils.loadFile( "config/weaponcategories.jsonc" );
 
         //Load the weightings
-        this.weaponCategoriesWeighting = categoriesConfig.weightings;
-        for ( let weighting in this.weaponCategoriesWeighting )
+        this.weaponCategoriesWeighting = {};
+        for ( let category in this.weaponCategories.categories )
         {
-            this.weaponCategories[ weighting ] = [];
-        }
-
-        //Process all weapons into their categories to be easier to use.
-        for ( const weapon in categoriesConfig.weapons )
-        {
-            for ( const category of categoriesConfig.weapons[ weapon ] )
-            {
-                if ( this.weaponCategories[ category ] )
-                {
-                    this.weaponCategories[ category ].push( weapon );
-                }
-                else
-                {
-                    this.leavesUtils.printColor( `Weapon ${ weapon } is trying to add to ${ category }, but it doesn't exist` )
-                }
-            }
+            this.weaponCategoriesWeighting[ category ] = this.weaponCategories.categories[ category ].weight;
         }
     }
-    
+
     private loadHandoverCategories()
     {
         //Load the file
@@ -124,20 +102,59 @@ class Questrandomizer implements IPreSptLoadMod
         //this.leavesUtils.debugJsonOutput( this.handoverCategories );
     }
 
-    private getWeaponGroup( flags: any ): string[]
+    private setWeaponGroup( condition: IQuestConditionCounterCondition, flags: any )
     {
         //Check if were gonna use a category or specific weapon
         if ( Math.random() < this.config.chanceForSpecificWeapon )
         {
-            const count = this.weaponIndividualWeapons.length;
-            let weapon: string = this.weaponIndividualWeapons[ randomInt( count ) ];
+            const count = this.weaponCategories.specificWeapon.length;
+            let weapon: string = this.weaponCategories.specificWeapon[ randomInt( count ) ];
             flags.hasSpecificWeapon = 1;
             flags.whatWeaponOrGroup = weapon;
-            return [ weapon ];
+            condition.weapon = [ weapon ];
+            return;
         }
         let group = this.weightedRandomHelper.getWeightedValue<string>( this.weaponCategoriesWeighting );
         flags.whatWeaponOrGroup = group;
-        return this.weaponCategories[ group ];
+        const weaponGroup = this.weaponCategories.categories[ group ];
+        condition.weapon = weaponGroup.weapons;
+
+        //Add weapon mods
+        for ( const modgroup of weaponGroup[ "mods-inclusive" ] )
+        {
+            condition.weaponModsInclusive = this.getModGroup( modgroup );
+        }
+
+        for ( const modgroup of weaponGroup[ "mods-exclusive" ] )
+        {
+            condition.weaponModsInclusive = this.getModGroup( modgroup );
+        }
+        //this.leavesUtils.debugJsonOutput( condition );
+    }
+
+    private getModGroup( modGroup: string ): string[][]
+    {
+        if ( !this.weaponCategories.modCategories[ modGroup ] )
+        {
+            this.leavesUtils.printColor( `Tried to use missing weapon mod category ${ modGroup }` );
+            return [];
+        }
+
+        const modCategory = this.weaponCategories.modCategories[ modGroup ];
+        if ( modCategory.together )
+        {
+            return [ modCategory.mods ];
+        }
+        else
+        {
+            let tempArray = [];
+            for ( const mod of modCategory.mods )
+            {
+                tempArray.push( [ mod ] );
+            }
+            return tempArray;
+        }
+
     }
 
     private loadLocalization()
@@ -150,8 +167,6 @@ class Questrandomizer implements IPreSptLoadMod
             //this.leavesUtils.printColor( fileWithoutExtension );
             this.localization[ fileWithoutExtension ] = this.leavesUtils.loadFile( `assets/data/localization/${ file }` );
         }
-
-
     }
 
     public preSptLoad( container: DependencyContainer ): void
@@ -193,11 +208,11 @@ class Questrandomizer implements IPreSptLoadMod
         //Process data
         this.loadWeaponCategories();
     }
-    
+
     private generateWeaponCategoryItem( category: string, handbookParent: string ): string
     {
         const leavesUp: NewItemFromCloneDetails = {
-            itemTplToClone: "574eb85c245977648157eec3", //ONLY CHANGED THIS
+            itemTplToClone: "574eb85c245977648157eec3",
             overrideProperties: {
                 Prefab: {
                     path: "assets/content/items/barter/item_info_book_bakeezy/item_info_book_bakeezy.bundle",
@@ -205,7 +220,7 @@ class Questrandomizer implements IPreSptLoadMod
                 }
             },
             newId: this.leavesUtils.getID( category ),
-            parentId: "567849dd4bdc2d150f8b456e", //ONLY CHANGED THIS
+            parentId: "567849dd4bdc2d150f8b456e",
             handbookParentId: handbookParent,
             fleaPriceRoubles: 1,
             handbookPriceRoubles: 1,
@@ -223,74 +238,101 @@ class Questrandomizer implements IPreSptLoadMod
         return leavesUp.newId;
     }
 
+    private addToCategorySheet( weaponGroup: any, modcategory: string, localename: string, language: string )
+    {
+        let categorysheet = "";
+
+        if ( weaponGroup[ modcategory ].length > 0 )
+        {
+            categorysheet += `[${ this.getLoc( localename, language ) }]\n-----------------------------\n`;
+            for ( const modgroup of weaponGroup[ modcategory ] )
+            {
+                categorysheet += `\t${ modgroup }\n`;
+            }
+        }
+
+        return categorysheet;
+    }
+
+    private addLocaleToSheet( language: string, category: string, categorysheet: string, categoryID: string )
+    {
+        this.leavesUtils.addLocaleTo( language, category, `${ categoryID } Name` );
+        this.leavesUtils.addLocaleTo( language, category, `${ categoryID } ShortName` );
+        this.leavesUtils.addLocaleTo( language, categorysheet, `${ categoryID } Description` );
+    }
+
     private generateWeaponCategorySheet()
     {
-        //Generate handbook stuff
-        let handbookDB = this.databaseServer.getTables().templates.handbook;
-        const weaponCategory = {
-            "Id": this.leavesUtils.getID( "WeaponCategoryHandbookID" ),
-            "ParentId": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
-            "Icon": "/files/handbook/icon_weapons_pistols.png", //Make my own icon?
-            "Color": "",
-            "Order": "1"
-        };
-        handbookDB.Categories.push( weaponCategory );
-
         //Generate the items
-        for ( const category in this.weaponCategories )
+        for ( const category in this.weaponCategories.categories )
         {
             this.generateWeaponCategoryItem( category, this.leavesUtils.getID( "WeaponCategoryHandbookID" ) );
+        }
+
+        for ( const modGroup in this.weaponCategories.modCategories )
+        {
+            this.generateWeaponCategoryItem( modGroup, this.leavesUtils.getID( "ModCategoryHandbookID" ) );
         }
 
         //Create the files and generate locales
         for ( const language in this.databaseServer.getTables().locales.global )
         {
-            this.leavesUtils.addLocaleTo( language, this.getLoc( "WeaponCategory", language ), weaponCategory.Id );
-            let sheet = "";
-            for ( const category in this.weaponCategories )
+            let sheet = ""; //The whole file
+
+            this.leavesUtils.addLocaleTo( language, this.getLoc( "WeaponCategory", language ), this.leavesUtils.getID( "WeaponCategoryHandbookID" ) );
+            for ( const category in this.weaponCategories.categories )
             {
+                const weaponGroup = this.weaponCategories.categories[ category ];
+
+                //Add weapon list
                 let categorysheet = `[${ this.getLoc( "Category", language ) }: ${ category }]\n-----------------------------\n`;
-                for ( const weapon of this.weaponCategories[ category ] )
+                if ( weaponGroup.weapons.length === 0 )
                 {
-                    categorysheet += `\t${ this.leavesUtils.getLocale( language, weapon, " Name" ) }\n`;
+                    categorysheet += `\t${ this.getLoc( "AnyWeapon", language ) }\n`;
+                }
+                else
+                {
+                    for ( const weapon of weaponGroup.weapons )
+                    {
+                        categorysheet += `\t${ this.leavesUtils.getLocale( language, weapon, " Name" ) }\n`;
+                    }
                 }
                 categorysheet += "\n";
+
+                categorysheet += this.addToCategorySheet(weaponGroup, "mods-inclusive", "RequiredMods", language);
+                categorysheet += this.addToCategorySheet(weaponGroup, "mods-exclusive", "ForbiddenMods", language);
+
                 const categoryID = this.leavesUtils.getID( category );
-                this.leavesUtils.addLocaleTo( language, category, `${ categoryID } Name` );
-                this.leavesUtils.addLocaleTo( language, category, `${ categoryID } ShortName` );
-                this.leavesUtils.addLocaleTo( language, categorysheet, `${ categoryID } Description` );
+                this.addLocaleToSheet( language, category, categorysheet, categoryID );
                 sheet += categorysheet;
             }
 
+            sheet += `\n-----------------------------\n`;
+            sheet += `-----------------------------\n\n`;
+
+            this.leavesUtils.addLocaleTo( language, this.getLoc( "ModCategory", language ), this.leavesUtils.getID( "ModCategoryHandbookID" ) );
+            for ( const category in this.weaponCategories.modCategories )
+            {
+                const modGroup = this.weaponCategories.modCategories[ category ];
+
+                //Top/Title
+                let modGroupSheet = `[${ this.getLoc( "Category", language ) }: ${ category }] - `;
+                modGroupSheet += modGroup.together ? this.getLoc( "AllRequired", language ) : this.getLoc( "OneRequired", language );
+                modGroupSheet += `\n-----------------------------\n`;
+
+                //Add each mod
+                for ( const mod of modGroup.mods )
+                {
+                    modGroupSheet += `\t${ this.leavesUtils.getLocale( language, mod, " Name" ) }\n`;
+                }
+                const categoryID = this.leavesUtils.getID( category );
+
+                this.addLocaleToSheet( language, category, modGroupSheet, categoryID );
+
+                sheet += modGroupSheet;
+            }
             this.leavesUtils.saveFile( sheet, `categories/categories_${ language }.txt`, false );
         }
-        //Debug shit
-        /*if ( true )
-        {
-
-            let sheet = "";
-            for ( const category in this.weaponCategories )
-            {
-                sheet += `"${ category }":\n{\n\t"weight":${ this.weaponCategoriesWeighting[ category ] },\n"weapons":\n[\n`;
-                for ( const weapon of this.weaponCategories[ category ] )
-                {
-                    let last = false;
-                    if ( weapon == this.weaponCategories[ category ][ this.weaponCategories[ category ].length - 1 ] )
-                    {
-                        last = true;
-                    }
-                    sheet += `"${ weapon }"${ last ? `` : `,` }//${ this.leavesUtils.getLocale( "en", weapon, " Name" ) }\n`;
-                }
-                sheet += `\t\n],\n"mods-inclusive":
-                        [
-                        ],
-                        "mods-exclusive":
-                        [
-                        ]\n},\n`;
-            }
-            this.leavesUtils.saveFile( sheet, `categories/categories_temp.txt`, false );
-
-        }*/
     }
 
     private getEditedQuest( questID: string ): IQuest
@@ -354,18 +396,8 @@ class Questrandomizer implements IPreSptLoadMod
         this.loadEditedQuests();
         this.loadHandoverCategories();
 
-        //Set up handbook category
-        let handbookDB = this.databaseServer.getTables().templates.handbook;
-        const questrandomizerCategory = {
-            "Id": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
-            "ParentId": null,
-            "Icon": "/files/handbook/icon_barter_valuables.png", //Make my own icon?
-            "Color": "",
-            "Order": "14"
-        };
-        handbookDB.Categories.push( questrandomizerCategory );
-
-        this.leavesUtils.addLocaleToAll( "[Questrandomizer]", questrandomizerCategory.Id );
+        //Set up handbook categories
+        const questrandomizerCategory = this.setupHandbookCategories();
 
         //Set up locale system.
         this.targetLocales = new Set<string>();
@@ -416,6 +448,41 @@ class Questrandomizer implements IPreSptLoadMod
         this.leavesUtils.saveIDs( "assets/generated/ids.jsonc" );
         //this.leavesUtils.dataDump();
 
+    }
+
+    private setupHandbookCategories()
+    {
+        let handbookDB = this.databaseServer.getTables().templates.handbook;
+
+        const questrandomizerCategory = {
+            "Id": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
+            "ParentId": null,
+            "Icon": "/files/handbook/icon_barter_valuables.png", //Make my own icon?
+            "Color": "",
+            "Order": "14"
+        };
+        //Weapon categories
+        const weaponCategory = {
+            "Id": this.leavesUtils.getID( "WeaponCategoryHandbookID" ),
+            "ParentId": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
+            "Icon": "/files/handbook/icon_weapons_pistols.png", //Make my own icon?
+            "Color": "",
+            "Order": "1"
+        };
+        //Mod categories
+        const modCategory = {
+            "Id": this.leavesUtils.getID( "ModCategoryHandbookID" ),
+            "ParentId": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
+            "Icon": "/files/handbook/icon_barter_tools.png", //Make my own icon?
+            "Color": "",
+            "Order": "2"
+        };
+
+        this.leavesUtils.addLocaleToAll( "[Questrandomizer]", questrandomizerCategory.Id );
+
+        handbookDB.Categories.push( questrandomizerCategory );
+        handbookDB.Categories.push( weaponCategory );
+        handbookDB.Categories.push( modCategory );
     }
 
     private editQuest( quest: IQuest ): IQuest
@@ -1003,12 +1070,12 @@ class Questrandomizer implements IPreSptLoadMod
             if ( killsCondition.weapon.length > 0 )
             {
                 flags.hasWeapon = 1;
-                killsCondition.weapon = this.getWeaponGroup( flags );
+                this.setWeaponGroup( killsCondition, flags );
             }
             else if ( Math.random() < this.config.chanceToAddWeapon )
             {
                 flags.hasWeapon = 1;
-                killsCondition.weapon = this.getWeaponGroup( flags );
+                this.setWeaponGroup( killsCondition, flags );
             }
         }
 
@@ -1042,54 +1109,6 @@ class Questrandomizer implements IPreSptLoadMod
             }
         }
         return newArray;
-    }
-
-    private add( item: string, target: any )
-    {
-        let order: string[] = [];
-        let current = item;
-        const finalParent = this.databaseServer.getTables().templates.items[ item ]._parent;
-
-        //Generate order
-        do
-        {
-            current = this.databaseServer.getTables().templates.items[ current ]._parent;
-            if ( current === "" )
-            {
-                break;
-            }
-            order.unshift( current );
-        } while ( current != "" );
-
-        //Re-generate the stack
-        let tempTarget = target;
-        for ( const toCheck of order )
-        {
-            if ( toCheck === finalParent )
-            {
-                if ( !tempTarget[ toCheck ] )
-                {
-                    tempTarget[ toCheck ] = {};
-                }
-                tempTarget[ toCheck ][ item ] = `${ this.leavesUtils.getLocale( "en", item, " Name" ) }`;
-            }
-            if ( !tempTarget[ toCheck ] )
-            {
-                tempTarget[ toCheck ] = {};
-            }
-
-            tempTarget = tempTarget[ toCheck ];
-        }
-
-        //this.leavesUtils.debugJsonOutput( target )*/
-
-        const itemDB = this.databaseServer.getTables().templates.items;
-        let parentName = this.leavesUtils.getLocale( "en", itemDB[ item ]._parent, " Name" );
-        if ( !target[ parentName ] )
-        {
-            target[ parentName ] = {};
-        }
-        target[ parentName ][ item ] = `${ this.leavesUtils.getLocale( "en", item, " Name" ) }`;
     }
 }
 
