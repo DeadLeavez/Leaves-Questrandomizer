@@ -24,6 +24,17 @@ Current Shortcomings
 - Doesn't have a counter for "found" items for handover quests. (The thing most- but not all BSG handover quests have.) Just a visual thing. Minor.
 - No Localization for category names (Due to them being very adjustable by end-users.)
 
+### Translation Credits
+- German - ``Friend B``
+- Polish - ``Friend M``
+- French - ``trippy``
+- Korean - ``Rising_Star``
+- Spanish - ``Strungerman``
+- Portuguese - ``SoundBlaster1998``
+- Latin American Spanish - ``UralreadyDead``
+- Russian - ``GhostFenixx`` & ``Friend B2``
+- Chinese - ``Echo``
+
 # Changelog
 ## 0.0.1
 - Initial beta release
@@ -68,3 +79,10 @@ Current Shortcomings
 - Added chance and config for handover quests requiring from categories rather than individual items. 
 - Added ``chanceToAddHandoverCondition`` which is a chance to add a handover condition to quests.
 - Localization for handover categories. (Working on doing the same for weapon categories.)
+
+## 0.0.7
+- Portuguese translation - Many thanks to ``SoundBlaster1998`` 
+- Chinese translation - Many thanks to ``Echo``
+- Added mod categories, and reworked the whole weapon categories file. You can now add weapon mod categories to other categories. Example adding silencer mod category to AKM-series weapon category.
+- Added weapon- and mod-category items into the handbook so you can see them in-game.
+- Added more weapon and mod-categories to the default config.

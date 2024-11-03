@@ -20,6 +20,12 @@
     //Category in the weapon category document
     "Category": "카테고리",
     "WeaponCategory": "Weapon Categories",
+    "ModCategory": "Mod Categories",
+    "RequiredMods": "Required Weapon Mods",
+    "ForbiddenMods": "Forbidden Weapon Mods",
+    "AnyWeapon": "Any Weapon",
+    "AllRequired":"All Required",
+    "OneRequired":"Any Required",
 
     //Maps
     "bigmap": "세관",
