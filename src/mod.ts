@@ -18,7 +18,6 @@ import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails
 // TODO:
 // Locale to weapon categories?
 // Weapon Category Mods? / Restructure Weapon categories (HALF DONE)
-// Category Items at a vendor perhaps?
 // Randomize gear if its already there (NOT DONE)
 // Have enemy be stunned?
 // Forbid usage of meds?
@@ -84,6 +83,7 @@ class Questrandomizer implements IPreSptLoadMod
             }
         }
     }
+    
     private loadHandoverCategories()
     {
         //Load the file
@@ -193,6 +193,7 @@ class Questrandomizer implements IPreSptLoadMod
         //Process data
         this.loadWeaponCategories();
     }
+    
     private generateWeaponCategoryItem( category: string, handbookParent: string ): string
     {
         const leavesUp: NewItemFromCloneDetails = {
