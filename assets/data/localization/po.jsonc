@@ -19,6 +19,7 @@
 
     //Category in the weapon category document
     "Category": "", //Omited from above
+    "WeaponCategory": "Weapon Categories",
 
     //Maps
     "bigmap": "Customs",

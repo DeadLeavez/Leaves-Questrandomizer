@@ -11,6 +11,10 @@ import { LeavesUtils } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { HashUtil } from "@spt/utils/HashUtil";
 
+//item creation
+import { CustomItemService } from "@spt/services/mod/CustomItemService";
+import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
+
 // TODO:
 // Locale to weapon categories?
 // Weapon Category Mods? / Restructure Weapon categories (HALF DONE)
@@ -26,6 +30,7 @@ class Questrandomizer implements IPreSptLoadMod
     private weightedRandomHelper: WeightedRandomHelper;
     private handbookHelper: HandbookHelper;
     private hashUtil: HashUtil;
+    private customItemService: CustomItemService;
 
     private leavesUtils: LeavesUtils;
     private leavesQuestTools: LeavesQuestTools;
@@ -154,6 +159,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
         this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
+        this.customItemService = container.resolve<CustomItemService>( "CustomItemService" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
 
         //Helper Classes
@@ -163,6 +169,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
         const itemTierList = this.leavesUtils.loadFile( "config/itemtierlist.jsonc" );
         this.leavesUtils.setTierList( itemTierList );
+        this.leavesUtils.loadIDs( "assets/generated/ids.jsonc" );
 
         container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
 
@@ -186,21 +193,74 @@ class Questrandomizer implements IPreSptLoadMod
         //Process data
         this.loadWeaponCategories();
     }
+    private generateWeaponCategoryItem( category: string, handbookParent: string ): string
+    {
+        const leavesUp: NewItemFromCloneDetails = {
+            itemTplToClone: "574eb85c245977648157eec3", //ONLY CHANGED THIS
+            overrideProperties: {
+                Prefab: {
+                    path: "assets/content/items/barter/item_info_book_bakeezy/item_info_book_bakeezy.bundle",
+                    rcid: ""
+                }
+            },
+            newId: this.leavesUtils.getID( category ),
+            parentId: "567849dd4bdc2d150f8b456e", //ONLY CHANGED THIS
+            handbookParentId: handbookParent,
+            fleaPriceRoubles: 1,
+            handbookPriceRoubles: 1,
+            locales: {
+                en: {
+                    name: "ERROR",
+                    shortName: "ERROR",
+                    description: "IF YOU EVER SEE THIS SOMETHING HAS GONE WRONG!",
+                },
+            },
+        };
+
+        this.customItemService.createItemFromClone( leavesUp );
+
+        return leavesUp.newId;
+    }
 
     private generateWeaponCategorySheet()
     {
+        //Generate handbook stuff
+        let handbookDB = this.databaseServer.getTables().templates.handbook;
+        const weaponCategory = {
+            "Id": this.leavesUtils.getID( "WeaponCategoryHandbookID" ),
+            "ParentId": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
+            "Icon": "/files/handbook/icon_weapons_pistols.png", //Make my own icon?
+            "Color": "",
+            "Order": "1"
+        };
+        handbookDB.Categories.push( weaponCategory );
+
+        //Generate the items
+        for ( const category in this.weaponCategories )
+        {
+            this.generateWeaponCategoryItem( category, this.leavesUtils.getID( "WeaponCategoryHandbookID" ) );
+        }
+
+        //Create the files and generate locales
         for ( const language in this.databaseServer.getTables().locales.global )
         {
+            this.leavesUtils.addLocaleTo( language, this.getLoc( "WeaponCategory", language ), weaponCategory.Id );
             let sheet = "";
             for ( const category in this.weaponCategories )
             {
-                sheet += `[${ this.getLoc( "Category", language ) }: ${ category }]\n-----------------------------\n`;
+                let categorysheet = `[${ this.getLoc( "Category", language ) }: ${ category }]\n-----------------------------\n`;
                 for ( const weapon of this.weaponCategories[ category ] )
                 {
-                    sheet += `\t${ this.leavesUtils.getLocale( language, weapon, " Name" ) }\n`;
+                    categorysheet += `\t${ this.leavesUtils.getLocale( language, weapon, " Name" ) }\n`;
                 }
-                sheet += "\n";
+                categorysheet += "\n";
+                const categoryID = this.leavesUtils.getID( category );
+                this.leavesUtils.addLocaleTo( language, category, `${ categoryID } Name` );
+                this.leavesUtils.addLocaleTo( language, category, `${ categoryID } ShortName` );
+                this.leavesUtils.addLocaleTo( language, categorysheet, `${ categoryID } Description` );
+                sheet += categorysheet;
             }
+
             this.leavesUtils.saveFile( sheet, `categories/categories_${ language }.txt`, false );
         }
         //Debug shit
@@ -293,6 +353,19 @@ class Questrandomizer implements IPreSptLoadMod
         this.loadEditedQuests();
         this.loadHandoverCategories();
 
+        //Set up handbook category
+        let handbookDB = this.databaseServer.getTables().templates.handbook;
+        const questrandomizerCategory = {
+            "Id": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
+            "ParentId": null,
+            "Icon": "/files/handbook/icon_barter_valuables.png", //Make my own icon?
+            "Color": "",
+            "Order": "14"
+        };
+        handbookDB.Categories.push( questrandomizerCategory );
+
+        this.leavesUtils.addLocaleToAll( "[Questrandomizer]", questrandomizerCategory.Id );
+
         //Set up locale system.
         this.targetLocales = new Set<string>();
         for ( const locale in this.localization )
@@ -338,6 +411,8 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Generate a category list
         this.generateWeaponCategorySheet();
+
+        this.leavesUtils.saveIDs( "assets/generated/ids.jsonc" );
         //this.leavesUtils.dataDump();
 
     }

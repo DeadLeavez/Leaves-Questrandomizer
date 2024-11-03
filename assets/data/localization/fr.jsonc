@@ -19,6 +19,7 @@
 
     //Category in the weapon category document
     "Category": "Catégorie",
+    "WeaponCategory": "Weapon Categories",
 
     //Maps
     "bigmap": "Douanes",

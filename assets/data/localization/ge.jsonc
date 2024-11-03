@@ -19,6 +19,7 @@
 
     //Category in the weapon category document
     "Category": "Kategorie",
+    "WeaponCategory": "Weapon Categories",
 
     //Maps
     "bigmap": "Zollgebäude",

@@ -19,6 +19,7 @@
 
     //Category in the weapon category document
     "Category": "Категории",
+    "WeaponCategory": "Weapon Categories",
 
     //Maps
     "bigmap": "на Таможне",

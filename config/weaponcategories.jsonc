@@ -55,7 +55,7 @@
         "Shturman Arsenal": 3, 
         "Tagilla Arsenal": 3, 
         "Zryachiy Arsenal": 3, 
-        "Santa Slaus Arsenal": 0.5,
+        "Santa Claus Arsenal": 0.5,
 
 
         //Misc
@@ -151,7 +151,7 @@ Assault carbines
         "5c07c60e0db834002330051f": //ADAR 2-15 5.56x45 carbine
         [
             "556 RUS",
-            "Santa Slaus Arsenal",
+            "Santa Claus Arsenal",
             "556 Boppers",
             "5.56"
         ],
@@ -163,7 +163,7 @@ Assault carbines
         ],
         "574d967124597745970e7c94": //TOZ Simonov SKS 7.62x39 carbine
         [
-            "Santa Slaus Arsenal",
+            "Santa Claus Arsenal",
             "7.62x39",
             "Viet-fucking-nam",
             "Hunting"
@@ -214,7 +214,7 @@ Assault carbines
         ],
         "59e6152586f77473dc057aa1": //Molot Arms VPO-136 Vepr-KM 7.62x39 carbine
         [
-            "Santa Slaus Arsenal",
+            "Santa Claus Arsenal",
             "7.62x39",
             "Hunting"
         ],
@@ -248,7 +248,7 @@ Assault rifles
         ],
         "5ac4cd105acfc40016339859": //Kalashnikov AK-74M 5.45x39 assault rifle
         [
-            "Santa Slaus Arsenal",
+            "Santa Claus Arsenal",
             "Ol' Reliable AKs",
             "5.45"
         ],
@@ -310,7 +310,7 @@ Assault rifles
         ],
         "59ff346386f77477562ff5e2": //Kalashnikov AKMS 7.62x39 assault rifle
         [
-            "Santa Slaus Arsenal",
+            "Santa Claus Arsenal",
             "Partisan Arsenal",
             "Killa Arsenal",
             "Ol' Reliable AKs",
@@ -1037,13 +1037,13 @@ Pistols
         ],
         "576a581d2459771e7b1bc4f1": //Yarygin MP-443 Grach 9x19 pistol
         [
-            "Santa Slaus Arsenal",
+            "Santa Claus Arsenal",
             "9x19",
             "Pistol"
         ],
         "56d59856d2720bd8418b456a": //SIG P226R 9x19 pistol
         [
-            "Santa Slaus Arsenal",
+            "Santa Claus Arsenal",
             "9x19",
             "Pistol",
             "SIG Series"

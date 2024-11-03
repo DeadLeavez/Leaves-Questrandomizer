@@ -19,6 +19,7 @@
 
     //Category in the weapon category document
     "Category": "카테고리",
+    "WeaponCategory": "Weapon Categories",
 
     //Maps
     "bigmap": "세관",

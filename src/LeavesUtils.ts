@@ -8,6 +8,7 @@ import { randomInt } from "crypto";
 import { jsonc } from "jsonc";
 import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
+import { HashUtil } from "@spt/utils/HashUtil";
 
 
 @injectable()
@@ -16,13 +17,15 @@ export class LeavesUtils
     private modFolder: string;
     private tierList: any;
     private itemTiers: number[];
+    private IDTranslator: any;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
         @inject( "VFS" ) protected vfs: VFS,
         @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
         @inject( "WinstonLogger" ) protected logger: ILogger,
-        @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper
+        @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper,
+        @inject( "HashUtil" ) protected hashUtil: HashUtil
     )
     {
         this.modFolder = path.resolve( __dirname, `../` );
@@ -88,7 +91,7 @@ export class LeavesUtils
             this.printColor( `"${ quest }", //${ questDB[ quest ].QuestName }` );
         }
 
-                //
+        //
         /*const TempArr = [ "5447a9cd4bdc2dbd208b4567", "5bfd297f0db834001a669119", "5c0530ee86f774697952d952" ];
         let target = {};
         this.leavesUtils.printColor( "Starting dump of items" );
@@ -247,9 +250,9 @@ export class LeavesUtils
 
         return localeDB[ `${ id }${ type }` ];
     }
-    public addLocaleToAll( targetLocale: Set<String>, text: string, id: string )
+    public addLocaleToAll( text: string, id: string )
     {
-        for ( const locale in targetLocale.keys )
+        for ( const locale in this.databaseServer.getTables().locales.global )
         {
             this.databaseServer.getTables().locales.global[ locale ][ id ] = text;
         }
@@ -279,10 +282,27 @@ export class LeavesUtils
             return false;
         }
         //Is it a quest item?
-        if( itemObject._props.QuestItem)
+        if ( itemObject._props.QuestItem )
         {
             return false;
         }
         return true;
+    }
+    public loadIDs( filename: string )
+    {
+        this.IDTranslator = this.loadFile( filename );
+    }
+    public saveIDs( filename: string ) 
+    {
+        this.saveFile( this.IDTranslator, filename );
+    }
+    public getID( name: string ): string
+    {
+       // this.debugJsonOutput( this.IDTranslator );
+        if ( !this.IDTranslator[ name ] )
+        {
+            this.IDTranslator[ name ] = this.hashUtil.generate();
+        }
+        return this.IDTranslator[ name ];
     }
 }

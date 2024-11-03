@@ -19,6 +19,7 @@
 
     //Category in the weapon category document
     "Category": "Categoria",
+    "WeaponCategory": "Weapon Categories",
 
     //Maps
     "bigmap": "Aduanas",
