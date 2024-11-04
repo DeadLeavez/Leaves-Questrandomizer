@@ -7,19 +7,17 @@
     "atLocation": "à",
     "wearingGear": "portant",
     "HandoverItem": "Donner",
-    "ofItem": "de", 
+    "ofItem": "de",
     "itemsFromThe": "items from the",
     "Category": "Catégorie",
-
     "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
     "ForbiddenMods": "Forbidden Weapon Mods",
     "AnyWeapon": "Any Weapon",
-    "AllRequired":"All Required",
-    "OneRequired":"Any Required",
-
+    "AllRequired": "All Required",
+    "OneRequired": "Any Required",
     "bigmap": "Douanes",
     "factory4_day": "Usine - Jour",
     "factory4_night": "Usine - Nuit",
@@ -32,7 +30,6 @@
     "woods": "Bois",
     "sandbox": "Ground Zero",
     "sandbox_high": "Ground Zero",
-
     "Head": "Tête",
     "Chest": "Poitrine",
     "Stomach": "Estomac",
@@ -40,7 +37,6 @@
     "RightLeg": "Jambe droite",
     "LeftArm": "Bras gauche",
     "RightArm": "Bras droite",
-
     "anypmc": "SMPs",
     "savage": "Scavs",
     "any": "Tous",
@@ -84,11 +80,11 @@
     "pmcusec": "SMP USEC",
     "pmcbot": "Raider",
     "arenaFighterEvent": "Bloodhound",
-
+    "spiritSpring": "Spring Spirit",
+    "spiritWinter": "Winter Spirit",
     "ITEMCATEGORY_Cigarettes": "Cigarettes",
     "ITEMCATEGORY_Info": "Information",
-
-    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key", 
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key",
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Face Wear",
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear"
 }

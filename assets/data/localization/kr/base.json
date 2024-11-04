@@ -10,16 +10,14 @@
     "ofItem": "개의",
     "itemsFromThe": "items from the",
     "Category": "카테고리",
-
     "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
     "ForbiddenMods": "Forbidden Weapon Mods",
     "AnyWeapon": "Any Weapon",
-    "AllRequired":"All Required",
-    "OneRequired":"Any Required",
-
+    "AllRequired": "All Required",
+    "OneRequired": "Any Required",
     "bigmap": "세관",
     "factory4_day": "공장 - 주간",
     "factory4_night": "공장 - 야간",
@@ -32,7 +30,6 @@
     "woods": "삼림",
     "sandbox": "그라운드 제로",
     "sandbox_high": "그라운드 제로",
-
     "Head": "머리",
     "Chest": "흉부",
     "Stomach": "복부",
@@ -40,7 +37,6 @@
     "RightLeg": "오른다리",
     "LeftArm": "왼팔",
     "RightArm": "오른팔",
-
     "anypmc": "PMC",
     "savage": "스캐브",
     "any": "아무나",
@@ -84,10 +80,10 @@
     "pmcusec": "USEC PMC",
     "pmcbot": "레이더",
     "arenaFighterEvent": "Bloodhound",
-
+    "spiritSpring": "Spring Spirit",
+    "spiritWinter": "Winter Spirit",
     "ITEMCATEGORY_Cigarettes": "Cigarettes",
     "ITEMCATEGORY_Info": "Information",
-
     "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key",
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Face Wear",
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear"

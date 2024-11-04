@@ -10,16 +10,14 @@
     "ofItem": "\b",
     "itemsFromThe": "предмета/ов из",
     "Category": "Категории",
-
     "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
     "ForbiddenMods": "Forbidden Weapon Mods",
     "AnyWeapon": "Any Weapon",
-    "AllRequired":"All Required",
-    "OneRequired":"Any Required",
-
+    "AllRequired": "All Required",
+    "OneRequired": "Any Required",
     "bigmap": "на Таможне",
     "factory4_day": "на Заводе - Днем",
     "factory4_night": " на Заводе - Ночью",
@@ -32,7 +30,6 @@
     "woods": "в Лесу",
     "sandbox": "на Эпицентре",
     "sandbox_high": "на Эпицентре",
-
     "Head": "Голову",
     "Chest": "Грудную клетку",
     "Stomach": "Живот",
@@ -40,7 +37,6 @@
     "RightLeg": "Правую ногу",
     "LeftArm": "Левую руку",
     "RightArm": "Правую руку",
-
     "anypmc": "ЧВК",
     "savage": "Дикие",
     "any": "Кого угодно",
@@ -84,10 +80,10 @@
     "pmcusec": "ЧВК USEC",
     "pmcbot": "Рейдер",
     "arenaFighterEvent": "Погоня",
-
+    "spiritSpring": "Spring Spirit",
+    "spiritWinter": "Winter Spirit",
     "ITEMCATEGORY_Cigarettes": "Сигареты",
     "ITEMCATEGORY_Info": "Инфо Предметы",
-
     "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Механические ключи",
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Маски и балаклавы",
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Головные уборы и шлемы"
