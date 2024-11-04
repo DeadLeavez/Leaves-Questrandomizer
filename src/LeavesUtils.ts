@@ -118,32 +118,6 @@ export class LeavesUtils
                 let locale = this.getLocale( "en", ID, " Name" );
                 if ( locale === undefined )
                 {
-                    const manualLocale =
-                    {
-                        "54009119af1c881c07000029": "Item",
-                        "617f1ef5e8b54b0998387733": "Revolver",
-                        "610720f290b75a49ff2e5e25": "Revolver Magazine",
-                        "627a137bf21bc425b06ab944": "Grenade Revolver Magazine",
-                        "5a2c3a9486f774688b05e574": "Night Vision Goggles",
-                        "5d21f59b6dbe99052b54ef83": "Thermal Vision Goggles",
-                        "5a74651486f7744e73386dd1": "Misc Weapon Mods",
-                        "62f109593b54472778797866": "Openable Items",
-                        "5a341c4086f77401f2541505": "Head wear",
-                        "5a341c4686f77469e155819e": "Face wear",
-                        "644120aa86ffbe10ee032b6f": "Armor Plates",
-                        "65649eb40bf0ed77b8044453": "Integrated Armor Plates",
-                        "5b3f15d486f77432d0509248": "Armbands",
-                        "6050cac987d3f925bf016837": "Something stash related IDK",
-                        "63da6da4784a55176c018dba": "Hideout Weapon stashes",
-                        "5c99f98d86f7745c314214b3": "Mechanical Keys",
-                        "5c164d2286f774194c5e69fa": "Electronic Keys",
-                        "66abb0743f4d8b145b1612c1": "Multitools",
-                        "5f4fbaaca5573a5ac31db429": "Compasses",
-                        "61605ddea09d851a0a0c1bbc": "Hand-held Rangefinders",
-                        "62e9103049c018f425059f38": "Radio Items",
-                        "64b69b0c8f3be32ed22682f8": "A"
-
-                    }
                     locale = this.databaseServer.getTables().templates.items[ ID ]._name;
                 }
                 processed += " //" + locale;
