@@ -86,6 +86,11 @@
     "arenaFighterEvent": "Bloodhound",
     "spiritSpring": "Spring Spirit",
     "spiritWinter": "Winter Spirit",
+    "infectedAssault": "Infected Scavs",
+    "infectedCivil": "Infected Civilian",
+    "infectedLaborant": "Infected Scientist",
+    "infectedPmc": "Infected PMC",
+    "infectedTagilla": "Infected Tagilla",
 
     "ITEMCATEGORY_Cigarettes": "Cigarettes",
     "ITEMCATEGORY_Info": "Information",

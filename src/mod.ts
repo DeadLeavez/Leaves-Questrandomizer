@@ -204,16 +204,9 @@ class Questrandomizer implements IPreSptLoadMod
 
         for ( const locale of this.leavesUtils.getFoldersInFolder( localeRoot ))
         {
-            // ABCDEFGH -- REMOVE ME
-            this.leavesUtils.printColor("OwO DIR: " + locale);
-
             for ( const file of this.leavesUtils.getFilesInFolder( `${ localeRoot }/${ locale }` ) )
             {
-                // ABCDEFGH -- REMOVE ME
-                this.leavesUtils.printColor("OwO FILE: " + file);
-
-                const fileWithoutExtension = this.leavesUtils.getFileWithoutExtension( file );
-                this.localization[ fileWithoutExtension ] = this.leavesUtils.loadFile( `${ localeRoot }/${ locale }/${ file }` );
+                this.localization[ locale ] = this.leavesUtils.loadFile( `${ localeRoot }/${ locale }/${ file }` );
             }
         }
     }
@@ -223,7 +216,6 @@ class Questrandomizer implements IPreSptLoadMod
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
         this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
-        this.vfs = container.resolve<VFS>( "VFS" );
         this.customItemService = container.resolve<CustomItemService>( "CustomItemService" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
 
