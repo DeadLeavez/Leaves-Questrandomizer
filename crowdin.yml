@@ -1,0 +1,3 @@
+files:
+  - source: /assets/data/localization/en
+    translation: /assets/data/localization/%two_letters_code%/%original_file_name%
