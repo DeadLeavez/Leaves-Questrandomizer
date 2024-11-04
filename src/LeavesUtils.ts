@@ -79,32 +79,17 @@ export class LeavesUtils
 
     public dataDump()
     {
-        //Dump gear
-        /*const parents =
-            [
-                "-5448e54d4bdc2dcc718b4568", //Armor
-                "5a341c4086f77401f2541505", //Headwear
-                "-5448e5284bdc2dcb718b4567" //Vest
-            ]
-        const itemDB = this.databaseServer.getTables().templates.items;
-        const locale = this.databaseServer.getTables().locales.global[ "en" ];
-        for ( const item in itemDB )
-        {
-            if ( parents.includes( itemDB[ item ]._parent ) )
-            {
-                this.printColor( `"${ item }", //${ locale[ item + " Name" ] }` );
-            }
-        }*/
         const questDB = this.databaseServer.getTables().templates.quests;
+        let questList = "";
         for ( const quest in questDB )
         {
-            this.printColor( `"${ quest }", //${ questDB[ quest ].QuestName }` );
+            questList += `"${ quest }", //${ questDB[ quest ].QuestName }\n`;
         }
+        this.saveFile( questList, "debug/quests.jsonc", false );
 
-        //
-        /*const TempArr = [ "5447a9cd4bdc2dbd208b4567", "5bfd297f0db834001a669119", "5c0530ee86f774697952d952" ];
+
         let target = {};
-        this.leavesUtils.printColor( "Starting dump of items" );
+        this.printColor( "Starting dump of items" );
         for ( let item in this.databaseServer.getTables().templates.items )
         {
             const type = this.databaseServer.getTables().templates.items[ item ]._type;
@@ -117,12 +102,64 @@ export class LeavesUtils
             }
             catch ( e )
             {
-                this.leavesUtils.debugJsonOutput( target );
+                this.debugJsonOutput( target );
                 return;
             }
         }
-        this.leavesUtils.debugJsonOutput( target );
-        */
+        let serialized: string = this.jsonUtil.serialize( target, true );
+        let lines: string[] = serialized.split( `\n` )
+        let processed: string = "";
+        for ( const line of lines )
+        {
+            processed += line;
+            if ( line.indexOf( "\"" ) !== -1 )
+            {
+                const ID: string = this.getStringBetweenChars( line, "\"", "\"" );
+                let locale = this.getLocale( "en", ID, " Name" );
+                if ( locale === undefined )
+                {
+                    const manualLocale =
+                    {
+                        "54009119af1c881c07000029": "Item",
+                        "617f1ef5e8b54b0998387733": "Revolver",
+                        "610720f290b75a49ff2e5e25": "Revolver Magazine",
+                        "627a137bf21bc425b06ab944": "Grenade Revolver Magazine",
+                        "5a2c3a9486f774688b05e574": "Night Vision Goggles",
+                        "5d21f59b6dbe99052b54ef83": "Thermal Vision Goggles",
+                        "5a74651486f7744e73386dd1": "Misc Weapon Mods",
+                        "62f109593b54472778797866": "Openable Items",
+                        "5a341c4086f77401f2541505": "Head wear",
+                        "5a341c4686f77469e155819e": "Face wear",
+                        "644120aa86ffbe10ee032b6f": "Armor Plates",
+                        "65649eb40bf0ed77b8044453": "Integrated Armor Plates",
+                        "5b3f15d486f77432d0509248": "Armbands",
+                        "6050cac987d3f925bf016837": "Something stash related IDK",
+                        "63da6da4784a55176c018dba": "Hideout Weapon stashes",
+                        "5c99f98d86f7745c314214b3": "Mechanical Keys",
+                        "5c164d2286f774194c5e69fa": "Electronic Keys",
+                        "66abb0743f4d8b145b1612c1": "Multitools",
+                        "5f4fbaaca5573a5ac31db429": "Compasses",
+                        "61605ddea09d851a0a0c1bbc": "Hand-held Rangefinders",
+                        "62e9103049c018f425059f38": "Radio Items",
+                        "64b69b0c8f3be32ed22682f8": "A"
+
+                    }
+                    locale = this.databaseServer.getTables().templates.items[ ID ]._name;
+                }
+                processed += " //" + locale;
+            }
+            processed += "\n";
+        }
+        this.saveFile( processed, "debug/allItems.jsonc", false );
+
+    }
+
+    public getStringBetweenChars( original: string, char1: string, char2: string )
+    {
+        return original.substring(
+            original.indexOf( char1 ) + 1,
+            original.lastIndexOf( char2 )
+        );
     }
 
     public printColor( message: string, color: LogTextColor = LogTextColor.GREEN )
@@ -405,7 +442,55 @@ export class LeavesUtils
             b: Math.round( b * 255 )
         };
     }
-    
+
+    private add( item: string, target: any )
+    {
+        let order: string[] = [];
+        let current = item;
+        const finalParent = this.databaseServer.getTables().templates.items[ item ]._parent;
+
+        //Generate order
+        do
+        {
+            current = this.databaseServer.getTables().templates.items[ current ]._parent;
+            if ( current === "" )
+            {
+                break;
+            }
+            order.unshift( current );
+        } while ( current != "" );
+
+        //Re-generate the stack
+        let tempTarget = target;
+        for ( const toCheck of order )
+        {
+            if ( toCheck === finalParent )
+            {
+                if ( !tempTarget[ toCheck ] )
+                {
+                    tempTarget[ toCheck ] = {};
+                }
+                tempTarget[ toCheck ][ item ] = true;//`${ this.getLocale( "en", item, " Name" ) }`;
+            }
+            if ( !tempTarget[ toCheck ] )
+            {
+                tempTarget[ toCheck ] = {};
+            }
+
+            tempTarget = tempTarget[ toCheck ];
+        }
+
+        /*//this.leavesUtils.debugJsonOutput( target )
+
+        const itemDB = this.databaseServer.getTables().templates.items;
+        let parentName = this.getLocale( "en", itemDB[ item ]._parent, " Name" );
+        if ( !target[ parentName ] )
+        {
+            target[ parentName ] = {};
+        }
+        target[ parentName ][ item ] = true;//`${ this.getLocale( "en", item, " Name" ) }`;*/
+    }
+
 }
 export const RTT_Align =
 {

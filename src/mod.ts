@@ -498,11 +498,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.generateWeaponCategorySheet();
 
         this.leavesUtils.saveIDs( "assets/generated/ids.jsonc" );
-        //this.leavesUtils.dataDump();
-        for ( let entry in this.databaseServer.getTables().locales.global[ "en" ] )
-        {
-            //this.databaseServer.getTables().locales.global[ "en" ][ entry ] = this.leavesUtils.RTT_Rainbowify( this.databaseServer.getTables().locales.global[ "en" ][ entry ] );
-        }
+        this.leavesUtils.dataDump();
     }
 
     private setupHandbookCategories()
