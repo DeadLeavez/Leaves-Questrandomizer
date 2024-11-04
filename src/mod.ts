@@ -14,7 +14,6 @@ import { HashUtil } from "@spt/utils/HashUtil";
 //item creation
 import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
-import { VFS } from "@spt/utils/VFS";
 
 // TODO:
 // Locale to weapon categories?
@@ -31,7 +30,6 @@ class Questrandomizer implements IPreSptLoadMod
     private handbookHelper: HandbookHelper;
     private hashUtil: HashUtil;
     private customItemService: CustomItemService;
-    private vfs: VFS;
 
     private leavesUtils: LeavesUtils;
     private leavesQuestTools: LeavesQuestTools;
@@ -201,12 +199,22 @@ class Questrandomizer implements IPreSptLoadMod
     private loadLocalization()
     {
         this.localization = [];
-        //Turn this into a loop. Thats it.
-        for ( const file of this.leavesUtils.getFilesInFolder( "assets/data/localization/" ) )
+
+        const localeRoot = "assets/data/localization";
+
+        for ( const locale of this.leavesUtils.getFoldersInFolder( localeRoot ))
         {
-            const fileWithoutExtension = file.split( '.' )[ 0 ];
-            //this.leavesUtils.printColor( fileWithoutExtension );
-            this.localization[ fileWithoutExtension ] = this.leavesUtils.loadFile( `assets/data/localization/${ file }` );
+            // ABCDEFGH -- REMOVE ME
+            this.leavesUtils.printColor("OwO DIR: " + locale);
+
+            for ( const file of this.leavesUtils.getFilesInFolder( `${ localeRoot }/${ locale }` ) )
+            {
+                // ABCDEFGH -- REMOVE ME
+                this.leavesUtils.printColor("OwO FILE: " + file);
+
+                const fileWithoutExtension = this.leavesUtils.getFileWithoutExtension( file );
+                this.localization[ fileWithoutExtension ] = this.leavesUtils.loadFile( `${ localeRoot }/${ locale }/${ file }` );
+            }
         }
     }
 
@@ -402,14 +410,11 @@ class Questrandomizer implements IPreSptLoadMod
         return this.QuestDB[ questID ];
     }
 
-    /// ABCDEFG
     private loadEditedQuests()
     {
         //Load saved quests
         this.QuestDB = this.leavesUtils.loadFile( "assets/generated/quests.jsonc" );
         this.leavesUtils.printColor( `[Questrandomizer] Loaded quest bundle!` );
-
-        const files = "";
 
         //Load localization bundle
         this.localizationChanges = this.leavesUtils.loadFile( "assets/generated/locale.jsonc" );

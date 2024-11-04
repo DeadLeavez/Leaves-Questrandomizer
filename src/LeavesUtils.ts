@@ -50,9 +50,19 @@ export class LeavesUtils
         return jsonc.parse( this.vfs.readFile( this.modFolder + file ) );
     }
 
+    public getFoldersInFolder( folder: string ): string[]
+    {
+        return this.vfs.getDirs( this.modFolder + folder );
+    }
+
     public getFilesInFolder( folder: string ): string[]
     {
         return this.vfs.getFiles( this.modFolder + folder );
+    }
+
+    public getFileWithoutExtension( file: string ): string
+    {
+        return this.vfs.stripExtension( file );
     }
 
     public saveFile( data: any, file: string, serialize: boolean = true )
