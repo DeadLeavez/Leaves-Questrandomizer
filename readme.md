@@ -18,6 +18,7 @@ Will change the following:
         - See the ``config/weaponcategories.jsonc`` file for more details
         - Once the server has started once with this mod. You can find an auto-generated category list in all supported languages in the ``categories/`` folder of this mod.
     - Add/Randomize the body part requirement.
+- Adds a new category in the handbook that 
 
 Current Shortcomings
 - Removes durability for handover quests.
@@ -81,8 +82,8 @@ Current Shortcomings
 - Localization for handover categories. (Working on doing the same for weapon categories.)
 
 ## 0.0.7
+- Added weapon- and mod-category items into the handbook so you can see them in-game.
 - Portuguese translation - Many thanks to ``SoundBlaster1998`` 
 - Chinese translation - Many thanks to ``Echo``
 - Added mod categories, and reworked the whole weapon categories file. You can now add weapon mod categories to other categories. Example adding silencer mod category to AKM-series weapon category.
-- Added weapon- and mod-category items into the handbook so you can see them in-game.
 - Added more weapon and mod-categories to the default config.

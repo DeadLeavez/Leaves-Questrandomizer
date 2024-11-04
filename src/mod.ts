@@ -7,17 +7,18 @@ import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { randomInt } from "crypto";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
-import { LeavesUtils } from "./LeavesUtils";
+import { LeavesUtils, RTT_Colors } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { HashUtil } from "@spt/utils/HashUtil";
 
 //item creation
 import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
+import { VFS } from "@spt/utils/VFS";
 
 // TODO:
 // Locale to weapon categories?
-// Weapon Category Mods? / Restructure Weapon categories (HALF DONE)
+// Quest generation?
 // Randomize gear if its already there (NOT DONE)
 // Have enemy be stunned?
 // Forbid usage of meds?
@@ -30,6 +31,7 @@ class Questrandomizer implements IPreSptLoadMod
     private handbookHelper: HandbookHelper;
     private hashUtil: HashUtil;
     private customItemService: CustomItemService;
+    private vfs: VFS;
 
     private leavesUtils: LeavesUtils;
     private leavesQuestTools: LeavesQuestTools;
@@ -120,27 +122,66 @@ class Questrandomizer implements IPreSptLoadMod
         condition.weapon = weaponGroup.weapons;
 
         //Add weapon mods
-        for ( const modgroup of weaponGroup[ "mods-inclusive" ] )
+        const modsInclusive = weaponGroup[ "mods-inclusive" ];
+        for ( const modgroup in modsInclusive )
         {
-            condition.weaponModsInclusive = this.getModGroup( modgroup );
+            condition.weaponModsInclusive = this.getModGroup( modgroup, condition.weaponModsInclusive, modsInclusive[ modgroup ] );
         }
 
-        for ( const modgroup of weaponGroup[ "mods-exclusive" ] )
+        const modsExclusive = weaponGroup[ "mods-exclusive" ]
+        for ( const modgroup in modsExclusive )
         {
-            condition.weaponModsInclusive = this.getModGroup( modgroup );
+            condition.weaponModsExclusive = this.getModGroup( modgroup, condition.weaponModsExclusive, modsExclusive[ modgroup ] );
         }
         //this.leavesUtils.debugJsonOutput( condition );
     }
 
-    private getModGroup( modGroup: string ): string[][]
+    private getModGroup( modGroup: string, weaponModsCurrent: string[][], merge: boolean ): string[][]
     {
         if ( !this.weaponCategories.modCategories[ modGroup ] )
         {
-            this.leavesUtils.printColor( `Tried to use missing weapon mod category ${ modGroup }` );
-            return [];
+            this.leavesUtils.printColor( `Tried to use missing weapon mod category ${ modGroup }`, LogTextColor.RED );
+            return weaponModsCurrent;
         }
 
         const modCategory = this.weaponCategories.modCategories[ modGroup ];
+
+        //Check for faulty merge
+        if ( merge && weaponModsCurrent.length === 0 )
+        {
+            this.leavesUtils.printColor( `Tried to merge mod group with empty mods list. Is your order wrong?`, LogTextColor.RED );
+            return weaponModsCurrent;
+        }
+
+        if ( merge )
+        {
+            //If together, just push the mods to each array.
+            if ( modCategory.together )
+            {
+                for ( let entry of weaponModsCurrent )
+                {
+                    entry.push( ...modCategory.mods );
+                }
+            }
+            //If not, we have to go ham.
+            else
+            {
+                let tempArray = [];
+                for ( const existingModGroup of weaponModsCurrent )
+                {
+                    for ( const modToAdd of modCategory.mods )
+                    {
+                        let newModGroup = [];
+                        newModGroup.push( ...existingModGroup );
+                        newModGroup.push( modToAdd );
+                        tempArray.push( newModGroup );
+                    }
+                }
+                //this.leavesUtils.debugJsonOutput( tempArray );
+                return tempArray;
+            }
+        }
+
         if ( modCategory.together )
         {
             return [ modCategory.mods ];
@@ -174,6 +215,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
         this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
+        this.vfs = container.resolve<VFS>( "VFS" );
         this.customItemService = container.resolve<CustomItemService>( "CustomItemService" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
 
@@ -209,7 +251,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.loadWeaponCategories();
     }
 
-    private generateWeaponCategoryItem( category: string, handbookParent: string ): string
+    private generateCategoryItem( category: string, handbookParent: string ): string
     {
         const leavesUp: NewItemFromCloneDetails = {
             itemTplToClone: "574eb85c245977648157eec3",
@@ -222,8 +264,8 @@ class Questrandomizer implements IPreSptLoadMod
             newId: this.leavesUtils.getID( category ),
             parentId: "567849dd4bdc2d150f8b456e",
             handbookParentId: handbookParent,
-            fleaPriceRoubles: 1,
-            handbookPriceRoubles: 1,
+            fleaPriceRoubles: 10000,
+            handbookPriceRoubles: 10000,
             locales: {
                 en: {
                     name: "ERROR",
@@ -240,25 +282,26 @@ class Questrandomizer implements IPreSptLoadMod
 
     private addToCategorySheet( weaponGroup: any, modcategory: string, localename: string, language: string )
     {
-        let categorysheet = "";
+        let categorysheet = ``;
 
-        if ( weaponGroup[ modcategory ].length > 0 )
+        if ( Object.keys( weaponGroup[ modcategory ] ).length > 0 )
         {
-            categorysheet += `[${ this.getLoc( localename, language ) }]\n-----------------------------\n`;
-            for ( const modgroup of weaponGroup[ modcategory ] )
+            categorysheet += this.leavesUtils.RTT_Size( `[${ this.getLoc( localename, language ) }]`, "+4px" );
+            categorysheet += `\n-----------------------------\n`;
+
+            let firstDone = false;
+            for ( const modgroup of Object.keys( weaponGroup[ modcategory ] ) )
             {
+                if ( firstDone )
+                {
+                    categorysheet += weaponGroup[ modcategory ][ modgroup ] ? `\tAND\n` : `\tOR\n`;
+                }
                 categorysheet += `\t${ modgroup }\n`;
+                firstDone = true;
             }
-        }
+        }   
 
         return categorysheet;
-    }
-
-    private addLocaleToSheet( language: string, category: string, categorysheet: string, categoryID: string )
-    {
-        this.leavesUtils.addLocaleTo( language, category, `${ categoryID } Name` );
-        this.leavesUtils.addLocaleTo( language, category, `${ categoryID } ShortName` );
-        this.leavesUtils.addLocaleTo( language, categorysheet, `${ categoryID } Description` );
     }
 
     private generateWeaponCategorySheet()
@@ -266,12 +309,12 @@ class Questrandomizer implements IPreSptLoadMod
         //Generate the items
         for ( const category in this.weaponCategories.categories )
         {
-            this.generateWeaponCategoryItem( category, this.leavesUtils.getID( "WeaponCategoryHandbookID" ) );
+            this.generateCategoryItem( category, this.leavesUtils.getID( "WeaponCategoryHandbookID" ) );
         }
 
         for ( const modGroup in this.weaponCategories.modCategories )
         {
-            this.generateWeaponCategoryItem( modGroup, this.leavesUtils.getID( "ModCategoryHandbookID" ) );
+            this.generateCategoryItem( modGroup, this.leavesUtils.getID( "ModCategoryHandbookID" ) );
         }
 
         //Create the files and generate locales
@@ -279,13 +322,18 @@ class Questrandomizer implements IPreSptLoadMod
         {
             let sheet = ""; //The whole file
 
-            this.leavesUtils.addLocaleTo( language, this.getLoc( "WeaponCategory", language ), this.leavesUtils.getID( "WeaponCategoryHandbookID" ) );
+            this.leavesUtils.addLocaleTo(
+                language,
+                this.leavesUtils.RTT_Color( this.getLoc( "WeaponCategory", language ), RTT_Colors.GREEN ),
+                this.leavesUtils.getID( "WeaponCategoryHandbookID" )
+            );
             for ( const category in this.weaponCategories.categories )
             {
                 const weaponGroup = this.weaponCategories.categories[ category ];
 
                 //Add weapon list
-                let categorysheet = `[${ this.getLoc( "Category", language ) }: ${ category }]\n-----------------------------\n`;
+                let categorysheet = this.leavesUtils.RTT_Size( `[${ this.getLoc( "SheetCategory", language ) }: ${ category }]`, "+4px" );
+                categorysheet += `\n-----------------------------\n`;
                 if ( weaponGroup.weapons.length === 0 )
                 {
                     categorysheet += `\t${ this.getLoc( "AnyWeapon", language ) }\n`;
@@ -299,25 +347,29 @@ class Questrandomizer implements IPreSptLoadMod
                 }
                 categorysheet += "\n";
 
-                categorysheet += this.addToCategorySheet(weaponGroup, "mods-inclusive", "RequiredMods", language);
-                categorysheet += this.addToCategorySheet(weaponGroup, "mods-exclusive", "ForbiddenMods", language);
+                categorysheet += this.addToCategorySheet( weaponGroup, "mods-inclusive", "RequiredMods", language );
+                categorysheet += this.addToCategorySheet( weaponGroup, "mods-exclusive", "ForbiddenMods", language );
 
                 const categoryID = this.leavesUtils.getID( category );
-                this.addLocaleToSheet( language, category, categorysheet, categoryID );
+                this.leavesUtils.addFullLocale( language, category, category, categorysheet, categoryID );
                 sheet += categorysheet;
             }
 
             sheet += `\n-----------------------------\n`;
-            sheet += `-----------------------------\n\n`;
+            sheet += `-----------------------------\n`;
 
-            this.leavesUtils.addLocaleTo( language, this.getLoc( "ModCategory", language ), this.leavesUtils.getID( "ModCategoryHandbookID" ) );
+            this.leavesUtils.addLocaleTo(
+                language,
+                this.leavesUtils.RTT_Color( this.getLoc( "ModCategory", language ), RTT_Colors.BLUE ),
+                this.leavesUtils.getID( "ModCategoryHandbookID" ) );
             for ( const category in this.weaponCategories.modCategories )
             {
                 const modGroup = this.weaponCategories.modCategories[ category ];
 
                 //Top/Title
-                let modGroupSheet = `[${ this.getLoc( "Category", language ) }: ${ category }] - `;
+                let modGroupSheet = `\n[${ this.getLoc( "SheetCategory", language ) }: ${ category }] - `;
                 modGroupSheet += modGroup.together ? this.getLoc( "AllRequired", language ) : this.getLoc( "OneRequired", language );
+                modGroupSheet = this.leavesUtils.RTT_Size( modGroupSheet, "+4px" );
                 modGroupSheet += `\n-----------------------------\n`;
 
                 //Add each mod
@@ -327,7 +379,7 @@ class Questrandomizer implements IPreSptLoadMod
                 }
                 const categoryID = this.leavesUtils.getID( category );
 
-                this.addLocaleToSheet( language, category, modGroupSheet, categoryID );
+                this.leavesUtils.addFullLocale( language, category, category, modGroupSheet, categoryID );
 
                 sheet += modGroupSheet;
             }
@@ -350,11 +402,14 @@ class Questrandomizer implements IPreSptLoadMod
         return this.QuestDB[ questID ];
     }
 
+    /// ABCDEFG
     private loadEditedQuests()
     {
         //Load saved quests
         this.QuestDB = this.leavesUtils.loadFile( "assets/generated/quests.jsonc" );
         this.leavesUtils.printColor( `[Questrandomizer] Loaded quest bundle!` );
+
+        const files = "";
 
         //Load localization bundle
         this.localizationChanges = this.leavesUtils.loadFile( "assets/generated/locale.jsonc" );
@@ -397,7 +452,7 @@ class Questrandomizer implements IPreSptLoadMod
         this.loadHandoverCategories();
 
         //Set up handbook categories
-        const questrandomizerCategory = this.setupHandbookCategories();
+        this.setupHandbookCategories();
 
         //Set up locale system.
         this.targetLocales = new Set<string>();
@@ -447,7 +502,10 @@ class Questrandomizer implements IPreSptLoadMod
 
         this.leavesUtils.saveIDs( "assets/generated/ids.jsonc" );
         //this.leavesUtils.dataDump();
-
+        for ( let entry in this.databaseServer.getTables().locales.global[ "en" ] )
+        {
+            //this.databaseServer.getTables().locales.global[ "en" ][ entry ] = this.leavesUtils.RTT_Rainbowify( this.databaseServer.getTables().locales.global[ "en" ][ entry ] );
+        }
     }
 
     private setupHandbookCategories()
@@ -467,7 +525,7 @@ class Questrandomizer implements IPreSptLoadMod
             "ParentId": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
             "Icon": "/files/handbook/icon_weapons_pistols.png", //Make my own icon?
             "Color": "",
-            "Order": "1"
+            "Order": "2"
         };
         //Mod categories
         const modCategory = {
@@ -475,10 +533,10 @@ class Questrandomizer implements IPreSptLoadMod
             "ParentId": this.leavesUtils.getID( "TopLevelHandbookCategory" ),
             "Icon": "/files/handbook/icon_barter_tools.png", //Make my own icon?
             "Color": "",
-            "Order": "2"
+            "Order": "1"
         };
 
-        this.leavesUtils.addLocaleToAll( "[Questrandomizer]", questrandomizerCategory.Id );
+        this.leavesUtils.addLocaleToAll( `${ this.leavesUtils.RTT_Rainbowify( "[Questrandomizer]" ) }`, questrandomizerCategory.Id );
 
         handbookDB.Categories.push( questrandomizerCategory );
         handbookDB.Categories.push( weaponCategory );

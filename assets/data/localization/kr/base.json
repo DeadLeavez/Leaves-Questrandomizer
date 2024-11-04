@@ -1,11 +1,4 @@
 {
-    //Examples
-    /*
-    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
-    Hand over 2 IFAK individual first aid kit
-    Hand over 10 items from the Cigarettes category
-    */
-    //Generation
     "Kill": "사살하기",
     "AtDistance": "거리에서",
     "DuringTimeOfDay": "시간 동안",
@@ -14,11 +7,11 @@
     "atLocation": "에서",
     "wearingGear": "착용하여",
     "HandoverItem": "제출하기",
-    "ofItem": "개의", //Might be used in some languages? IDK. Is after Hand over <of item> 10 IFAK individual first aid kit
+    "ofItem": "개의",
     "itemsFromThe": "items from the",
-
-    //Category in the weapon category document
     "Category": "카테고리",
+
+    "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
@@ -27,7 +20,6 @@
     "AllRequired":"All Required",
     "OneRequired":"Any Required",
 
-    //Maps
     "bigmap": "세관",
     "factory4_day": "공장 - 주간",
     "factory4_night": "공장 - 야간",
@@ -41,7 +33,6 @@
     "sandbox": "그라운드 제로",
     "sandbox_high": "그라운드 제로",
 
-    //Body parts
     "Head": "머리",
     "Chest": "흉부",
     "Stomach": "복부",
@@ -50,7 +41,6 @@
     "LeftArm": "왼팔",
     "RightArm": "오른팔",
 
-    //Targets
     "anypmc": "PMC",
     "savage": "스캐브",
     "any": "아무나",
@@ -95,11 +85,10 @@
     "pmcbot": "레이더",
     "arenaFighterEvent": "Bloodhound",
 
-    //Category LOC
     "ITEMCATEGORY_Cigarettes": "Cigarettes",
     "ITEMCATEGORY_Info": "Information",
 
-    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key", //These are missing in the official locale :(
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key",
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Face Wear",
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear"
 }

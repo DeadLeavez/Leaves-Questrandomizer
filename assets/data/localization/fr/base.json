@@ -1,11 +1,4 @@
 {
-    //Examples
-    /*
-    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
-    Hand over 2 IFAK individual first aid kit
-    Hand over 10 items from the Cigarettes category
-    */
-    //Generation
     "Kill": "Tuer",
     "AtDistance": "à",
     "DuringTimeOfDay": "pendant",
@@ -14,11 +7,11 @@
     "atLocation": "à",
     "wearingGear": "portant",
     "HandoverItem": "Donner",
-    "ofItem": "de", //Might be used in some languages? IDK. Is after Hand over <of item> 10 IFAK individual first aid kit
+    "ofItem": "de", 
     "itemsFromThe": "items from the",
-
-    //Category in the weapon category document
     "Category": "Catégorie",
+
+    "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
@@ -27,7 +20,6 @@
     "AllRequired":"All Required",
     "OneRequired":"Any Required",
 
-    //Maps
     "bigmap": "Douanes",
     "factory4_day": "Usine - Jour",
     "factory4_night": "Usine - Nuit",
@@ -41,7 +33,6 @@
     "sandbox": "Ground Zero",
     "sandbox_high": "Ground Zero",
 
-    //Body parts
     "Head": "Tête",
     "Chest": "Poitrine",
     "Stomach": "Estomac",
@@ -50,7 +41,6 @@
     "LeftArm": "Bras gauche",
     "RightArm": "Bras droite",
 
-    //Targets
     "anypmc": "SMPs",
     "savage": "Scavs",
     "any": "Tous",
@@ -95,11 +85,10 @@
     "pmcbot": "Raider",
     "arenaFighterEvent": "Bloodhound",
 
-    //Category LOC
     "ITEMCATEGORY_Cigarettes": "Cigarettes",
     "ITEMCATEGORY_Info": "Information",
 
-    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key", //These are missing in the official locale :(
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key", 
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Face Wear",
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear"
 }

@@ -261,6 +261,12 @@ export class LeavesUtils
     {
         this.databaseServer.getTables().locales.global[ targetLocale ][ id ] = text;
     }
+    public addFullLocale( language: string, name: string, shortname: string, description: string, targetID: string )
+    {
+        this.addLocaleTo( language, name, `${ targetID } Name` );
+        this.addLocaleTo( language, shortname, `${ targetID } ShortName` );
+        this.addLocaleTo( language, description, `${ targetID } Description` );
+    }
     public isProperItem( item: string ): boolean
     {
         const itemDB = this.databaseServer.getTables().templates.items;
@@ -298,11 +304,114 @@ export class LeavesUtils
     }
     public getID( name: string ): string
     {
-       // this.debugJsonOutput( this.IDTranslator );
+        // this.debugJsonOutput( this.IDTranslator );
         if ( !this.IDTranslator[ name ] )
         {
             this.IDTranslator[ name ] = this.hashUtil.generate();
         }
         return this.IDTranslator[ name ];
     }
+
+    public RTT_Underline( original: string ): string
+    {
+        return `<underline>${ original }</underline>`;
+    }
+    public RTT_Rotate( original: string, angle: number ): string
+    {
+        return `<rotate="${ angle }">${ original }</rotate>`;
+    }
+    public RTT_Align( original: string, alignment: string ): string
+    {
+        return `<align="${ alignment }">${ original }<align>`;
+    }
+    public RTT_Bold( original: string ): string
+    {
+        return `<b>${ original }</b>`;
+    }
+    public RTT_Italic( original: string ): string
+    {
+        return `<i>${ original }</i>`;
+    }
+    public RTT_Color( original: string, color: string ): string
+    {
+        if ( color.length === 0 )
+        {
+            return original;
+        }
+        if ( color.at( 0 ) === `#` )
+        {
+            return `<color=${ color }>${ original }</color>`;
+        }
+        else
+        {
+            return `<color="${ color }">${ original }</color>`;
+        }
+    }
+    public RTT_Rainbowify( original: string ): string
+    {
+        let newString = "";
+        const step = 1 / original.length;
+        let start = 0;
+        for ( let char of original )
+        {
+            let color = this.HSVtoRGB( start, 1, 1 );
+            let hexstring = `#${ color.r.toString( 16 ).padStart( 2, `0` ) }${ color.g.toString( 16 ).padStart( 2, `0` ) }${ color.b.toString( 16 ).padStart( 2, `0` ) }`;
+            newString += this.RTT_Color( char, hexstring );
+            start += step;
+        }
+        return newString;
+    }
+    public RTT_Size( original: string, size: string ): string
+    {
+        return `<size=${ size }>${ original }</size>`;
+    }
+    /*
+    https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
+    */
+    public HSVtoRGB( h, s, v )
+    {
+        var r, g, b, i, f, p, q, t;
+        if ( arguments.length === 1 )
+        {
+            s = h.s, v = h.v, h = h.h;
+        }
+        i = Math.floor( h * 6 );
+        f = h * 6 - i;
+        p = v * ( 1 - s );
+        q = v * ( 1 - f * s );
+        t = v * ( 1 - ( 1 - f ) * s );
+        switch ( i % 6 )
+        {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+        }
+        return {
+            r: Math.round( r * 255 ),
+            g: Math.round( g * 255 ),
+            b: Math.round( b * 255 )
+        };
+    }
+    
 }
+export const RTT_Align =
+{
+    LEFT: "left",
+    CENTER: "center",
+    RIGHT: "right",
+    JUSTIFIED: "justified",
+    FLUSH: "flush"
+};
+export const RTT_Colors =
+{
+    BLACK: "black",
+    BLUE: "blue",
+    GREEN: "green",
+    ORANGE: "orange",
+    PURPLE: "purple",
+    RED: "red",
+    WHITE: "white"
+};

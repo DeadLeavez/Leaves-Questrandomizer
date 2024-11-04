@@ -1,11 +1,5 @@
 {
-    //Examples
-    /*
-    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
-    Hand over 2 IFAK individual first aid kit
-    Hand over 10 items from the Cigarettes category
-    */
-    //Generation
+
     "Kill": "zlikwiduj",
     "AtDistance": "na",
     "DuringTimeOfDay": "podczas",
@@ -14,11 +8,11 @@
     "atLocation": "w",
     "wearingGear": "nosząc",
     "HandoverItem": "przekaż",
-    "ofItem": "/b", //Might be used in some languages? IDK. Is after Hand over <of item> 10 IFAK individual first aid kit //Not in polish at least, Przekaż 10IFAK...
+    "ofItem": "/b", 
     "itemsFromThe": "przedmioty z",
-
-    //Category in the weapon category document
     "Category": "kategoria",
+
+    "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
@@ -27,7 +21,6 @@
     "AllRequired":"All Required",
     "OneRequired":"Any Required",
 
-    //Maps
     "bigmap": "Skład Celny",
     "factory4_day": "Fabryka",
     "factory4_night": "Fabryka nocą",
@@ -41,7 +34,6 @@
     "sandbox": "Strefa Zero",
     "sandbox_high": "Strefa Zero",
 
-    //Body parts
     "Head": "Głowa",
     "Chest": "Tors",
     "Stomach": "Żołądek",
@@ -50,7 +42,6 @@
     "LeftArm": "Lewa Ręka",
     "RightArm": "Prawa Ręka",
 
-    //Targets
     "anypmc": "PMC",
     "savage": "Scav",
     "any": "jakikolwiek",
@@ -95,11 +86,10 @@
     "pmcbot": "Bandyta",
     "arenaFighterEvent": "Psy Wojny",
 
-    //Category LOC
     "ITEMCATEGORY_Cigarettes": "Papierosy",
     "ITEMCATEGORY_Info": "Informacja",
 
-    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Klucz mechaniczny", //These are missing in the official locale :(
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Klucz mechaniczny",
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Okrycie twarzy",
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Nakrycie głowy"
 }

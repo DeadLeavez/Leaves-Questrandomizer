@@ -1,24 +1,17 @@
 {
-    //Examples
-    /*
-    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
-    Hand over 2 IFAK individual first aid kit
-    Hand over 10 items from the Cigarettes category
-    */
-    //Generation
-    "Kill": "Kill",
-    "AtDistance": "at",
-    "DuringTimeOfDay": "during",
-    "usingWeaponGroup": "using",
-    "inBodyPart": "in",
-    "atLocation": "at",
-    "wearingGear": "wearing",
-    "HandoverItem": "Hand over",
-    "ofItem": "\b", //Might be used in some languages? IDK. Hand over <of item> 10 IFAK individual first aid kit
-    "itemsFromThe":"items from the",
+    "Kill": "Mata",
+    "AtDistance": "a",
+    "DuringTimeOfDay": "durante",
+    "usingWeaponGroup": "utilizando um/a",
+    "inBodyPart": "na/no",
+    "atLocation": "no mapa",
+    "wearingGear": "vestindo",
+    "HandoverItem": "Entregar",
+    "ofItem": "\b", 
+    "itemsFromThe":"itens da categoria",
+    "Category": "", 
 
-    //Category in the weapon category document and handbook
-    "Category": "Category",
+    "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
@@ -27,10 +20,9 @@
     "AllRequired":"All Required",
     "OneRequired":"Any Required",
 
-    //Maps
     "bigmap": "Customs",
-    "factory4_day": "Factory - Day",
-    "factory4_night": "Factory - Night",
+    "factory4_day": "Factory - Dia",
+    "factory4_night": "Factory - Noite",
     "interchange": "Interchange",
     "laboratory": "Labs",
     "lighthouse": "Lighthouse",
@@ -41,19 +33,17 @@
     "sandbox": "Ground Zero",
     "sandbox_high": "Ground Zero",
 
-    //Body parts
-    "Head": "Head",
-    "Chest": "Chest",
-    "Stomach": "Stomach",
-    "LeftLeg": "Left Leg",
-    "RightLeg": "Right Leg",
-    "LeftArm": "Left Arm",
-    "RightArm": "Right Arm",
+    "Head": "Cabeça",
+    "Chest": "Peito",
+    "Stomach": "Estômago",
+    "LeftLeg": "Perna Esquerda",
+    "RightLeg": "Perna Direita",
+    "LeftArm": "Braço Esquerdo",
+    "RightArm": "Braço Direito",
 
-    //Targets
     "anypmc": "PMCs",
     "savage": "Scavs",
-    "any": "Anything",
+    "any": "Quaisquer",
     "marksman": "Sniper Scav",
     "assault": "Scav",
     "bossbully": "Reshala",
@@ -68,11 +58,11 @@
     "followergluharsniper": "Gl. Fol. Snipe",
     "followersanitar": "Sanitar Follower",
     "bosssanitar": "Sanitar",
-    "sectantwarrior": "Cultist Warrior",
-    "sectantpriest": "Cultist Priest",
-    "sectantoni": "Cultist Oni",
-    "sectantpredvestnik": "Cultist Harbinger",
-    "sectantprizrak": "Cultist Ghost",
+    "sectantwarrior": "Cultista Warrior",
+    "sectantpriest": "Cultista Priest",
+    "sectantoni": "Cultista Oni",
+    "sectantpredvestnik": "Cultista Harbinger",
+    "sectantprizrak": "Cultista Ghost",
     "bosstagilla": "Tagilla",
     "followertagilla": "Tagilla Follower",
     "exusec": "Rogue",
@@ -95,11 +85,10 @@
     "pmcbot": "Raider",
     "arenaFighterEvent": "Bloodhound",
 
-    //Category LOC
-    "ITEMCATEGORY_Cigarettes": "Cigarettes",
-    "ITEMCATEGORY_Info": "Information",
+    "ITEMCATEGORY_Cigarettes": "Cigarros",
+    "ITEMCATEGORY_Info": "Informação",
 
-    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key", //These are missing in the official locale :(
-    "ITEMCATEGORY_5a341c4686f77469e155819e": "Face Wear",
-    "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear"
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Chave Mecânica", 
+    "ITEMCATEGORY_5a341c4686f77469e155819e": "Vestuário para Face",
+    "ITEMCATEGORY_5a341c4086f77401f2541505": "Armamento para Cabeça"
 }

@@ -1,11 +1,4 @@
 {
-    //Examples
-    /*
-    Kill 4 Scavs at >= 70m during 11-17 using MP-43-1C 12ga double-barrel shotgun in: Left Arm Right Arm Head at Customs wearing: [Module 3M]
-    Hand over 2 IFAK individual first aid kit
-    Hand over 10 items from the Cigarettes category
-    */
-    //Generation
     "Kill": "Убей",
     "AtDistance": "с растояния",
     "DuringTimeOfDay": "в течение",
@@ -14,11 +7,11 @@
     "atLocation": "\b",
     "wearingGear": "надев",
     "HandoverItem": "Передай",
-    "ofItem": "\b", //Might be used in some languages? IDK. Is after Hand over <of item> 10 IFAK individual first aid kit
+    "ofItem": "\b",
     "itemsFromThe": "предмета/ов из",
-
-    //Category in the weapon category document
     "Category": "Категории",
+
+    "SheetCategory": "Category",
     "WeaponCategory": "Weapon Categories",
     "ModCategory": "Mod Categories",
     "RequiredMods": "Required Weapon Mods",
@@ -27,7 +20,6 @@
     "AllRequired":"All Required",
     "OneRequired":"Any Required",
 
-    //Maps
     "bigmap": "на Таможне",
     "factory4_day": "на Заводе - Днем",
     "factory4_night": " на Заводе - Ночью",
@@ -41,7 +33,6 @@
     "sandbox": "на Эпицентре",
     "sandbox_high": "на Эпицентре",
 
-    //Body parts 
     "Head": "Голову",
     "Chest": "Грудную клетку",
     "Stomach": "Живот",
@@ -50,7 +41,6 @@
     "LeftArm": "Левую руку",
     "RightArm": "Правую руку",
 
-    //Targets
     "anypmc": "ЧВК",
     "savage": "Дикие",
     "any": "Кого угодно",
@@ -95,11 +85,10 @@
     "pmcbot": "Рейдер",
     "arenaFighterEvent": "Погоня",
 
-    //Category LOC
     "ITEMCATEGORY_Cigarettes": "Сигареты",
     "ITEMCATEGORY_Info": "Инфо Предметы",
 
-    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Механические ключи", //These are missing in the official locale :(
+    "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Механические ключи",
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Маски и балаклавы",
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Головные уборы и шлемы"
 }
