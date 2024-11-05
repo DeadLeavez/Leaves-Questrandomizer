@@ -6,6 +6,7 @@ import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
 import { IQuest, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
 import { LeavesUtils } from "./LeavesUtils";
+import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
 
 @injectable()
 export class LeavesQuestTools
@@ -125,7 +126,7 @@ export class LeavesQuestTools
             "dogtagLevel": 0,
             "dynamicLocale": false,
             "globalQuestCounterId": "",
-            "id":  this.hashUtil.generate(),
+            "id": this.hashUtil.generate(),
             "index": 1,
             "isEncoded": false,
             "maxDurability": 15,
@@ -224,6 +225,73 @@ export class LeavesQuestTools
 
         //Else, we're not on a map in particular, or we're on more than one map. either way, "any" applies.
         return "any";
+    }
+
+    public generateEmptyQuest( name: string, trader: string, location: string ): IQuest
+    {
+        const ID = this.hashUtil.generate();
+
+        let newQuest:any =
+        {
+            QuestName: name,
+            _id: ID,
+            canShowNotificationsInGame: true,
+            acceptPlayerMessage: `${ID} acceptPlayerMessage`,
+            changeQuestMessageText: `${ID} changeQuestMessageText`,
+            completePlayerMessage: `${ID} completePlayerMessage`,
+            conditions: {
+                Started: [],
+                AvailableForFinish: [],
+                AvailableForStart: [],
+                Success: [],
+                Fail: [],
+            },
+            description: `${ID} description`,
+            failMessageText: `${ID} failMessageText`,
+            declinePlayerMessage: `${ID} declinePlayerMessage`,
+            name: `${ID} name`,
+            note: `${ID} note`,
+            traderId: trader, 
+            location: location,
+            image: `/files/quest/icon/65899d03adeac0191c51e880.jpg`,
+            type: QuestTypeEnum.ELIMINATION,
+            isKey: false,
+            restartable: false,
+            instantComplete: false,
+            secretQuest: false,
+            startedMessageText: `${ID} startedMessageText`,
+            successMessageText: `${ID} successMessageText`,
+            rewards: {
+                Started: [],
+                Success: [],
+                Fail: []
+            },
+            side: `Pmc`
+        }
+        return newQuest;
+    }
+    public setBaseQuestLocale(
+        ID: string,
+        locale: string,
+        acceptPlayerMessage: string,
+        changeQuestMessageText: string,
+        completePlayerMessage: string,
+        description: string,
+        failMessageText: string,
+        declinePlayerMessage: string,
+        startedMessageText: string,
+        successMessageText: string,
+        localizationChanges: any
+    )
+    {
+        this.leavesUtils.editLocale( `${ ID } acceptPlayerMessage`, acceptPlayerMessage, locale, localizationChanges );
+        this.leavesUtils.editLocale( `${ ID } changeQuestMessageText`, changeQuestMessageText, locale, localizationChanges );
+        this.leavesUtils.editLocale( `${ ID } completePlayerMessage`, completePlayerMessage, locale, localizationChanges );
+        this.leavesUtils.editLocale( `${ ID } description`, description, locale, localizationChanges );
+        this.leavesUtils.editLocale( `${ ID } failMessageText`, failMessageText, locale, localizationChanges );
+        this.leavesUtils.editLocale( `${ ID } declinePlayerMessage`, declinePlayerMessage, locale, localizationChanges );
+        this.leavesUtils.editLocale( `${ ID } startedMessageText`, startedMessageText, locale, localizationChanges );
+        this.leavesUtils.editLocale( `${ ID } successMessageText`, successMessageText, locale, localizationChanges );
     }
 
 }

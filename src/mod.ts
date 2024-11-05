@@ -16,8 +16,8 @@ import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
 
 // TODO:
-// Locale to weapon categories?
 // Quest generation?
+// Locale to weapon categories?
 // Randomize gear if its already there (NOT DONE)
 // Have enemy be stunned?
 // Forbid usage of meds?
@@ -415,8 +415,6 @@ class Questrandomizer implements IPreSptLoadMod
         let localeDB = this.databaseServer.getTables().locales.global;
         for ( const language in this.localizationChanges )
         {
-            //this.leavesUtils.debugJsonOutput( this.localizationChanges );
-            //this.leavesUtils.printColor( `Language:${ language }` );
             for ( const changeID in this.localizationChanges[ language ] )
             {
                 if ( !localeDB[ language ] )
@@ -739,7 +737,7 @@ class Questrandomizer implements IPreSptLoadMod
                 line += `${ this.getLoc( "Category", targetLocale ) }` // category
             }
 
-            this.editTaskLocale( task, line, targetLocale );
+            this.leavesUtils.editLocale( task.id, line, targetLocale, this.localizationChanges );
         }
     }
 
@@ -850,27 +848,6 @@ class Questrandomizer implements IPreSptLoadMod
         }
         //We don't edit anything else with counters for now.
         return;
-    }
-
-    private editTaskLocale( task: IQuestCondition, newLocale: string, targetLocale: string )
-    {
-
-        const taskId = task.id;
-        if ( !this.localizationChanges[ targetLocale ] )
-        {
-            this.localizationChanges[ targetLocale ] = {};
-        }
-        this.localizationChanges[ targetLocale ][ taskId ] = newLocale;
-        if ( !this.databaseServer.getTables().locales.global[ targetLocale ] )
-        {
-            this.databaseServer.getTables().locales.global[ targetLocale ] = {};
-        }
-        this.databaseServer.getTables().locales.global[ targetLocale ][ taskId ] = newLocale;
-
-        if ( targetLocale === "en" )
-        {
-            this.leavesUtils.printColor( newLocale, LogTextColor.MAGENTA );
-        }
     }
 
     private editLocations( locations: IQuestConditionCounterCondition, flags: any, )
@@ -1027,7 +1004,7 @@ class Questrandomizer implements IPreSptLoadMod
                 }
             }
 
-            this.editTaskLocale( task, line, targetLocale );
+            this.leavesUtils.editLocale( task.id, line, targetLocale, this.localizationChanges );
         }
     }
 

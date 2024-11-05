@@ -282,6 +282,20 @@ export class LeavesUtils
     {
         this.databaseServer.getTables().locales.global[ targetLocale ][ id ] = text;
     }
+    public editLocale( localeID: string, newLocale: string, targetLocale: string, localizationChanges:any )
+    {
+        if ( !localizationChanges[ targetLocale ] )
+        {
+            localizationChanges[ targetLocale ] = {};
+        }
+        localizationChanges[ targetLocale ][ localeID ] = newLocale;
+        this.databaseServer.getTables().locales.global[ targetLocale ][ localeID ] = newLocale;
+
+        if ( targetLocale === "en" )
+        {
+            this.printColor( newLocale, LogTextColor.MAGENTA );
+        }
+    }
     public addFullLocale( language: string, name: string, shortname: string, description: string, targetID: string )
     {
         this.addLocaleTo( language, name, `${ targetID } Name` );
