@@ -4,9 +4,10 @@ import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
+import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
 import { LeavesUtils } from "./LeavesUtils";
 import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
+import { QuestStatus } from "@spt/models/enums/QuestStatus";
 
 @injectable()
 export class LeavesQuestTools
@@ -227,71 +228,233 @@ export class LeavesQuestTools
         return "any";
     }
 
-    public generateEmptyQuest( name: string, trader: string, location: string ): IQuest
+    public generateKillsLocale( task: IQuestCondition, flags: any, localizationChangesToSave: any )
     {
-        const ID = this.hashUtil.generate();
-
-        let newQuest:any =
+        for ( const targetLocale of this.leavesUtils.getLoadedLocales() )
         {
-            QuestName: name,
-            _id: ID,
-            canShowNotificationsInGame: true,
-            acceptPlayerMessage: `${ID} acceptPlayerMessage`,
-            changeQuestMessageText: `${ID} changeQuestMessageText`,
-            completePlayerMessage: `${ID} completePlayerMessage`,
-            conditions: {
-                Started: [],
-                AvailableForFinish: [],
-                AvailableForStart: [],
-                Success: [],
-                Fail: [],
-            },
-            description: `${ID} description`,
-            failMessageText: `${ID} failMessageText`,
-            declinePlayerMessage: `${ID} declinePlayerMessage`,
-            name: `${ID} name`,
-            note: `${ID} note`,
-            traderId: trader, 
-            location: location,
-            image: `/files/quest/icon/65899d03adeac0191c51e880.jpg`,
-            type: QuestTypeEnum.ELIMINATION,
-            isKey: false,
-            restartable: false,
-            instantComplete: false,
-            secretQuest: false,
-            startedMessageText: `${ID} startedMessageText`,
-            successMessageText: `${ID} successMessageText`,
-            rewards: {
-                Started: [],
-                Success: [],
-                Fail: []
-            },
-            side: `Pmc`
+            const kills = task.value as number;
+            const conditions = task.counter.conditions;
+            let target: string = "";
+            if ( flags.hasSavageRole >= 0 )
+            {
+                for ( let role of conditions[ flags.hasKills ].savageRole ) 
+                {
+                    const targetTranslated = this.leavesUtils.getLoc( role.toLocaleLowerCase(), targetLocale );
+                    target += `${ targetTranslated } `;
+                }
+            }
+            else
+            {
+                target = conditions[ flags.hasKills ].target as string;
+                target = this.leavesUtils.getLoc( target.toLocaleLowerCase(), targetLocale ) + " ";
+            }
+
+            let line: string = `${ this.leavesUtils.getLoc( "Kill", targetLocale ) } ${ kills } ${ target }`;
+
+            //Distance
+            if ( flags.hasDistance >= 0 )
+            {
+                const distance = conditions[ flags.hasKills ].distance.compareMethod as string + " " + conditions[ flags.hasKills ].distance.value as string;
+                line += `${ this.leavesUtils.getLoc( "AtDistance", targetLocale ) } ${ distance }m `;
+            }
+
+            //Time of day //Skip if labs or factory
+            if ( flags.hasTime >= 0 )
+            {
+                const start: string = ( conditions[ flags.hasKills ].daytime.from ).toString().padStart( 2, `0` );
+                const finish: string = ( conditions[ flags.hasKills ].daytime.to ).toString().padStart( 2, `0` );
+                line += `${ this.leavesUtils.getLoc( "DuringTimeOfDay", targetLocale ) } ${ start }-${ finish } `;
+            }
+
+            //Weapon requirements
+            if ( flags.hasWeapon >= 0 )
+            {
+                line += `${ this.leavesUtils.getLoc( "usingWeaponGroup", targetLocale ) } `;
+                if ( flags.hasSpecificWeapon >= 0 )
+                {
+                    line += `${ this.leavesUtils.getLocale( targetLocale, flags.whatWeaponOrGroup, " Name" ) } `;
+                }
+                else
+                {
+                    line += `${ flags.whatWeaponOrGroup } `;
+                }
+            }
+
+            //Body part hit requirement
+            if ( flags.hasBodyparts >= 0 )
+            {
+                let bodypartsline = `${ this.leavesUtils.getLoc( "inBodyPart", targetLocale ) }: `;
+                //for ( let partindex = 0; partindex < conditions[ flags.hasKills ].bodyPart.length; partindex++ )
+                for ( const bodyPart of conditions[ flags.hasKills ].bodyPart )
+                {
+                    bodypartsline += `${ this.leavesUtils.getLoc( bodyPart, targetLocale ) } `
+                }
+                line += bodypartsline;
+            }
+
+            //Location
+            if ( flags.hasLocation >= 0 )
+            {
+                let hasAddedGz = false;
+                let mapsline = `${ this.leavesUtils.getLoc( "atLocation", targetLocale ) } `;
+                for ( const map of conditions[ flags.hasLocation ].target )
+                {
+                    if ( map.toLowerCase() === "sandbox" || map.toLowerCase() === "sandbox_high" )
+                    {
+                        if ( !hasAddedGz )
+                        {
+                            mapsline += `${ this.leavesUtils.getLoc( "sandbox", targetLocale ) } `;
+                            hasAddedGz = true;
+                        }
+                    }
+                    else
+                    {
+                        mapsline += `${ this.leavesUtils.getLoc( map.toLowerCase(), targetLocale ) } `;
+                    }
+                }
+                line += mapsline;
+            }
+
+            //Gear
+            if ( flags.hasEquipment >= 0 )
+            {
+                line += `${ this.leavesUtils.getLoc( "wearingGear", targetLocale ) }:\n`;
+                let tempCount = 0;
+                for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
+                {
+                    line += "[";
+                    for ( const gearID of gearGroup )
+                    {
+                        let name = this.leavesUtils.getLocale( targetLocale, gearID, " Name" );
+                        line += `${ name }`;
+                    }
+                    line += "]";
+
+                    //Check if we're on the last line, so to not add extra |
+                    if ( tempCount < conditions.length - 1 )
+                    {
+                        line += "|"
+                    }
+                    else
+                    {
+                        line += " ";
+                    }
+
+                    tempCount++;
+                }
+            }
+
+            this.leavesUtils.editLocaleText( task.id, line, targetLocale, localizationChangesToSave );
         }
-        return newQuest;
-    }
-    public setBaseQuestLocale(
-        ID: string,
-        locale: string,
-        acceptPlayerMessage: string,
-        changeQuestMessageText: string,
-        completePlayerMessage: string,
-        description: string,
-        failMessageText: string,
-        declinePlayerMessage: string,
-        startedMessageText: string,
-        successMessageText: string,
-        localizationChanges: any
-    )
-    {
-        this.leavesUtils.editLocale( `${ ID } acceptPlayerMessage`, acceptPlayerMessage, locale, localizationChanges );
-        this.leavesUtils.editLocale( `${ ID } changeQuestMessageText`, changeQuestMessageText, locale, localizationChanges );
-        this.leavesUtils.editLocale( `${ ID } completePlayerMessage`, completePlayerMessage, locale, localizationChanges );
-        this.leavesUtils.editLocale( `${ ID } description`, description, locale, localizationChanges );
-        this.leavesUtils.editLocale( `${ ID } failMessageText`, failMessageText, locale, localizationChanges );
-        this.leavesUtils.editLocale( `${ ID } declinePlayerMessage`, declinePlayerMessage, locale, localizationChanges );
-        this.leavesUtils.editLocale( `${ ID } startedMessageText`, startedMessageText, locale, localizationChanges );
-        this.leavesUtils.editLocale( `${ ID } successMessageText`, successMessageText, locale, localizationChanges );
     }
 
+    public generateHandoverItemLocale( task: IQuestCondition, categoryName: string, localizationChangesToSave: any )
+    {
+        for ( const targetLocale of this.leavesUtils.getLoadedLocales() )
+        {
+            let line = `${ this.leavesUtils.getLoc( "HandoverItem", targetLocale ) } `; //Hand over
+            line += `${ task.value } ${ this.leavesUtils.getLoc( "ofItem", targetLocale ) } `; //x counts of
+            //No category
+            if ( categoryName === "" )
+            {
+                line += this.leavesUtils.getLocale( targetLocale, task.target[ 0 ], ` Name` );
+            }
+            else //We have a category
+            {
+                //Get category name.
+
+                //Try the official DB
+                let newName = this.leavesUtils.getLocale( targetLocale, categoryName, " Name" );
+
+                //Else we check the local DB
+                if ( newName == null )
+                {
+                    newName = this.leavesUtils.getLoc( `ITEMCATEGORY_${ categoryName }`, targetLocale );
+                }
+
+                //If the local DB fails, we use the category name, as is.
+                if ( newName == null )
+                {
+                    newName = categoryName;
+                }
+
+                line += `${ this.leavesUtils.getLoc( "itemsFromThe", targetLocale ) } ` // items from the
+                line += `${ newName } `;
+                line += `${ this.leavesUtils.getLoc( "Category", targetLocale ) }` // category
+            }
+
+            this.leavesUtils.editLocaleText( task.id, line, targetLocale, localizationChangesToSave );
+        }
+    }
+
+    public purgeFindItemTasks( tasks: IQuestCondition[] )
+    {
+        const itemDB = this.databaseServer.getTables().templates.items;
+        let toPurge = [];
+        for ( let i = 0; i < tasks.length; i++ )
+        {
+            //Find "FindItem" tasks
+            if ( tasks[ i ].conditionType === "FindItem" )
+            {
+                let purge = true;
+                for ( const item of tasks[ i ].target )
+                {
+                    if ( itemDB[ item ]._props.QuestItem )
+                    {
+                        purge = false;
+                    }
+                }
+                if ( purge )
+                {
+                    //We unshift (reverse push) so we get a reversed order to purge. To easier purge later.
+                    toPurge.unshift( i );
+                }
+            }
+        }
+        for ( const purgeIndex of toPurge )
+        {
+            tasks.splice( purgeIndex, 1 );
+        }
+    }
+
+    public addQuestPrerequisite( targetQuest: IQuest, previousQuestID: string )
+    {
+        let prereqQuestCondition: any =
+        {
+            "conditionType": "Quest",
+            "id": this.hashUtil.generate(),
+            "index": 0,
+            "parentId": "",
+            "dynamicLocale": false,
+            "target": previousQuestID,
+            "status": [
+                QuestStatus.Started,
+                QuestStatus.Success
+            ],
+            "globalQuestCounterId": "",
+            "availableAfter": 0,
+            "dispersion": 0,
+            "visibilityConditions": []
+        }
+
+        targetQuest.conditions.AvailableForStart.push( prereqQuestCondition );
+    }
+
+    public addLevelPrerequisite( targetQuest: IQuest, requiredLevel: number )
+    {
+        let prereqQuestCondition: any =
+        {
+            "conditionType": "Level",
+            "id": this.hashUtil.generate(),
+            "index": 1,
+            "parentId": "",
+            "dynamicLocale": false,
+            "globalQuestCounterId": "",
+            "value": requiredLevel,
+            "compareMethod": ">=",
+            "visibilityConditions": []
+        }
+        
+        targetQuest.conditions.AvailableForStart.push( prereqQuestCondition );
+    }
 }

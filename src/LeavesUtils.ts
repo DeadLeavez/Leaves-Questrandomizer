@@ -9,6 +9,7 @@ import { jsonc } from "jsonc";
 import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { HashUtil } from "@spt/utils/HashUtil";
+import { IItem } from "@spt/models/eft/common/tables/IItem";
 
 
 @injectable()
@@ -18,6 +19,8 @@ export class LeavesUtils
     private tierList: any;
     private itemTiers: number[];
     private IDTranslator: any;
+    private localization: any;
+    private targetLocales: Set<string>;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -37,16 +40,14 @@ export class LeavesUtils
         this.modFolder = folder;
     }
 
-    public setTierList( list: any )
+    public setTierList( file: string )
     {
-        this.tierList = list;
+        this.tierList = this.loadFile( file );
         this.generateItemTiers();
     }
 
     public loadFile( file: string ): any
     {
-        //const directoryFile = path.resolve( __dirname, `../${ file }` );
-        //this.printColor( `${directoryFile }` );
         return jsonc.parse( this.vfs.readFile( this.modFolder + file ) );
     }
 
@@ -138,8 +139,6 @@ export class LeavesUtils
 
     public printColor( message: string, color: LogTextColor = LogTextColor.GREEN )
     {
-        //this.logger.logWithColor( message, color );
-        //this.logger.debug( message );
         this.logger.log( message, color );
     }
 
@@ -282,18 +281,18 @@ export class LeavesUtils
     {
         this.databaseServer.getTables().locales.global[ targetLocale ][ id ] = text;
     }
-    public editLocale( localeID: string, newLocale: string, targetLocale: string, localizationChanges:any )
+    public editLocaleText( targetID: string, newText: string, targetLocale: string, localizationChanges: any )
     {
         if ( !localizationChanges[ targetLocale ] )
         {
             localizationChanges[ targetLocale ] = {};
         }
-        localizationChanges[ targetLocale ][ localeID ] = newLocale;
-        this.databaseServer.getTables().locales.global[ targetLocale ][ localeID ] = newLocale;
+        localizationChanges[ targetLocale ][ targetID ] = newText;
+        this.databaseServer.getTables().locales.global[ targetLocale ][ targetID ] = newText;
 
         if ( targetLocale === "en" )
         {
-            this.printColor( newLocale, LogTextColor.MAGENTA );
+            this.printColor( newText, LogTextColor.MAGENTA );
         }
     }
     public addFullLocale( language: string, name: string, shortname: string, description: string, targetID: string )
@@ -431,6 +430,25 @@ export class LeavesUtils
         };
     }
 
+    public hasParent( item: IItem, parent: string ): boolean
+    {
+        let current = item.parentId;
+
+        while ( current !== "" )
+        {
+            current = this.databaseServer.getTables().templates.items[ current ]._parent;
+            if ( current === parent )
+            {
+                return true;
+            }
+            if ( current === "" )
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+
     private add( item: string, target: any )
     {
         let order: string[] = [];
@@ -477,6 +495,47 @@ export class LeavesUtils
             target[ parentName ] = {};
         }
         target[ parentName ][ item ] = true;//`${ this.getLocale( "en", item, " Name" ) }`;*/
+    }
+
+    public loadLocalization( localeRoot: string )
+    {
+        this.localization = [];
+
+        for ( const locale of this.getFoldersInFolder( localeRoot ) )
+        {
+            for ( const file of this.getFilesInFolder( `${ localeRoot }/${ locale }` ) )
+            {
+                this.localization[ locale ] = this.loadFile( `${ localeRoot }/${ locale }/${ file }` );
+            }
+        }
+
+        //Set up locale system.
+        this.targetLocales = new Set<string>();
+        for ( const locale in this.localization )
+        {
+            this.targetLocales.add( locale );
+        }
+        for ( const language in this.databaseServer.getTables().locales.global )
+        {
+            this.targetLocales.add( language );
+        }
+    }
+
+    public getLoadedLocales(): Set<string>
+    {
+        return this.targetLocales;
+    }
+
+    public getLoc( original: string, targetLocale ): string
+    {
+        if ( this.localization[ targetLocale ] && this.localization[ targetLocale ][ original ] )
+        {
+            return this.localization[ targetLocale ][ original ];
+        }
+        else
+        {
+            return this.localization[ "en" ][ original ];
+        }
     }
 
 }
