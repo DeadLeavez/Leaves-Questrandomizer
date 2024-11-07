@@ -12,11 +12,11 @@ import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 import { LeavesUtils, RTT_Colors } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
+import { LeavesSettingsManager } from "./LeavesSettingsManager";
 
 //item creation
 import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
-import { QuestStatus } from "@spt/models/enums/QuestStatus";
 
 // TODO:
 // Quest generation?
@@ -25,6 +25,7 @@ import { QuestStatus } from "@spt/models/enums/QuestStatus";
 // Randomize gear if its already there (NOT DONE)
 // Have enemy be stunned?
 // Forbid usage of meds?
+// Create a config class that can be passed around. Too much shit that I pass around through reference. Stoobid leaves.
 
 
 class Questrandomizer implements IPreSptLoadMod
@@ -37,20 +38,25 @@ class Questrandomizer implements IPreSptLoadMod
     private leavesUtils: LeavesUtils;
     private leavesQuestTools: LeavesQuestTools;
     private leavesQuestGeneration: LeavesQuestGeneration;
+    private leavesSettingsManager: LeavesSettingsManager;
+
+    //WE WANNA MOVE THESE
     private config: any;
     private weaponCategories: any;
     private handoverCategories: any;
     private weaponCategoriesWeighting: any;
     private gearList: any;
     private localizationChangesToSave: any;
-    private QuestDB: any;
-
     private bodyParts: string[];
     private validTargets: string[];
     private validMaps: string[];
     private easyMaps: string[];
     private locationIdMap;
+    //END
+    
+    private QuestDB: any;
 
+    //WE SHOULD MOVE THIS WHOLE THING INTO THE SETTINGS MANAGER
     private loadWeaponCategories()
     {
         //Load the file
@@ -64,6 +70,7 @@ class Questrandomizer implements IPreSptLoadMod
         }
     }
 
+    //SAME WITH THIS
     private loadHandoverCategories()
     {
         //Load the file
@@ -209,10 +216,12 @@ class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesUtils>( "LeavesUtils", LeavesUtils, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestGeneration>( "LeavesQuestGeneration", LeavesQuestGeneration, { lifecycle: Lifecycle.Singleton } );
+        container.register<LeavesSettingsManager>( "LeavesSettingsManager", LeavesSettingsManager, { lifecycle: Lifecycle.Singleton } );
 
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
         this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
         this.leavesQuestGeneration = container.resolve<LeavesQuestGeneration>( "LeavesQuestGeneration" );
+        this.leavesSettingsManager = container.resolve<LeavesSettingsManager>( "LeavesSettingsManager" );
 
         this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
         this.leavesUtils.setTierList( "config/itemtierlist.jsonc" );
@@ -429,6 +438,7 @@ class Questrandomizer implements IPreSptLoadMod
         //Init questDB and load anything that might have been generated before.
         this.QuestDB = {};
         this.localizationChangesToSave = {};
+        this.leavesQuestGeneration.setLocalizationChanges( this.localizationChangesToSave );
         this.leavesUtils.loadLocalization( "assets/data/localization" );
         this.loadEditedQuests();
         this.loadHandoverCategories();
@@ -470,6 +480,8 @@ class Questrandomizer implements IPreSptLoadMod
 
         //Generate a category list
         this.generateWeaponCategorySheet();
+
+        this.leavesQuestGeneration.generateQuest();
 
         this.leavesUtils.saveIDs( "assets/generated/ids.jsonc" );
         this.leavesUtils.dataDump();

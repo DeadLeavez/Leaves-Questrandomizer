@@ -8,6 +8,7 @@ import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/m
 import { LeavesUtils } from "./LeavesUtils";
 import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
 import { QuestStatus } from "@spt/models/enums/QuestStatus";
+import { QuestRewardType } from "@spt/models/enums/QuestRewardType";
 
 @injectable()
 export class LeavesQuestTools
@@ -75,12 +76,6 @@ export class LeavesQuestTools
                         "weaponCaliber": [],
                         "weaponModsExclusive": [],
                         "weaponModsInclusive": []
-                    },
-                    {
-                        "conditionType": "Location",
-                        "dynamicLocale": false,
-                        "id": this.hashUtil.generate(),
-                        "target": []
                     }
                 ],
                 "id": this.hashUtil.generate()
@@ -89,7 +84,7 @@ export class LeavesQuestTools
             "dynamicLocale": false,
             "globalQuestCounterId": "",
             "id": this.hashUtil.generate(),
-            "index": 0,
+            "index": quest.conditions.AvailableForFinish.length,
             "oneSessionOnly": false,
             "parentId": "",
             "type": "Elimination",
@@ -128,14 +123,14 @@ export class LeavesQuestTools
             "dynamicLocale": false,
             "globalQuestCounterId": "",
             "id": this.hashUtil.generate(),
-            "index": 1,
+            "index": quest.conditions.AvailableForFinish.length,
             "isEncoded": false,
-            "maxDurability": 15,
+            "maxDurability": 100,
             "minDurability": 0,
-            "onlyFoundInRaid": true,
+            "onlyFoundInRaid": false,
             "parentId": "",
             "target": [
-                "5447a9cd4bdc2dbd208b4567"
+                "57347c5b245977448d35f6e1" //Screws, nuts and bolts! (meme)
             ],
             "value": count,
             "visibilityConditions": []
@@ -417,13 +412,13 @@ export class LeavesQuestTools
         }
     }
 
-    public addQuestPrerequisite( targetQuest: IQuest, previousQuestID: string )
+    public addPrerequisiteQuest( targetQuest: IQuest, previousQuestID: string )
     {
         let prereqQuestCondition: any =
         {
             "conditionType": "Quest",
             "id": this.hashUtil.generate(),
-            "index": 0,
+            "index": targetQuest.conditions.AvailableForStart.length,
             "parentId": "",
             "dynamicLocale": false,
             "target": previousQuestID,
@@ -435,26 +430,73 @@ export class LeavesQuestTools
             "availableAfter": 0,
             "dispersion": 0,
             "visibilityConditions": []
-        }
+        };
 
         targetQuest.conditions.AvailableForStart.push( prereqQuestCondition );
     }
 
-    public addLevelPrerequisite( targetQuest: IQuest, requiredLevel: number )
+    public addPrerequisiteLevel( targetQuest: IQuest, requiredLevel: number )
     {
         let prereqQuestCondition: any =
         {
             "conditionType": "Level",
             "id": this.hashUtil.generate(),
-            "index": 1,
+            "index": targetQuest.conditions.AvailableForStart.length,
             "parentId": "",
             "dynamicLocale": false,
             "globalQuestCounterId": "",
             "value": requiredLevel,
             "compareMethod": ">=",
             "visibilityConditions": []
-        }
-        
+        };
+
         targetQuest.conditions.AvailableForStart.push( prereqQuestCondition );
+    }
+
+    public addRewardExperience( targetQuest: IQuest, experienceCount: number )
+    {
+        let reward =
+        {
+            availableInGameEditions: [],
+            value: experienceCount,
+            id: this.hashUtil.generate(),
+            type: QuestRewardType.EXPERIENCE,
+            index: targetQuest.rewards.Success.length,
+            unknown: false
+        };
+        targetQuest.rewards.Success.push( reward );
+    }
+
+    /*
+    DON'T GIVE MULTIPLE OF NONSTACKABLE ITEMS. JESUS CHRIST CURSED SHIT WILL HAPPEN. JUST DON'T
+    */
+    public addRewardItem( targetQuest: IQuest, itemID: string, count: number, FIR: boolean )
+    {
+        const rewardGroupID = this.hashUtil.generate();
+        let reward =
+        {
+            "availableInGameEditions": [],
+            "value": 1,
+            "id": this.hashUtil.generate(),
+            type: QuestRewardType.ITEM,
+            "index": targetQuest.rewards.Success.length,
+            "target": rewardGroupID,
+            "unknown": false,
+            "findInRaid": true,
+            "items": []
+        }
+        let item =
+        {
+            "_id": rewardGroupID,
+            "_tpl": itemID,
+            "upd": {
+                "StackObjectsCount": count,
+                "SpawnedInSession": FIR
+            }
+        }
+
+        reward.items.push( item );
+
+        targetQuest.rewards.Success.push( reward );
     }
 }
