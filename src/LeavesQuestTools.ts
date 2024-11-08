@@ -117,7 +117,7 @@ export class LeavesQuestTools
         return condition.push( tempGear ) - 1;
     }
 
-    public addHandOverObjectiveToQuest( quest: IQuest, count: number ): number
+    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items:string[] ): number
     {
         let objectiveData = {
             "conditionType": "HandoverItem",
@@ -131,12 +131,12 @@ export class LeavesQuestTools
             "minDurability": 0,
             "onlyFoundInRaid": false,
             "parentId": "",
-            "target": [
-                "57347c5b245977448d35f6e1" //Screws, nuts and bolts! (meme)
-            ],
+            "target": [],
             "value": count,
             "visibilityConditions": []
         }
+
+        objectiveData.target.push( ...items );
 
         return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
     }

@@ -11,8 +11,7 @@ export class LeavesIdManager
         @inject( "HashUtil" ) protected hashUtil: HashUtil,
         @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
     )
-    {
-    }
+    {}
 
     public load( filename: string )
     {

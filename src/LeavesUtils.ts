@@ -243,6 +243,11 @@ export class LeavesUtils
 
     public getRandomItemFromTier( tier: number ): string
     {
+        if ( !this.tierList[ tier ] )
+        {
+            tier = this.getClosestTier( tier );
+        }
+        
         let size = this.tierList[ tier ].length;
 
         return this.tierList[ tier ][ randomInt( size ) ];

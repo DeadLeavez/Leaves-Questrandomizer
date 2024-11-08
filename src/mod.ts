@@ -21,18 +21,12 @@ import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
 import { LeavesIdManager } from "./LeavesIdManager";
 
 // TODO:
-// Quest generation?
-//  Still re-roll handover on easy quests.
-// Kill discrepancies between scavs/pmcs
 // Locale to weapon categories?
 // Randomize gear if its already there (NOT DONE)
-// Have enemy be stunned?
-// Forbid usage of meds?
+// Zones
 
 class Questrandomizer implements IPreSptLoadMod
 {
-
-
     private databaseServer: DatabaseServer;
     private weightedRandomHelper: WeightedRandomHelper;
     private handbookHelper: HandbookHelper;
@@ -265,7 +259,7 @@ class Questrandomizer implements IPreSptLoadMod
         //Generate a category list
         this.generateWeaponCategorySheet();
 
-        this.leavesQuestGeneration.generateQuest();
+        //this.leavesQuestGeneration.generateQuest();
 
 
         //this.leavesUtils.dataDump();
@@ -341,7 +335,7 @@ class Questrandomizer implements IPreSptLoadMod
         let editHandOverOverride = false;
         if ( !this.leavesUtils.searchObject( "HandoverItem", quest.conditions.AvailableForFinish ) && Math.random() < this.leavesSettingsManager.getConfig().addHandOverObjectiveToQuestChance )
         {
-            this.leavesQuestTools.addHandOverObjectiveToQuest( quest, this.leavesSettingsManager.getConfig().addHandOverObjectiveBaseCount );
+            this.leavesQuestTools.addHandOverObjectiveToQuest( quest, this.leavesSettingsManager.getConfig().addHandOverObjectiveBaseCount, [ this.leavesUtils.getRandomItemFromTier( 5 ) ] );
             editHandOverOverride = true;
             this.leavesUtils.printColor( "Added Hand Over objective to quest", LogTextColor.YELLOW );
         }
@@ -446,7 +440,7 @@ class Questrandomizer implements IPreSptLoadMod
         task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.leavesSettingsManager.getConfig().adjustHandoverCountFactorsUpDown );
 
         // MODIFIED ABCD
-        this.leavesLocaleGeneration.generateHandoverItemLocale( task, categoryName, this.leavesSettingsManager.getLocalizationChangesToSave() );
+        this.leavesLocaleGeneration.generateHandoverItemLocale( task, categoryName );
 
         return true;
     }
@@ -472,6 +466,7 @@ class Questrandomizer implements IPreSptLoadMod
             hasEquipment: -1,
             questID: questID,
             isEasyQuest: false,
+            killsEnemyTypeDistance: 0
         }
 
         //Check if its on the list of "easy" quests
@@ -495,7 +490,10 @@ class Questrandomizer implements IPreSptLoadMod
             }
             else if ( conditions[ counterConditionIndex ].conditionType === "InZone" )
             {
-                flags.hasInZone = counterConditionIndex;
+                //flags.hasInZone = counterConditionIndex; //For now lets purge them.
+                conditions.splice( counterConditionIndex );
+                counterConditionIndex--;
+                continue;
             }
             else if ( conditions[ counterConditionIndex ].conditionType === "Equipment" )
             {
@@ -541,7 +539,7 @@ class Questrandomizer implements IPreSptLoadMod
             //Edit zones possibly (PROBABLY WONT DO)
             if ( flags.hasInZone >= 0 )
             {
-
+                this.leavesUtils.printColor( "WE HAVE ZONES!??!?" );
             }
 
             //We edit the kill quest
@@ -550,11 +548,18 @@ class Questrandomizer implements IPreSptLoadMod
             //edit KILL count if its not a special type
             if ( flags.hasSavageRole < 0 )
             {
-                const previousValue: number = task.value as number;
-                task.value = this.leavesUtils.generateValueAdjustment( previousValue, this.leavesSettingsManager.getConfig().adjustKillCountFactorsUpDown );
+                if ( flags.killsEnemyTypeDistance > 0 )
+                {
+                    task.value = Math.round( Math.max( task.value as number / ( flags.killsEnemyTypeDistance * this.leavesSettingsManager.getConfig().killCountWhenTargetTypeChangesFactor ), 5) );
+                }
+                if ( flags.killsEnemyTypeDistance < 0 )
+                {
+                    task.value = Math.round( task.value as number * ( Math.abs( flags.killsEnemyTypeDistance ) * this.leavesSettingsManager.getConfig().killCountWhenTargetTypeChangesFactor ) );
+                }
+                task.value = this.leavesUtils.generateValueAdjustment( task.value as number, this.leavesSettingsManager.getConfig().adjustKillCountFactorsUpDown );
             }
 
-            this.leavesLocaleGeneration.generateKillsLocale( task, flags, this.leavesSettingsManager.getLocalizationChangesToSave() )
+            this.leavesLocaleGeneration.generateKillsLocale( task, flags )
         }
         //We don't edit anything else with counters for now.
         return;
@@ -595,7 +600,10 @@ class Questrandomizer implements IPreSptLoadMod
             }
             else
             {
-                killsCondition.target = this.leavesSettingsManager.getValidTargets().at( randomInt( this.leavesSettingsManager.getValidTargets().length - 1 ) );
+                const validTargets = this.leavesSettingsManager.getValidTargets()
+                const previousTarget: string = killsCondition.target as string;
+                killsCondition.target = validTargets.at( randomInt( this.leavesSettingsManager.getValidTargets().length - 1 ) );
+                flags.killsEnemyTypeDistance = validTargets.indexOf( previousTarget ) - validTargets.indexOf( killsCondition.target );
             }
         }
 

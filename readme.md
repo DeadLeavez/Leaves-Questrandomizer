@@ -87,3 +87,8 @@ Current Shortcomings
 - Chinese translation - Many thanks to ``Echo``
 - Added mod categories, and reworked the whole weapon categories file. You can now add weapon mod categories to other categories. Example adding silencer mod category to AKM-series weapon category.
 - Added more weapon and mod-categories to the default config.
+
+## 0.0.8
+- Massive reworks of behind the scenes. (Quest generation coming soon)
+- Remove ZONE requirements for now. (This might have bricked quests in earlier versions, for that I sincerely apologize.)
+- Added ratios between scavs/pmcs/any so that quests that convert to other things will have their kill counts adjusted.

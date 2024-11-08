@@ -87,15 +87,15 @@ export class LeavesQuestGeneration
         questName: string
     )
     {
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } acceptPlayerMessage`, acceptPlayerMessage, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } changeQuestMessageText`, changeQuestMessageText, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } completePlayerMessage`, completePlayerMessage, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } description`, description, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } failMessageText`, failMessageText, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } declinePlayerMessage`, declinePlayerMessage, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } startedMessageText`, startedMessageText, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } successMessageText`, successMessageText, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
-        this.leavesLocaleGeneration.editLocaleText( `${ ID } name`, questName, locale, this.leavesSettingsManager.getLocalizationChangesToSave() );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } acceptPlayerMessage`, acceptPlayerMessage, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } changeQuestMessageText`, changeQuestMessageText, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } completePlayerMessage`, completePlayerMessage, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } description`, description, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } failMessageText`, failMessageText, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } declinePlayerMessage`, declinePlayerMessage, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } startedMessageText`, startedMessageText, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } successMessageText`, successMessageText, locale );
+        this.leavesLocaleGeneration.editLocaleText( `${ ID } name`, questName, locale );
     }
 
     public generateQuest()
@@ -128,8 +128,8 @@ export class LeavesQuestGeneration
             isEasyQuest: false,
         }
 
-        const handoverIndex = this.leavesQuestTools.addHandOverObjectiveToQuest( newQuest, 1 );
-        this.leavesLocaleGeneration.generateHandoverItemLocale( newQuest.conditions.AvailableForFinish[ handoverIndex ], "", this.leavesSettingsManager.getLocalizationChangesToSave() );
+        const handoverIndex = this.leavesQuestTools.addHandOverObjectiveToQuest( newQuest, 1, [ this.leavesUtils.getRandomItemFromTier( 5 ) ] );
+        this.leavesLocaleGeneration.generateHandoverItemLocale( newQuest.conditions.AvailableForFinish[ handoverIndex ], "" );
         //this.leavesQuestTools.generateKillsLocale( newQuest.conditions.AvailableForFinish[ killIndex ], flags, this.localizationChangesToSave );
         for ( const locale of this.leavesLocaleGeneration.getLoadedLocales() )
         {

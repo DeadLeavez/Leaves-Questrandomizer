@@ -20,6 +20,7 @@
     "chanceForSpecificWeapon": 0.10, //Chance to instead of a weapon group, select a specific weapon from the "SpecificWeapon" array in weaponcategories.jsonc
 
     "adjustKillCountFactorsUpDown": [ 0.20, 0.20 ], //How many kills a quest will need. It's randomly increased/decreased by a multiplier between the factors. So default settings makes the multiplier between 0.8-1.2
+    "killCountWhenTargetTypeChangesFactor": 1.5, //Ill tell how this works later. Idk
 
     "addKillObjectiveToQuestChance": 0.60, //Chance to add a kill objective to quests that don't naturally have them.
     "addKillObjectiveKillCount": 5, //Base kill count to added objectives. Then multiplied by the factors above.
@@ -77,9 +78,17 @@
     ],
 
     //Quest generation.
-    "QuestGen_TotalQuests": 10,
-    "QuestGen_Traders":
-    [
-        
-    ]
+    "QuestGen_TotalQuests": 10, //Amount of quests per type
+    "QuestGen_Trader":"54cb50c76803fa8b248b4571" //What trader will provide the new quests.
+
+    //Default Traders
+    // PRAPOR = "54cb50c76803fa8b248b4571"
+    // THERAPIST = "54cb57776803fa99248b456e"
+    // FENCE = "579dc571d53a0658a154fbec"
+    // SKIER = "58330581ace78e27b8b10cee"
+    // PEACEKEEPER = "5935c25fb3acc3127c3d8cd9"
+    // MECHANIC = "5a7c2eca46aef81a7ca2145d"
+    // RAGMAN = "5ac3b934156ae10c4430e83c"
+    // JAEGER = "5c0647fdd443bc2504c2d371"
+    // REF = "6617beeaa9cfa777ca915b7c"
 }

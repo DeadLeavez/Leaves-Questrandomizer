@@ -67,7 +67,7 @@ export class LeavesLocaleGeneration
         }
     }
 
-    public generateKillsLocale( task: IQuestCondition, flags: any, localizationChangesToSave: any )
+    public generateKillsLocale( task: IQuestCondition, flags: any )
     {
         for ( const targetLocale of this.getLoadedLocales() )
         {
@@ -183,11 +183,11 @@ export class LeavesLocaleGeneration
                 }
             }
 
-            this.editLocaleText( task.id, line, targetLocale, localizationChangesToSave );
+            this.editLocaleText( task.id, line, targetLocale );
         }
     }
 
-    public generateHandoverItemLocale( task: IQuestCondition, categoryName: string, localizationChangesToSave: any )
+    public generateHandoverItemLocale( task: IQuestCondition, categoryName: string )
     {
         for ( const targetLocale of this.getLoadedLocales() )
         {
@@ -222,7 +222,7 @@ export class LeavesLocaleGeneration
                 line += `${ this.getLoc( "Category", targetLocale ) }` // category
             }
 
-            this.editLocaleText( task.id, line, targetLocale, localizationChangesToSave );
+            this.editLocaleText( task.id, line, targetLocale );
         }
     }
 
@@ -238,13 +238,13 @@ export class LeavesLocaleGeneration
     {
         this.databaseServer.getTables().locales.global[ targetLocale ][ id ] = text;
     }
-    public editLocaleText( targetID: string, newText: string, targetLocale: string, localizationChanges: any )
+    public editLocaleText( targetID: string, newText: string, targetLocale: string )
     {
-        if ( !localizationChanges[ targetLocale ] )
+        if ( !this.leavesSettingsManager.getLocalizationChangesToSave()[ targetLocale ] )
         {
-            localizationChanges[ targetLocale ] = {};
+            this.leavesSettingsManager.getLocalizationChangesToSave()[ targetLocale ] = {};
         }
-        localizationChanges[ targetLocale ][ targetID ] = newText;
+        this.leavesSettingsManager.getLocalizationChangesToSave()[ targetLocale ][ targetID ] = newText;
         this.databaseServer.getTables().locales.global[ targetLocale ][ targetID ] = newText;
 
         if ( targetLocale === "en" )
