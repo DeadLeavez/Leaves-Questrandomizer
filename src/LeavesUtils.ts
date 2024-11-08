@@ -19,8 +19,6 @@ export class LeavesUtils
     private tierList: any;
     private itemTiers: number[];
     private IDTranslator: any;
-    private localization: any;
-    private targetLocales: Set<string>;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -129,6 +127,25 @@ export class LeavesUtils
 
     }
 
+    public getLocale( locale: string, id: string, type: string = "" ):string
+    {
+        let localeDB;
+        if ( this.databaseServer.getTables().locales.global[ locale ] )
+        {
+            localeDB = this.databaseServer.getTables().locales.global[ locale ];
+        }
+        else
+        {
+            localeDB = this.databaseServer.getTables().locales.global[ "en" ];
+        }
+
+        if ( !localeDB[ `${ id }${ type }` ] )
+        {
+            localeDB = this.databaseServer.getTables().locales.global[ "en" ];
+        }
+
+        return localeDB[ `${ id }${ type }` ];
+    }
     public getStringBetweenChars( original: string, char1: string, char2: string )
     {
         return original.substring(
@@ -250,57 +267,6 @@ export class LeavesUtils
             this.itemTiers.push( Number( tier ) );
         }
     }
-
-    public getLocale( locale: string, id: string, type: string = "" )
-    {
-        let localeDB;
-        if ( this.databaseServer.getTables().locales.global[ locale ] )
-        {
-            localeDB = this.databaseServer.getTables().locales.global[ locale ];
-        }
-        else
-        {
-            localeDB = this.databaseServer.getTables().locales.global[ "en" ];
-        }
-
-        if ( !localeDB[ `${ id }${ type }` ] )
-        {
-            localeDB = this.databaseServer.getTables().locales.global[ "en" ];
-        }
-
-        return localeDB[ `${ id }${ type }` ];
-    }
-    public addLocaleToAll( text: string, id: string )
-    {
-        for ( const locale in this.databaseServer.getTables().locales.global )
-        {
-            this.databaseServer.getTables().locales.global[ locale ][ id ] = text;
-        }
-    }
-    public addLocaleTo( targetLocale: string, text: string, id: string )
-    {
-        this.databaseServer.getTables().locales.global[ targetLocale ][ id ] = text;
-    }
-    public editLocaleText( targetID: string, newText: string, targetLocale: string, localizationChanges: any )
-    {
-        if ( !localizationChanges[ targetLocale ] )
-        {
-            localizationChanges[ targetLocale ] = {};
-        }
-        localizationChanges[ targetLocale ][ targetID ] = newText;
-        this.databaseServer.getTables().locales.global[ targetLocale ][ targetID ] = newText;
-
-        if ( targetLocale === "en" )
-        {
-            this.printColor( newText, LogTextColor.MAGENTA );
-        }
-    }
-    public addFullLocale( language: string, name: string, shortname: string, description: string, targetID: string )
-    {
-        this.addLocaleTo( language, name, `${ targetID } Name` );
-        this.addLocaleTo( language, shortname, `${ targetID } ShortName` );
-        this.addLocaleTo( language, description, `${ targetID } Description` );
-    }
     public isProperItem( item: string ): boolean
     {
         const itemDB = this.databaseServer.getTables().templates.items;
@@ -327,23 +293,6 @@ export class LeavesUtils
             return false;
         }
         return true;
-    }
-    public loadIDs( filename: string )
-    {
-        this.IDTranslator = this.loadFile( filename );
-    }
-    public saveIDs( filename: string ) 
-    {
-        this.saveFile( this.IDTranslator, filename );
-    }
-    public getID( name: string ): string
-    {
-        // this.debugJsonOutput( this.IDTranslator );
-        if ( !this.IDTranslator[ name ] )
-        {
-            this.IDTranslator[ name ] = this.hashUtil.generate();
-        }
-        return this.IDTranslator[ name ];
     }
 
     public RTT_Underline( original: string ): string
@@ -497,46 +446,9 @@ export class LeavesUtils
         target[ parentName ][ item ] = true;//`${ this.getLocale( "en", item, " Name" ) }`;*/
     }
 
-    public loadLocalization( localeRoot: string )
-    {
-        this.localization = [];
 
-        for ( const locale of this.getFoldersInFolder( localeRoot ) )
-        {
-            for ( const file of this.getFilesInFolder( `${ localeRoot }/${ locale }` ) )
-            {
-                this.localization[ locale ] = this.loadFile( `${ localeRoot }/${ locale }/${ file }` );
-            }
-        }
 
-        //Set up locale system.
-        this.targetLocales = new Set<string>();
-        for ( const locale in this.localization )
-        {
-            this.targetLocales.add( locale );
-        }
-        for ( const language in this.databaseServer.getTables().locales.global )
-        {
-            this.targetLocales.add( language );
-        }
-    }
 
-    public getLoadedLocales(): Set<string>
-    {
-        return this.targetLocales;
-    }
-
-    public getLoc( original: string, targetLocale ): string
-    {
-        if ( this.localization[ targetLocale ] && this.localization[ targetLocale ][ original ] )
-        {
-            return this.localization[ targetLocale ][ original ];
-        }
-        else
-        {
-            return this.localization[ "en" ][ original ];
-        }
-    }
 
 }
 export const RTT_Align =

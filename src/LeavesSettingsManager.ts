@@ -1,37 +1,25 @@
-import path from "node:path";
-import { inject, injectable } from "tsyringe";
+import { DependencyContainer, inject, injectable } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
-import { VFS } from "@spt/utils/VFS";
 import { LeavesUtils } from "./LeavesUtils"
-import packageJson from "../package.json";
 import { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
-
-class ModSettings
-{
-
-}
 
 @injectable()
 export class LeavesSettingsManager
 {
-
-    //WE WANNA MOVE THESE
-    public config: any;
-    public weaponCategories: any;
-    public handoverCategories: any;
-    public weaponCategoriesWeighting: any;
-    public gearList: any;
-    public localizationChangesToSave: any;
-    public bodyParts: string[];
-    public validTargets: string[];
-    public validMaps: string[];
-    public easyMaps: string[];
-    public locationIdMap;
-    //END
-
+    private config: any;
+    private weaponCategories: any;
+    private handoverCategories: any;
+    private weaponCategoriesWeighting: any;
+    private gearList: any;
+    private localizationChanges: any;
+    private bodyParts: string[];
+    private validTargets: string[];
+    private validMaps: string[];
+    private easyMaps: string[];
+    private locationIDMap;
+    
     constructor(
         @inject( "PreSptModLoader" ) protected preSptModLoader: PreSptModLoader,
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -41,10 +29,30 @@ export class LeavesSettingsManager
     )
     {
         this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
+
+        //Load localization bundle
+        this.localizationChanges = this.leavesUtils.loadFile( "assets/generated/locale.jsonc" );
+
         this.loadHandoverCategories();
         this.loadWeaponCategories();
+        this.loadEditedLocalization();
+
+        const miscData = this.leavesUtils.loadFile( "assets/data/misc.jsonc" );
+        this.locationIDMap = miscData.locationIdMap;
+        this.validMaps = miscData.validMaps;
+        this.validTargets = miscData.validTargets;
+        this.bodyParts = miscData.bodyParts;
+        this.easyMaps = miscData.easyMaps;
+
+        this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
+
     }
 
+    public saveChanges()
+    {
+        this.leavesUtils.saveFile( this.localizationChanges, "assets/generated/locale.jsonc" );
+        this.leavesUtils.printColor( `[Questrandomizer] Saved localization bundle!` )    
+    }
 
     private loadWeaponCategories()
     {
@@ -99,13 +107,76 @@ export class LeavesSettingsManager
         //this.leavesUtils.debugJsonOutput( this.handoverCategories );
     }
 
+    private loadEditedLocalization()
+    {
+        //Load into database.
+        let localeDB = this.databaseServer.getTables().locales.global;
+
+        for ( const language in this.localizationChanges )
+        {
+
+            for ( const changeID in this.localizationChanges[ language ] )
+            {
+                if ( !localeDB[ language ] )
+                {
+                    localeDB[ language ] = {};
+                }
+                localeDB[ language ][ changeID ] = this.localizationChanges[ language ][ changeID ];
+            }
+        }
+
+        this.leavesUtils.printColor( `[Questrandomizer] Loaded localization bundle!` );
+    }
+    
+    public getLocalizationChangesToSave()
+    {
+        return this.localizationChanges;
+    }
+
+    public getGearList()
+    {
+        return this.gearList;
+    }
+
+    public getEasyMaps()
+    {
+        return this.easyMaps;
+    }
+
+    public getBodyParts()
+    {
+        return this.bodyParts;
+    }
+
+    public getValidTargets()
+    {
+        return this.validTargets;
+    }
+
+    public getValidMaps()
+    {
+        return this.validMaps;
+    }
+
+    public getLocationIDMap()
+    {
+        return this.locationIDMap;
+    }
+
+    public getweaponCategoriesWeighting()
+    {
+        return this.weaponCategoriesWeighting;
+    }
+    public getWeaponCategories()
+    {
+        return this.weaponCategories;
+    }
+    public gethandoverCategories()
+    {
+        return this.handoverCategories
+    }
     public getConfig(): any
     {
         return this.config;
-    }
-
-    public setLocalizationChanges( localizationChanges: any )
-    {
-        this.config.localizationChangesToSave = localizationChanges;
     }
 }
