@@ -19,6 +19,8 @@
     "AnyWeapon": "Any Weapon",
     "AllRequired": "All Required",
     "OneRequired": "Any Required",
+    "AND": "AND",
+    "OR": "OR",
     "bigmap": "海关",
     "factory4_day": "工厂 - 日间",
     "factory4_night": "工厂 - 夜间",
