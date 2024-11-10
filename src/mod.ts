@@ -757,7 +757,10 @@ class Questrandomizer implements IPreSptLoadMod
                 const weaponGroup = this.leavesSettingsManager.getWeaponCategories().categories[ category ];
 
                 //Add weapon list
-                let categorysheet = this.leavesUtils.RTT_Size( `[${ this.leavesLocaleGeneration.getLoc( "SheetCategory", language ) }: ${ category }]`, "+4px" );
+                let tempLocaleForSheetCategory = this.leavesLocaleGeneration.getLoc( "SheetCategory", language );
+                let tempLocaleForWeaponCategory = this.leavesLocaleGeneration.getWeaponCategoryLocale( category, language );
+
+                let categorysheet = this.leavesUtils.RTT_Size( `[${ tempLocaleForSheetCategory }: ${ tempLocaleForWeaponCategory }]`, "+4px" ); //HERE
                 categorysheet += `\n-----------------------------\n`;
                 if ( weaponGroup.weapons.length === 0 )
                 {
@@ -776,7 +779,7 @@ class Questrandomizer implements IPreSptLoadMod
                 categorysheet += this.addToCategorySheet( weaponGroup, "mods-exclusive", "ForbiddenMods", language );
 
                 const categoryID = this.leavesIdManager.get( category );
-                this.leavesLocaleGeneration.addFullLocale( language, category, category, categorysheet, categoryID );
+                this.leavesLocaleGeneration.addFullLocale( language, tempLocaleForWeaponCategory, tempLocaleForWeaponCategory, categorysheet, categoryID );
                 sheet += categorysheet;
             }
 
@@ -826,7 +829,7 @@ class Questrandomizer implements IPreSptLoadMod
             {
                 if ( firstDone )
                 {
-                    categorysheet += weaponGroup[ modcategory ][ modgroup ] ? `\tAND\n` : `\tOR\n`; //ADD LOCALE TO THIS
+                    categorysheet += weaponGroup[ modcategory ][ modgroup ] ? `\t${this.leavesLocaleGeneration.getLoc("AND", language)}\n` : `\t${this.leavesLocaleGeneration.getLoc("OR", language)}\n`; //ADD LOCALE TO THIS
                 }
                 categorysheet += `\t${ modgroup }\n`;
                 firstDone = true;

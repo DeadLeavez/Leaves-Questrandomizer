@@ -16,6 +16,7 @@ import { LeavesSettingsManager } from "./LeavesSettingsManager";
 export class LeavesLocaleGeneration
 {
     private loadedModLocalization;
+    private weaponCategoriesLocalization;
     private targetLocales: Set<string>;
 
     constructor(
@@ -29,13 +30,21 @@ export class LeavesLocaleGeneration
     )
     {
         this.loadedModLocalization = [];
+        this.weaponCategoriesLocalization = [];
         const localeRoot = "assets/data/localization";
 
         for ( const locale of this.leavesUtils.getFoldersInFolder( localeRoot ) )
         {
             for ( const file of this.leavesUtils.getFilesInFolder( `${ localeRoot }/${ locale }` ) )
             {
-                this.loadedModLocalization[ locale ] = this.leavesUtils.loadFile( `${ localeRoot }/${ locale }/${ file }` );
+                if ( file === "base.json" )
+                {
+                    this.loadedModLocalization[ locale ] = this.leavesUtils.loadFile( `${ localeRoot }/${ locale }/${ file }` );
+                }
+                if ( file === "weaponCategories.json" )
+                {
+                    this.weaponCategoriesLocalization[ locale ] = this.leavesUtils.loadFile( `${ localeRoot }/${ locale }/${ file }` );
+                }
             }
         }
 
@@ -55,7 +64,21 @@ export class LeavesLocaleGeneration
         return this.targetLocales;
     }
 
-    public getLoc( original: string, targetLocale ): string
+    public getWeaponCategoryLocale( category: string, targetLocale: string ): string
+    {
+        if ( this.weaponCategoriesLocalization[ targetLocale ] && this.weaponCategoriesLocalization[ targetLocale ][ category ] )
+        {
+            return this.weaponCategoriesLocalization[ targetLocale ][ category ];
+        }
+        else if ( this.weaponCategoriesLocalization[ "en" ][ category ] )
+        {
+            return this.weaponCategoriesLocalization[ "en" ][ category ];
+        }
+
+        return category;
+    }
+
+    public getLoc( original: string, targetLocale: string ): string
     {
         if ( this.loadedModLocalization[ targetLocale ] && this.loadedModLocalization[ targetLocale ][ original ] )
         {
@@ -109,13 +132,13 @@ export class LeavesLocaleGeneration
             if ( flags.hasWeapon >= 0 )
             {
                 line += `${ this.getLoc( "usingWeaponGroup", targetLocale ) } `;
-                if ( flags.hasSpecificWeapon >= 0 )
+                if ( flags.hasSpecificWeapon >= 0 ) //Specific Weapon
                 {
                     line += `${ this.leavesUtils.getLocale( targetLocale, flags.whatWeaponOrGroup, " Name" ) } `;
                 }
-                else
+                else //Weapon Group
                 {
-                    line += `${ flags.whatWeaponOrGroup } `;
+                    line += `${ this.getWeaponCategoryLocale( flags.whatWeaponOrGroup, targetLocale ) } `;
                 }
             }
 

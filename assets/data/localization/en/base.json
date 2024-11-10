@@ -20,6 +20,8 @@
     "AnyWeapon": "Any Weapon",
     "AllRequired": "All Required",
     "OneRequired": "Any Required",
+    "AND": "AND",
+    "OR": "OR",
 
     "bigmap": "Customs",
     "factory4_day": "Factory - Day",
