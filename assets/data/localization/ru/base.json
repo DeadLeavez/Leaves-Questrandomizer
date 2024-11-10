@@ -19,6 +19,8 @@
     "AnyWeapon": "Any Weapon",
     "AllRequired": "All Required",
     "OneRequired": "Любые необходимые",
+    "AND": "AND",
+    "OR": "OR",
     "bigmap": "на Таможне",
     "factory4_day": "на Заводе - Днем",
     "factory4_night": "на Заводе - Ночью",
