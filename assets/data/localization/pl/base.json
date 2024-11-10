@@ -19,6 +19,8 @@
     "AnyWeapon": "Any Weapon",
     "AllRequired": "All Required",
     "OneRequired": "Any Required",
+    "AND": "AND",
+    "OR": "OR",
     "bigmap": "Skład Celny",
     "factory4_day": "Fabryka",
     "factory4_night": "Fabryka nocą",
