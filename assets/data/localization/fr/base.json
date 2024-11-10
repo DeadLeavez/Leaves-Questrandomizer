@@ -19,6 +19,8 @@
     "AnyWeapon": "Any Weapon",
     "AllRequired": "All Required",
     "OneRequired": "Any Required",
+    "AND": "AND",
+    "OR": "OR",
     "bigmap": "Douanes",
     "factory4_day": "Usine - Jour",
     "factory4_night": "Usine - Nuit",
