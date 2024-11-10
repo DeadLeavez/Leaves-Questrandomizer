@@ -19,6 +19,8 @@
     "AnyWeapon": "Any Weapon",
     "AllRequired": "All Required",
     "OneRequired": "Any Required",
+    "AND": "AND",
+    "OR": "OR",
     "bigmap": "Zollgebäude",
     "factory4_day": "Fabrik - Tag",
     "factory4_night": "Fabrik - Nacht",
