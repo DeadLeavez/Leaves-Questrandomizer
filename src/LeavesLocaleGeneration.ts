@@ -27,7 +27,7 @@ export class LeavesLocaleGeneration
         @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
         @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager
     )
-    {      
+    {
         this.loadedModLocalization = [];
         const localeRoot = "assets/data/localization";
 
@@ -135,22 +135,32 @@ export class LeavesLocaleGeneration
             if ( flags.hasLocation >= 0 )
             {
                 let hasAddedGz = false;
-                let mapsline = `${ this.getLoc( "atLocation", targetLocale ) } `;
+                let mapsline = `${ this.getLoc( "atLocation", targetLocale ) } [`;
                 for ( const map of conditions[ flags.hasLocation ].target )
                 {
+                    if ( map !== conditions[ flags.hasLocation ].target[ 0 ] )
+                    {
+                        if ( hasAddedGz === true && ( map.toLowerCase() === "sandbox" || map.toLowerCase() === "sandbox_high" ) )
+                        { }
+                        else
+                        {
+                            mapsline += ` or `;
+                        }
+                    }
                     if ( map.toLowerCase() === "sandbox" || map.toLowerCase() === "sandbox_high" )
                     {
                         if ( !hasAddedGz )
                         {
-                            mapsline += `${ this.getLoc( "sandbox", targetLocale ) } `;
+                            mapsline += `${ this.getLoc( "sandbox", targetLocale ) }`;
                             hasAddedGz = true;
                         }
                     }
                     else
                     {
-                        mapsline += `${ this.getLoc( map.toLowerCase(), targetLocale ) } `;
+                        mapsline += `${ this.getLoc( map.toLowerCase(), targetLocale ) }`;
                     }
                 }
+                mapsline += `] `;
                 line += mapsline;
             }
 
@@ -192,7 +202,8 @@ export class LeavesLocaleGeneration
         for ( const targetLocale of this.getLoadedLocales() )
         {
             let line = `${ this.getLoc( "HandoverItem", targetLocale ) } `; //Hand over
-            line += `${ task.value } ${ this.getLoc( "ofItem", targetLocale ) } `; //x counts of
+            line += `${ task.value } ${ this.getLoc( "ofItem", targetLocale ) }`; //x counts of
+            line += task.onlyFoundInRaid ? this.leavesUtils.RTT_Rainbowify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) : ``;
             //No category
             if ( categoryName === "" )
             {
@@ -219,7 +230,7 @@ export class LeavesLocaleGeneration
 
                 line += `${ this.getLoc( "itemsFromThe", targetLocale ) } ` // items from the
                 line += `${ newName } `;
-                line += `${ this.getLoc( "Category", targetLocale ) }` // category
+                line += `${ this.getLoc( "Category", targetLocale ) } ` // category
             }
 
             this.editLocaleText( task.id, line, targetLocale );

@@ -92,3 +92,8 @@ Current Shortcomings
 - Massive reworks of behind the scenes. (Quest generation coming soon)
 - Remove ZONE requirements for now. (This might have bricked quests in earlier versions, for that I sincerely apologize.)
 - Added ratios between scavs/pmcs/any so that quests that convert to other things will have their kill counts adjusted.
+
+## 0.0.9
+- Fix issue with quests handover-tasks sometimes not being randomized.
+- Show found in raid requirements (oops)
+- Safeguard against other mods adding broken items to quests.

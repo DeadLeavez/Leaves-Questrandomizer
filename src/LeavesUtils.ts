@@ -41,6 +41,22 @@ export class LeavesUtils
     public setTierList( file: string )
     {
         this.tierList = this.loadFile( file );
+        const itemDB = this.databaseServer.getTables().templates.items;
+
+        //Verify
+        for ( let tier in this.tierList )
+        {
+            let currentTier: string[] = this.tierList[ tier ];
+            for ( let item of Object.values( currentTier ) )
+            {
+                if ( !itemDB[ item ] )
+                {
+                    this.printColor( `Found broken item in tierlist: ${ item } Ignore this in 3.9.x`);
+                    currentTier.splice( currentTier.indexOf( item ), 1 );
+                }
+            }
+        }
+
         this.generateItemTiers();
     }
 
@@ -127,7 +143,7 @@ export class LeavesUtils
 
     }
 
-    public getLocale( locale: string, id: string, type: string = "" ):string
+    public getLocale( locale: string, id: string, type: string = "" ): string
     {
         let localeDB;
         if ( this.databaseServer.getTables().locales.global[ locale ] )
@@ -247,7 +263,7 @@ export class LeavesUtils
         {
             tier = this.getClosestTier( tier );
         }
-        
+
         let size = this.tierList[ tier ].length;
 
         return this.tierList[ tier ][ randomInt( size ) ];

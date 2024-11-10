@@ -24,6 +24,7 @@ import { LeavesIdManager } from "./LeavesIdManager";
 // Locale to weapon categories?
 // Randomize gear if its already there (NOT DONE)
 // Zones
+// Blacklist items
 
 class Questrandomizer implements IPreSptLoadMod
 {
@@ -168,7 +169,7 @@ class Questrandomizer implements IPreSptLoadMod
     {
         if ( !this.QuestDB[ questID ] )
         {
-            this.leavesUtils.printColor( `[Questrandomizer] Didn't find quest: ${ questID }, creating` )
+            this.leavesUtils.printColor( `[Questrandomizer] Didn't find quest: ${ questID }, ${ this.databaseServer.getTables().templates.quests[ questID ]?.QuestName }, creating` )
             //Edit the quest
 
             this.QuestDB[ questID ] = this.editQuest( structuredClone( this.databaseServer.getTables().templates.quests[ questID ] ) );
@@ -267,7 +268,7 @@ class Questrandomizer implements IPreSptLoadMod
 
         this.leavesIdManager.save( "assets/generated/ids.jsonc" );
         this.leavesUtils.saveFile( this.QuestDB, "assets/generated/quests.jsonc" );
-        this.leavesUtils.printColor( `[Questrandomizer] Finished Setting Everything Up! Watch out for SPT, they are Pretty Extraordinary Dudes Or Something` );
+        this.leavesUtils.printColor( `[Questrandomizer] Finished Setting Everything Up! SPT are some pretty extraordinary dudes or something` );
     }
 
     private setupHandbookCategories()
@@ -375,7 +376,7 @@ class Questrandomizer implements IPreSptLoadMod
     private editHandoverItemTask( task: IQuestCondition, IgnoreChance: boolean ): boolean
     {
         //Chance to even do this.
-        if ( Math.random() > this.leavesSettingsManager.getConfig().chanceToEditHandoverCondition || !IgnoreChance )
+        if ( Math.random() > this.leavesSettingsManager.getConfig().chanceToEditHandoverCondition && IgnoreChance === false )
         {
             return false;
         }
@@ -383,6 +384,12 @@ class Questrandomizer implements IPreSptLoadMod
         const itemDB = this.databaseServer.getTables().templates.items;
         const originalItem = task.target[ 0 ];
         //Ignore quest items
+        if ( !itemDB[ originalItem ] )
+        {
+            this.leavesUtils.printColor( "[Questrandomizer]Found a quest that requires a broken item. Report to the author of the quest above." );
+            return false;
+        }
+
         if ( itemDB[ originalItem ]._props.QuestItem )
         {
             return false;
@@ -491,7 +498,7 @@ class Questrandomizer implements IPreSptLoadMod
             else if ( conditions[ counterConditionIndex ].conditionType === "InZone" )
             {
                 //flags.hasInZone = counterConditionIndex; //For now lets purge them.
-                conditions.splice( counterConditionIndex );
+                conditions.splice( counterConditionIndex, 1 );
                 counterConditionIndex--;
                 continue;
             }
@@ -539,7 +546,7 @@ class Questrandomizer implements IPreSptLoadMod
             //Edit zones possibly (PROBABLY WONT DO)
             if ( flags.hasInZone >= 0 )
             {
-                this.leavesUtils.printColor( "WE HAVE ZONES!??!?" );
+
             }
 
             //We edit the kill quest
@@ -550,7 +557,7 @@ class Questrandomizer implements IPreSptLoadMod
             {
                 if ( flags.killsEnemyTypeDistance > 0 )
                 {
-                    task.value = Math.round( Math.max( task.value as number / ( flags.killsEnemyTypeDistance * this.leavesSettingsManager.getConfig().killCountWhenTargetTypeChangesFactor ), 5) );
+                    task.value = Math.round( Math.max( task.value as number / ( flags.killsEnemyTypeDistance * this.leavesSettingsManager.getConfig().killCountWhenTargetTypeChangesFactor ), 5 ) );
                 }
                 if ( flags.killsEnemyTypeDistance < 0 )
                 {

@@ -256,7 +256,7 @@ This file holds all weapon and mod categories, and a list of individual weapons 
             "mods-inclusive": { },
             "mods-exclusive": { }
         },
-        ".50 AE":
+        /*".50 AE":
         {
             "weight": 1,
             "weapons":
@@ -269,7 +269,7 @@ This file holds all weapon and mod categories, and a list of individual weapons 
             ],
             "mods-inclusive": { },
             "mods-exclusive": { }
-        },
+        },*/
         "4.6mm":
         {
             "weight": 1,

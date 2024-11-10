@@ -8,12 +8,12 @@
     ],
 
     "chanceToEditKillConditions": 1.00, //Chance that we want to edit kill requirement on a quest. 1 for always. 0 for never. Decimal values are ok.
-    "chanceToAddLocations": 0.15, //Chance to add a location requirement to kill quests.
+    "chanceToAddLocations": 0.25, //Chance to add a location requirement to kill quests.
     "locationCount": 2, //Total locations that the quest will be valid on. 
     "chanceToAddTimeOfDay": 0.05, //CHance to add a time of day requirement to kill quests.
     "chanceToAddBodypart": 0.05, //Chance to add having to target specific body parts to kill quests.
     "chanceToAddDistance": 0.05, //Chance to add a distance requirement to kill quests. (Currently >=/<= 20-100m, Might add options for this later)
-    "chanceToAddWeapon": 0.60, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
+    "chanceToAddWeapon": 0.70, //Chance to add weapon requirement to kill quests. Will do a weighted selection from the weaponcategories.jsonc file.
     "chanceToAddGear": 0.05, //Chance to add gear requirement to kill quest. Will do a weighted selection from the gearlist.jsonc file.
     "addGearCount": 3, //How many different gear pieces will be selected. Every gear piece is an alternative. You only ever need to wear 1 of them.
 
