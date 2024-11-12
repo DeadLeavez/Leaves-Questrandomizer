@@ -7,18 +7,25 @@ import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { randomInt } from "crypto";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
+import { HttpServer } from "@spt/servers/HttpServer";
 
 //Helpers
 import { LeavesUtils, RTT_Colors } from "./LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
+import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
+import { LeavesIdManager } from "./LeavesIdManager";
+import { LeavesContextSwitcher } from "./LeavesContextSwitcher";
 
 //item creation
 import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
-import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
-import { LeavesIdManager } from "./LeavesIdManager";
+import { IncomingMessage, ServerResponse } from "http";
+import { ConfigServer } from "@spt/servers/ConfigServer";
+import { ICoreConfig } from "@spt/models/spt/config/ICoreConfig";
+import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
+import { ContextVariableType } from "@spt/context/ContextVariableType";
 
 // TODO:
 // Locale to weapon categories?
@@ -26,12 +33,15 @@ import { LeavesIdManager } from "./LeavesIdManager";
 // Zones
 // Blacklist items
 
-class Questrandomizer implements IPreSptLoadMod
+export class Questrandomizer implements IPreSptLoadMod
 {
     private databaseServer: DatabaseServer;
     private weightedRandomHelper: WeightedRandomHelper;
     private handbookHelper: HandbookHelper;
     private customItemService: CustomItemService;
+    private httpServer: HttpServer;
+
+    public static leavesContextSwitcher: LeavesContextSwitcher;
 
     private leavesIdManager: LeavesIdManager;
     private leavesUtils: LeavesUtils;
@@ -165,21 +175,6 @@ class Questrandomizer implements IPreSptLoadMod
         return leavesUp.newId;
     }
 
-    private getEditedQuest( questID: string ): IQuest
-    {
-        if ( !this.QuestDB[ questID ] )
-        {
-            this.leavesUtils.printColor( `[Questrandomizer] Didn't find quest: ${ questID }, ${ this.databaseServer.getTables().templates.quests[ questID ]?.QuestName }, creating` )
-            //Edit the quest
-
-            this.QuestDB[ questID ] = this.editQuest( structuredClone( this.databaseServer.getTables().templates.quests[ questID ] ) );
-
-            //this.leavesUtils.printColor( `[Questrandomizer] ${ questID }, created` )
-        }
-
-        return this.QuestDB[ questID ];
-    }
-
     public preSptLoad( container: DependencyContainer ): void
     {
         container.register<LeavesIdManager>( "LeavesIdManager", LeavesIdManager, { lifecycle: Lifecycle.Singleton } );
@@ -188,6 +183,7 @@ class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestGeneration>( "LeavesQuestGeneration", LeavesQuestGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesLocaleGeneration>( "LeavesLocaleGeneration", LeavesLocaleGeneration, { lifecycle: Lifecycle.Singleton } );
+        container.register<LeavesContextSwitcher>( "LeavesContextSwitcher", LeavesContextSwitcher, { lifecycle: Lifecycle.Singleton } );
     }
 
     public postDBLoad( container: DependencyContainer ): void
@@ -195,12 +191,15 @@ class Questrandomizer implements IPreSptLoadMod
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
         this.customItemService = container.resolve<CustomItemService>( "CustomItemService" );
+        this.httpServer = container.resolve<HttpServer>( "HttpServer" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
 
         //Helper Classes
         this.leavesIdManager = container.resolve<LeavesIdManager>( "LeavesIdManager" );
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
         this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
+        Questrandomizer.leavesContextSwitcher = container.resolve<LeavesContextSwitcher>( "LeavesContextSwitcher" );
+        Questrandomizer.leavesContextSwitcher.setQuestRandomizerReference( this );
 
         this.leavesSettingsManager = container.resolve<LeavesSettingsManager>( "LeavesSettingsManager" );
         this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
@@ -215,18 +214,35 @@ class Questrandomizer implements IPreSptLoadMod
 
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
 
-        //Init questDB
-        this.QuestDB = this.leavesUtils.loadFile( "assets/generated/quests.jsonc" );
+        //Thanks AcidPhantasm
+        const configServer = container.resolve<ConfigServer>( "ConfigServer" );
+        const sptConfig = configServer.getConfig<ICoreConfig>( ConfigTypes.CORE );
+        const sptVersion = globalThis.G_SPTVERSION || sptConfig.sptVersion;
+
+        switch ( sptVersion )
+        {
+            case "3.10.0":
+            case "3.9.8":
+                this.leavesUtils.printColor( "[Questrandomizer] Supported version found." + sptVersion );
+                this.httpServer.handleRequest = this.handleRequestReplacement310; //Seems to be the same in 3.9.x
+                break;
+            default:
+                this.leavesUtils.printColor( "UNKNOWN SPT VERSION. THIS IS UNSUPPORTED. LITERALLY WHOLE OF SPT MIGHT BREAK. NO SUPPORT WILL BE PROVIDED", LogTextColor.RED );
+                this.httpServer.handleRequest = this.handleRequestReplacement310;
+                break;
+        }
 
         //Set up handbook categories
         this.setupHandbookCategories();
-
 
         let questWhitelist: string[] = [];
         if ( this.leavesSettingsManager.getConfig().enableQuestWhilelist )
         {
             questWhitelist = this.leavesUtils.loadFile( "config/questwhitelist.jsonc" ).whitelist;
         }
+/*
+        //Init questDB
+        this.QuestDB = this.leavesUtils.loadFile( "assets/generated/quests.jsonc" );
 
         //Iterate the regular quest database see if any new quests are added.
         const serverQuestDB = this.databaseServer.getTables().templates.quests;
@@ -255,7 +271,8 @@ class Questrandomizer implements IPreSptLoadMod
             this.databaseServer.getTables().templates.quests[ leavesQuestId ] = leavesQuest;
         }
 
-
+        this.leavesUtils.saveFile( this.QuestDB, "assets/generated/quests.jsonc" );
+        */
 
         //Generate a category list
         this.generateWeaponCategorySheet();
@@ -265,9 +282,7 @@ class Questrandomizer implements IPreSptLoadMod
 
         //this.leavesUtils.dataDump();
         this.leavesSettingsManager.saveChanges();
-
         this.leavesIdManager.save( "assets/generated/ids.jsonc" );
-        this.leavesUtils.saveFile( this.QuestDB, "assets/generated/quests.jsonc" );
         this.leavesUtils.printColor( `[Questrandomizer] Finished Setting Everything Up! SPT are some pretty extraordinary dudes or something` );
         this.leavesUtils.saveFile( this.databaseServer.getTables().templates.quests, "dump/quests.json", true );
         this.leavesUtils.saveFile( this.databaseServer.getTables().locales.global, "dump/locales.json", true );
@@ -308,7 +323,7 @@ class Questrandomizer implements IPreSptLoadMod
         handbookDB.Categories.push( modCategory );
     }
 
-    private editQuest( quest: IQuest ): IQuest
+    public editQuest( quest: IQuest ): IQuest
     {
         //QUEST — There is only one quest
         //- TASK  — There can be multiple tasks.
@@ -831,7 +846,7 @@ class Questrandomizer implements IPreSptLoadMod
             {
                 if ( firstDone )
                 {
-                    categorysheet += weaponGroup[ modcategory ][ modgroup ] ? `\t${this.leavesLocaleGeneration.getLoc("AND", language)}\n` : `\t${this.leavesLocaleGeneration.getLoc("OR", language)}\n`; //ADD LOCALE TO THIS
+                    categorysheet += weaponGroup[ modcategory ][ modgroup ] ? `\t${ this.leavesLocaleGeneration.getLoc( "AND", language ) }\n` : `\t${ this.leavesLocaleGeneration.getLoc( "OR", language ) }\n`; //ADD LOCALE TO THIS
                 }
                 categorysheet += `\t${ modgroup }\n`;
                 firstDone = true;
@@ -839,6 +854,48 @@ class Questrandomizer implements IPreSptLoadMod
         }
 
         return categorysheet;
+    }
+
+    public async handleRequestReplacement310( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
+    {
+        // Pull sessionId out of cookies and store inside app context
+        const sessionId = this.getCookies( req ).PHPSESSID;
+        Questrandomizer.leavesContextSwitcher.switchContext( sessionId );
+        this.applicationContext.addValue( ContextVariableType.SESSION_ID, sessionId );
+
+        // Extract headers for original IP detection
+        const realIp = req.headers[ "x-real-ip" ] as string;
+        const forwardedFor = req.headers[ "x-forwarded-for" ] as string;
+        const clientIp = realIp || ( forwardedFor ? forwardedFor.split( "," )[ 0 ].trim() : req.socket.remoteAddress );
+
+        if ( this.httpConfig.logRequests )
+        {
+            const isLocalRequest = this.isLocalRequest( clientIp );
+            if ( typeof isLocalRequest !== "undefined" )
+            {
+                if ( isLocalRequest )
+                {
+                    this.logger.info( this.localisationService.getText( "client_request", req.url ) );
+                } else
+                {
+                    this.logger.info(
+                        this.localisationService.getText( "client_request_ip", {
+                            ip: clientIp,
+                            url: req.url.replaceAll( "/", "\\" ), // Localisation service escapes `/` into hex code `&#x2f;`
+                        } ),
+                    );
+                }
+            }
+        }
+
+        for ( const listener of this.httpListeners )
+        {
+            if ( listener.canHandle( sessionId, req ) )
+            {
+                await listener.handle( sessionId, req, resp );
+                break;
+            }
+        }
     }
 }
 

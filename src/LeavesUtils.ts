@@ -92,6 +92,11 @@ export class LeavesUtils
         this.vfs.writeFile( `${ this.modFolder }${ file }`, dataCopy );
     }
 
+    public checkIfFileExists( file: string ):boolean
+    {
+        return this.vfs.exists( this.modFolder + file )
+    }
+
     public dataDump()
     {
         const questDB = this.databaseServer.getTables().templates.quests;
