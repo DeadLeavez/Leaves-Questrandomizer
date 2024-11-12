@@ -255,7 +255,7 @@ export class LeavesQuestTools
         }
     }
 
-    public addPrerequisiteQuest( targetQuest: IQuest, previousQuestID: string )
+    public addPrerequisiteQuest( targetQuest: IQuest, previousQuestID: string, statuses: QuestStatus[] )
     {
         let prereqQuestCondition: any =
         {
@@ -265,10 +265,7 @@ export class LeavesQuestTools
             "parentId": "",
             "dynamicLocale": false,
             "target": previousQuestID,
-            "status": [
-                QuestStatus.Started,
-                QuestStatus.Success
-            ],
+            "status": statuses,
             "globalQuestCounterId": "",
             "availableAfter": 0,
             "dispersion": 0,

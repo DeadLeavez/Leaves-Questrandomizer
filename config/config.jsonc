@@ -78,7 +78,11 @@
     ],
 
     //Quest generation.
-    "QuestGen_TotalQuests": 10, //Amount of quests per type
+    "QuestGen_TotalWeaponQuests": 10, //Amount of quests per type
+    "QuestGen_TotalHandoverQuests": 10,
+    "QuestGen_TotalPostmanQuests": 10,
+    "QuestGen_TotalRunnerQuests": 10,
+    "QuestGen_TotalSniperQuests": 10,
     "QuestGen_Trader":"54cb50c76803fa8b248b4571" //What trader will provide the new quests.
 
     //Default Traders

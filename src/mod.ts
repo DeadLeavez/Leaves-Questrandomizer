@@ -269,6 +269,8 @@ class Questrandomizer implements IPreSptLoadMod
         this.leavesIdManager.save( "assets/generated/ids.jsonc" );
         this.leavesUtils.saveFile( this.QuestDB, "assets/generated/quests.jsonc" );
         this.leavesUtils.printColor( `[Questrandomizer] Finished Setting Everything Up! SPT are some pretty extraordinary dudes or something` );
+        this.leavesUtils.saveFile( this.databaseServer.getTables().templates.quests, "dump/quests.json", true );
+        this.leavesUtils.saveFile( this.databaseServer.getTables().locales.global, "dump/locales.json", true );
     }
 
     private setupHandbookCategories()

@@ -18,12 +18,11 @@ Will change the following:
         - See the ``config/weaponcategories.jsonc`` file for more details
         - Once the server has started once with this mod. You can find an auto-generated category list in all supported languages in the ``categories/`` folder of this mod.
     - Add/Randomize the body part requirement.
-- Adds a new category in the handbook that 
+- Adds a new category in the handbook that shows weapon categories and mods.
 
 Current Shortcomings
 - Removes durability for handover quests.
 - Doesn't have a counter for "found" items for handover quests. (The thing most- but not all BSG handover quests have.) Just a visual thing. Minor.
-- No Localization for category names (Due to them being very adjustable by end-users.)
 
 ### Translation Credits
 - German - ``Friend B``
@@ -97,3 +96,6 @@ Current Shortcomings
 - Fix issue with quests handover-tasks sometimes not being randomized.
 - Show found in raid requirements (oops)
 - Safeguard against other mods adding broken items to quests.
+
+## 0.0.10
+- Add localization for weapon groups. (Uses locale, then en, and lastly the weapon group name string)

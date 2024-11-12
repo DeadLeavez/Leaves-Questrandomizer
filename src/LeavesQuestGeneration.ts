@@ -12,6 +12,8 @@ import { Traders } from "@spt/models/enums/Traders";
 import { ELocationName } from "@spt/models/enums/ELocationName";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
+import { QuestStatus } from "@spt/models/enums/QuestStatus";
+import { kill } from "process";
 
 @injectable()
 export class LeavesQuestGeneration
@@ -98,21 +100,24 @@ export class LeavesQuestGeneration
         this.leavesLocaleGeneration.editLocaleText( `${ ID } name`, questName, locale );
     }
 
-    public generateQuest()
+    public generateWeaponMasteryQuest( name:string, previousQuest:string, trader:string, questNumber:number ):IQuest
     {
         const questDB = this.databaseServer.getTables().templates.quests;
-        let newQuest = this.generateEmptyQuest( "TestQuest", Traders.PRAPOR, ELocationName.ANY );
 
-        //const killIndex = this.leavesQuestTools.addKillObjectiveToQuest( newQuest, "Savage", 5 );
-        //this.leavesQuestTools.addPrerequisiteQuest( newQuest, "657315df034d76585f032e01" );
-        //this.leavesQuestTools.addPrerequisiteLevel( newQuest, 0 );
+        //Make empty quest
+        let newQuest = this.generateEmptyQuest( name, trader, ELocationName.ANY );
+        this.leavesQuestTools.addPrerequisiteQuest( newQuest, "657315df034d76585f032e01", [QuestStatus.Success] );
+
         this.leavesQuestTools.addRewardExperience( newQuest, 666 );
         this.leavesQuestTools.addRewardItem( newQuest, "57347c5b245977448d35f6e1", 1, true );
+        //this.leavesQuestTools.addPrerequisiteLevel( newQuest, 5 );
+        const killIndex = this.leavesQuestTools.addKillObjectiveToQuest( newQuest, "Any", 5 );
+        
 
         let flags =
         {
             hasInZone: -1,
-            hasKills: -1,
+            hasKills: killIndex,
             hasLocation: -1,
             whatLoctations: [],
             hasDistance: -1,
@@ -128,9 +133,9 @@ export class LeavesQuestGeneration
             isEasyQuest: false,
         }
 
-        const handoverIndex = this.leavesQuestTools.addHandOverObjectiveToQuest( newQuest, 1, [ this.leavesUtils.getRandomItemFromTier( 5 ) ] );
-        this.leavesLocaleGeneration.generateHandoverItemLocale( newQuest.conditions.AvailableForFinish[ handoverIndex ], "" );
-        //this.leavesQuestTools.generateKillsLocale( newQuest.conditions.AvailableForFinish[ killIndex ], flags, this.localizationChangesToSave );
+        //const handoverIndex = this.leavesQuestTools.addHandOverObjectiveToQuest( newQuest, 1, [ this.leavesUtils.getRandomItemFromTier( 5 ) ] );
+        //this.leavesLocaleGeneration.generateHandoverItemLocale( newQuest.conditions.AvailableForFinish[ handoverIndex ], "" );
+        this.leavesLocaleGeneration.generateKillsLocale( newQuest.conditions.AvailableForFinish[ killIndex ], flags );
         for ( const locale of this.leavesLocaleGeneration.getLoadedLocales() )
         {
             this.setBaseQuestLocale(
@@ -149,6 +154,7 @@ export class LeavesQuestGeneration
         }
         questDB[ newQuest._id ] = newQuest;
         this.leavesUtils.debugJsonOutput( newQuest );
+        return newQuest;
     }
 
 }
