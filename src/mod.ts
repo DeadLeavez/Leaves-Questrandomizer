@@ -232,60 +232,21 @@ export class Questrandomizer implements IPreSptLoadMod
                 break;
         }
 
-        //Set up handbook categories
-        this.setupHandbookCategories();
 
+        //Set up quest whitelist
         let questWhitelist: string[] = [];
         if ( this.leavesSettingsManager.getConfig().enableQuestWhilelist )
         {
             questWhitelist = this.leavesUtils.loadFile( "config/questwhitelist.jsonc" ).whitelist;
         }
-/*
-        //Init questDB
-        this.QuestDB = this.leavesUtils.loadFile( "assets/generated/quests.jsonc" );
 
-        //Iterate the regular quest database see if any new quests are added.
-        const serverQuestDB = this.databaseServer.getTables().templates.quests;
-        for ( const originalQuest in serverQuestDB )
-        {
-            //Check whitelist.
-            if ( !questWhitelist.includes( originalQuest ) && this.leavesSettingsManager.getConfig().enableQuestWhilelist )
-            {
-                this.leavesUtils.printColor( `Ignoring:${ originalQuest } - ${ serverQuestDB[ originalQuest ].QuestName } due to not being on whitelist.` );
-                continue;
-            }
-
-            //Check if quest has been generated before.
-            if ( !this.QuestDB[ originalQuest ] )
-            {
-                //If it hasn't, make get an edited copy of the quest.
-                this.QuestDB[ originalQuest ] = this.getEditedQuest( originalQuest );
-            }
-        }
-
-        //We're done with checking, so now we override the original quest DB with our new quests.
-        for ( const leavesQuestId in this.QuestDB )
-        {
-            const leavesQuest = this.QuestDB[ leavesQuestId ];
-
-            this.databaseServer.getTables().templates.quests[ leavesQuestId ] = leavesQuest;
-        }
-
-        this.leavesUtils.saveFile( this.QuestDB, "assets/generated/quests.jsonc" );
-        */
+        //Set up handbook categories
+        this.setupHandbookCategories();
 
         //Generate a category list
         this.generateWeaponCategorySheet();
 
-        //this.leavesQuestGeneration.generateQuest();
-
-
-        //this.leavesUtils.dataDump();
-        this.leavesSettingsManager.saveChanges();
         this.leavesIdManager.save( "assets/generated/ids.jsonc" );
-        this.leavesUtils.printColor( `[Questrandomizer] Finished Setting Everything Up! SPT are some pretty extraordinary dudes or something` );
-        this.leavesUtils.saveFile( this.databaseServer.getTables().templates.quests, "dump/quests.json", true );
-        this.leavesUtils.saveFile( this.databaseServer.getTables().locales.global, "dump/locales.json", true );
     }
 
     private setupHandbookCategories()

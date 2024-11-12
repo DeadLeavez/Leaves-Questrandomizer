@@ -19,7 +19,7 @@ export class LeavesSettingsManager
     private validMaps: string[];
     private easyMaps: string[];
     private locationIDMap;
-    
+
     constructor(
         @inject( "PreSptModLoader" ) protected preSptModLoader: PreSptModLoader,
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -31,11 +31,10 @@ export class LeavesSettingsManager
         this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
 
         //Load localization bundle
-        this.localizationChanges = this.leavesUtils.loadFile( "assets/generated/locale.jsonc" );
+        this.localizationChanges = {};
 
         this.loadHandoverCategories();
         this.loadWeaponCategories();
-        this.loadEditedLocalization();
 
         const miscData = this.leavesUtils.loadFile( "assets/data/misc.jsonc" );
         this.locationIDMap = miscData.locationIdMap;
@@ -46,12 +45,6 @@ export class LeavesSettingsManager
 
         this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
 
-    }
-
-    public saveChanges()
-    {
-        this.leavesUtils.saveFile( this.localizationChanges, "assets/generated/locale.jsonc" );
-        this.leavesUtils.printColor( `[Questrandomizer] Saved localization bundle!` )    
     }
 
     private loadWeaponCategories()
@@ -127,10 +120,14 @@ export class LeavesSettingsManager
 
         this.leavesUtils.printColor( `[Questrandomizer] Loaded localization bundle!` );
     }
-    
+
     public getLocalizationChangesToSave()
     {
         return this.localizationChanges;
+    }
+    public setLocalzationChangesToSave( localizationChanges: any )
+    {
+        this.localizationChanges = localizationChanges;
     }
 
     public getGearList()

@@ -73,26 +73,28 @@ export class LeavesContextSwitcher
             return;
         }
 
-        //Quests have been generated, but aren't loaded.
-        if ( this.leavesUtils.checkIfFileExists( `assets/generated/${ profileID }/quests.json` ) )
-        {
-            this.quests[ profileID ] = this.leavesUtils.loadFile( `assets/generated/${ profileID }/quests.json` );
-            this.locales[ profileID ] = this.leavesUtils.loadFile( `assets/generated/${ profileID }/locales.json` );
-            this.set( profileID );
-            return;
-        }
-
         //Not loaded, or generated. Time to generate new stuff.
-        this.generate( profileID );
+        this.load( profileID );
         this.set( profileID );
     }
 
-    private generate( profileID )
+    private load( profileID )
     {
+        let questDB = {};
+        let localeChangesToSave = {};
+        //Quests have been generated, but aren't loaded.
+        if ( this.leavesUtils.checkIfFileExists( `assets/generated/${ profileID }/quests.json` ) )
+        {
+            questDB = this.leavesUtils.loadFile( `assets/generated/${ profileID }/quests.json` );
+            localeChangesToSave = this.leavesUtils.loadFile( `assets/generated/${ profileID }/locales.json` );
+            this.leavesSettingsManager.setLocalzationChangesToSave( localeChangesToSave );
+        }
+
+        //Get some fresh databases in here. 
         this.databaseServer.getTables().templates.quests = structuredClone( this.originalQuestDB );
         this.databaseServer.getTables().locales.global = structuredClone( this.originalLocaleDB );
 
-        let QuestDB = {};
+
         let questWhitelist: string[] = [];
         if ( this.leavesSettingsManager.getConfig().enableQuestWhilelist )
         {
@@ -111,29 +113,58 @@ export class LeavesContextSwitcher
             }
 
             //Check if quest has been generated before.
-            if ( !QuestDB[ originalQuest ] )
+            if ( !questDB[ originalQuest ] )
             {
                 //If it hasn't, make get an edited copy of the quest.
                 this.leavesUtils.printColor( `[Questrandomizer] Didn't find quest: ${ originalQuest }, ${ this.databaseServer.getTables().templates.quests[ originalQuest ]?.QuestName }, creating` )
                 //Edit the quest
 
-                QuestDB[ originalQuest ] = this.questRandomizer.editQuest( structuredClone( this.databaseServer.getTables().templates.quests[ originalQuest ] ) );
+                questDB[ originalQuest ] = this.questRandomizer.editQuest( structuredClone( this.databaseServer.getTables().templates.quests[ originalQuest ] ) );
             }
         }
 
-        //We're done with checking, so now we override the original quest DB with our new quests.
-        for ( const leavesQuestId in QuestDB )
-        {
-            const leavesQuest = QuestDB[ leavesQuestId ];
+        //Load localization into the database.
+        localeChangesToSave  = this.leavesSettingsManager.getLocalizationChangesToSave();
+        this.loadLocalizationIntoDatabase( localeChangesToSave );
 
-            this.databaseServer.getTables().templates.quests[ leavesQuestId ] = leavesQuest;
-        }
+        //Load quests into the database
+        this.loadQuestsIntoDatabase( questDB );
 
+        //Save expanded database into memory.
         this.quests[ profileID ] = structuredClone( this.databaseServer.getTables().templates.quests );
         this.locales[ profileID ] = structuredClone( this.databaseServer.getTables().locales.global );
 
-        this.leavesUtils.saveFile( this.quests[ profileID ], `assets/generated/${ profileID }/quests.json` );
-        this.leavesUtils.saveFile( this.locales[ profileID ], `assets/generated/${ profileID }/locales.json` );
+        //Save the changes to file
+        this.leavesUtils.saveFile( questDB, `assets/generated/${ profileID }/quests.json` );
+        this.leavesUtils.saveFile( localeChangesToSave, `assets/generated/${ profileID }/locales.json` );
+    }
+
+    private loadQuestsIntoDatabase( questDB:any )
+    {
+        for ( const leavesQuestId in questDB )
+        {
+            const leavesQuest = questDB[ leavesQuestId ];
+
+            this.databaseServer.getTables().templates.quests[ leavesQuestId ] = leavesQuest;
+        }
+    }
+
+    private loadLocalizationIntoDatabase( localeChangesToSave:any )
+    {
+        let localeDB = this.databaseServer.getTables().locales.global;
+
+        for ( const language in localeChangesToSave )
+        {
+
+            for ( const changeID in localeChangesToSave[ language ] )
+            {
+                if ( !localeDB[ language ] )
+                {
+                    localeDB[ language ] = {};
+                }
+                localeDB[ language ][ changeID ] = localeChangesToSave[ language ][ changeID ];
+            }
+        }
     }
 
     //This assumes profileID has been vetted and loaded.
