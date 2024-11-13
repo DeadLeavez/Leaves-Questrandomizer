@@ -145,6 +145,30 @@ export class LeavesSettingsManager
         return this.bodyParts;
     }
 
+    public getBodypartSelection( count: number ): string[]
+    {
+        let tempArray = this.leavesUtils.getUniqueValues( this.getBodyParts(), count );
+        let newArray = [];
+        for ( const item of tempArray )
+        {
+            switch ( item )
+            {
+                case "Arms":
+                    newArray.push( "LeftArm" );
+                    newArray.push( "RightArm" );
+                    break;
+                case "Legs":
+                    newArray.push( "LeftLeg" );
+                    newArray.push( "RightLeg" );
+                    break;
+                default:
+                    newArray.push( item );
+                    break;
+            }
+        }
+        return newArray;
+    }
+
     public getValidTargets()
     {
         return this.validTargets;

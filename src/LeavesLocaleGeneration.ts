@@ -283,7 +283,7 @@ export class LeavesLocaleGeneration
 
         if ( targetLocale === "en" )
         {
-            this.leavesUtils.printColor( newText, LogTextColor.MAGENTA );
+            this.leavesUtils.printColor( newText, LogTextColor.MAGENTA, true );
         }
     }
     public addFullLocale( language: string, name: string, shortname: string, description: string, targetID: string )

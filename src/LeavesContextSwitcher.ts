@@ -24,6 +24,7 @@ export class LeavesContextSwitcher
     private quests;
     private hasInit: boolean;
     private questRandomizer: Questrandomizer;
+    private currentContex: string;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -40,6 +41,7 @@ export class LeavesContextSwitcher
         this.locales = {};
         this.quests = {};
         this.hasInit = false;
+        this.currentContex = "";
     }
 
     public getAllQuests(): any
@@ -63,6 +65,11 @@ export class LeavesContextSwitcher
         const profileID = this.profileHelper.getFullProfile( sessionId ).info?.id;
 
         if ( profileID === undefined || profileID === "undefined" || profileID === "" || profileID === null )
+        {
+            return;
+        }
+
+        if ( this.currentContex === profileID ) //If we're already in the context for that profile.
         {
             return;
         }
@@ -107,12 +114,14 @@ export class LeavesContextSwitcher
 
         //Iterate the regular quest database see if any new quests are added.
         const serverQuestDB = this.databaseServer.getTables().templates.quests;
+        let editedQuests = 0;
+        let loadedQuests = Object.keys( questDB ).length;
         for ( const originalQuest in serverQuestDB )
         {
             //Check whitelist.
             if ( !questWhitelist.includes( originalQuest ) && this.leavesSettingsManager.getConfig().enableQuestWhilelist )
             {
-                this.leavesUtils.printColor( `Ignoring:${ originalQuest } - ${ serverQuestDB[ originalQuest ].QuestName } due to not being on whitelist.` );
+                this.leavesUtils.printColor( `Ignoring:${ originalQuest } - ${ serverQuestDB[ originalQuest ].QuestName } due to not being on whitelist.`, LogTextColor.YELLOW, true );
                 continue;
             }
 
@@ -120,12 +129,25 @@ export class LeavesContextSwitcher
             if ( !questDB[ originalQuest ] )
             {
                 //If it hasn't, make get an edited copy of the quest.
-                this.leavesUtils.printColor( `[Questrandomizer] Didn't find quest: ${ originalQuest }, ${ this.databaseServer.getTables().templates.quests[ originalQuest ]?.QuestName }, creating` )
+                this.leavesUtils.printColor( `[Questrandomizer] Didn't find quest: ${ originalQuest }, ${ this.databaseServer.getTables().templates.quests[ originalQuest ]?.QuestName }, creating`, LogTextColor.GREEN, true )
                 //Edit the quest
 
                 questDB[ originalQuest ] = this.questRandomizer.editQuest( structuredClone( this.databaseServer.getTables().templates.quests[ originalQuest ] ) );
+                editedQuests++;
             }
         }
+        this.leavesUtils.printColor( "     ____     ____  ", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "    / __ \\   / __ \\", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "   / / / /  / /_/ /", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "  / /_/ /  / _, _/ ", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "  \\___\\_\\ /_/ |_|  Leaves Questrandomizer", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( `┌──────────────────────────────────────────────────┐` );
+        this.leavesUtils.printColor( `│ Found a total of ${ Object.keys( serverQuestDB ).length } quests in the game.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ ----------------------------------------`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Loaded:  ${ loadedQuests } already edited quests.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Edited:  ${ editedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Total:   ${ loadedQuests + editedQuests } quests changed from original.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `└──────────────────────────────────────────────────┘` );
 
         //Load localization into the database.
         localeChangesToSave = this.leavesSettingsManager.getLocalizationChangesToSave();
@@ -174,6 +196,7 @@ export class LeavesContextSwitcher
     //This assumes profileID has been vetted and loaded.
     private set( profileID )
     {
+        this.currentContex = profileID;
         this.databaseServer.getTables().locales.global = this.locales[ profileID ];
         this.databaseServer.getTables().templates.quests = this.quests[ profileID ];
     }

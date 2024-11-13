@@ -19,6 +19,7 @@ export class LeavesUtils
     private tierList: any;
     private itemTiers: number[];
     private IDTranslator: any;
+    private debug: boolean;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -30,12 +31,18 @@ export class LeavesUtils
     )
     {
         this.modFolder = path.resolve( __dirname, `../` );
+        this.debug = false;
     }
 
 
     public setModFolder( folder: string )
     {
         this.modFolder = folder;
+    }
+
+    public setDebug( enabled: boolean )
+    {
+        this.debug = enabled;
     }
 
     public setTierList( file: string )
@@ -51,7 +58,7 @@ export class LeavesUtils
             {
                 if ( !itemDB[ item ] )
                 {
-                    this.printColor( `Found broken item in tierlist: ${ item } Ignore this in 3.9.x`);
+                    this.printColor( `[Questrandomizer]Found broken item in tierlist: ${ item } Ignore this in 3.9.x`);
                     currentTier.splice( currentTier.indexOf( item ), 1 );
                 }
             }
@@ -175,8 +182,12 @@ export class LeavesUtils
         );
     }
 
-    public printColor( message: string, color: LogTextColor = LogTextColor.GREEN )
+    public printColor( message: string, color: LogTextColor = LogTextColor.GREEN, debug = false )
     {
+        if ( debug === true && this.debug === false )
+        {
+            return;
+        }
         this.logger.log( message, color );
     }
 
