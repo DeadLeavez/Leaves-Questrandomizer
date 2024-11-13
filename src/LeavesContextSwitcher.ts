@@ -24,6 +24,7 @@ export class LeavesContextSwitcher
     private quests;
     private hasInit: boolean;
     private questRandomizer: Questrandomizer;
+
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
         @inject( "VFS" ) protected vfs: VFS,
@@ -41,9 +42,13 @@ export class LeavesContextSwitcher
         this.hasInit = false;
     }
 
+    public getAllQuests(): any
+    {
+        return;
+    }
+
     public switchContext( sessionId )
     {
-        this.leavesUtils.printColor( "SESSID:" + sessionId );
         if ( !this.hasInit )
         {
             this.hasInit = true;
@@ -55,15 +60,14 @@ export class LeavesContextSwitcher
         {
             return;
         }
-        const profileID = this.profileHelper.getPmcProfile( sessionId )._id;
+        const profileID = this.profileHelper.getFullProfile( sessionId ).info?.id;
 
         if ( profileID === undefined || profileID === "undefined" || profileID === "" || profileID === null )
         {
             return;
         }
 
-        this.leavesUtils.printColor( "GOT A PROPER PROFILE: " + profileID );
-        this.leavesUtils.printColor( "SETTING!" );
+        this.leavesUtils.printColor( `[Questrandomizer] Switching context for PID:${ profileID } SID:${ sessionId }` );
 
         //We check in order of most likely to save performance, since this will be called a lot
         //Most likely: Everything is loaded.
@@ -124,7 +128,7 @@ export class LeavesContextSwitcher
         }
 
         //Load localization into the database.
-        localeChangesToSave  = this.leavesSettingsManager.getLocalizationChangesToSave();
+        localeChangesToSave = this.leavesSettingsManager.getLocalizationChangesToSave();
         this.loadLocalizationIntoDatabase( localeChangesToSave );
 
         //Load quests into the database
@@ -139,7 +143,7 @@ export class LeavesContextSwitcher
         this.leavesUtils.saveFile( localeChangesToSave, `assets/generated/${ profileID }/locales.json` );
     }
 
-    private loadQuestsIntoDatabase( questDB:any )
+    private loadQuestsIntoDatabase( questDB: any )
     {
         for ( const leavesQuestId in questDB )
         {
@@ -149,7 +153,7 @@ export class LeavesContextSwitcher
         }
     }
 
-    private loadLocalizationIntoDatabase( localeChangesToSave:any )
+    private loadLocalizationIntoDatabase( localeChangesToSave: any )
     {
         let localeDB = this.databaseServer.getTables().locales.global;
 

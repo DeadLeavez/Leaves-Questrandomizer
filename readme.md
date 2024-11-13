@@ -97,5 +97,6 @@ Current Shortcomings
 - Show found in raid requirements (oops)
 - Safeguard against other mods adding broken items to quests.
 
-## 0.0.10
+## 0.1.0
+- Major rework. Quests are now on a per-profile basis.
 - Add localization for weapon groups. (Uses locale, then en, and lastly the weapon group name string)

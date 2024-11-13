@@ -22,13 +22,9 @@ import { LeavesContextSwitcher } from "./LeavesContextSwitcher";
 import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
 import { IncomingMessage, ServerResponse } from "http";
-import { ConfigServer } from "@spt/servers/ConfigServer";
-import { ICoreConfig } from "@spt/models/spt/config/ICoreConfig";
-import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
-import { ContextVariableType } from "@spt/context/ContextVariableType";
 
 // TODO:
-// Locale to weapon categories?
+// Way to make compatibility with other mods. At least shiny airdrops
 // Randomize gear if its already there (NOT DONE)
 // Zones
 // Blacklist items
@@ -40,6 +36,7 @@ export class Questrandomizer implements IPreSptLoadMod
     private handbookHelper: HandbookHelper;
     private customItemService: CustomItemService;
     private httpServer: HttpServer;
+    private static originalHandleMethod;
 
     public static leavesContextSwitcher: LeavesContextSwitcher;
 
@@ -50,9 +47,7 @@ export class Questrandomizer implements IPreSptLoadMod
     private leavesSettingsManager: LeavesSettingsManager;
     private leavesLocaleGeneration: LeavesLocaleGeneration;
 
-    private QuestDB: any;
-
-    private setWeaponGroup( condition: IQuestConditionCounterCondition, flags: any )
+    public setWeaponGroup( condition: IQuestConditionCounterCondition, flags: any )
     {
         //Check if were gonna use a category or specific weapon
         if ( Math.random() < this.leavesSettingsManager.getConfig().chanceForSpecificWeapon )
@@ -84,7 +79,7 @@ export class Questrandomizer implements IPreSptLoadMod
         //this.leavesUtils.debugJsonOutput( condition );
     }
 
-    private getModGroup( modGroup: string, weaponModsCurrent: string[][], merge: boolean ): string[][]
+    public getModGroup( modGroup: string, weaponModsCurrent: string[][], merge: boolean ): string[][]
     {
         if ( !this.leavesSettingsManager.getWeaponCategories().modCategories[ modGroup ] )
         {
@@ -198,6 +193,7 @@ export class Questrandomizer implements IPreSptLoadMod
         this.leavesIdManager = container.resolve<LeavesIdManager>( "LeavesIdManager" );
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
         this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
+
         Questrandomizer.leavesContextSwitcher = container.resolve<LeavesContextSwitcher>( "LeavesContextSwitcher" );
         Questrandomizer.leavesContextSwitcher.setQuestRandomizerReference( this );
 
@@ -214,24 +210,11 @@ export class Questrandomizer implements IPreSptLoadMod
 
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
 
-        //Thanks AcidPhantasm
-        const configServer = container.resolve<ConfigServer>( "ConfigServer" );
-        const sptConfig = configServer.getConfig<ICoreConfig>( ConfigTypes.CORE );
-        const sptVersion = globalThis.G_SPTVERSION || sptConfig.sptVersion;
-
-        switch ( sptVersion )
-        {
-            case "3.10.0":
-            case "3.9.8":
-                this.leavesUtils.printColor( "[Questrandomizer] Supported version found." + sptVersion );
-                this.httpServer.handleRequest = this.handleRequestReplacement310; //Seems to be the same in 3.9.x
-                break;
-            default:
-                this.leavesUtils.printColor( "UNKNOWN SPT VERSION. THIS IS UNSUPPORTED. LITERALLY WHOLE OF SPT MIGHT BREAK. NO SUPPORT WILL BE PROVIDED", LogTextColor.RED );
-                this.httpServer.handleRequest = this.handleRequestReplacement310;
-                break;
-        }
-
+        //Override the handle
+        // @ts-ignore
+        Questrandomizer.originalHandleMethod = this.httpServer.handleRequest.bind( this.httpServer );
+        // @ts-ignore
+        this.httpServer.handleRequest = this.handleRequestReplacement;
 
         //Set up quest whitelist
         let questWhitelist: string[] = [];
@@ -817,46 +800,13 @@ export class Questrandomizer implements IPreSptLoadMod
         return categorysheet;
     }
 
-    public async handleRequestReplacement310( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
+    public async handleRequestReplacement( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
     {
         // Pull sessionId out of cookies and store inside app context
+        // @ts-ignore
         const sessionId = this.getCookies( req ).PHPSESSID;
         Questrandomizer.leavesContextSwitcher.switchContext( sessionId );
-        this.applicationContext.addValue( ContextVariableType.SESSION_ID, sessionId );
-
-        // Extract headers for original IP detection
-        const realIp = req.headers[ "x-real-ip" ] as string;
-        const forwardedFor = req.headers[ "x-forwarded-for" ] as string;
-        const clientIp = realIp || ( forwardedFor ? forwardedFor.split( "," )[ 0 ].trim() : req.socket.remoteAddress );
-
-        if ( this.httpConfig.logRequests )
-        {
-            const isLocalRequest = this.isLocalRequest( clientIp );
-            if ( typeof isLocalRequest !== "undefined" )
-            {
-                if ( isLocalRequest )
-                {
-                    this.logger.info( this.localisationService.getText( "client_request", req.url ) );
-                } else
-                {
-                    this.logger.info(
-                        this.localisationService.getText( "client_request_ip", {
-                            ip: clientIp,
-                            url: req.url.replaceAll( "/", "\\" ), // Localisation service escapes `/` into hex code `&#x2f;`
-                        } ),
-                    );
-                }
-            }
-        }
-
-        for ( const listener of this.httpListeners )
-        {
-            if ( listener.canHandle( sessionId, req ) )
-            {
-                await listener.handle( sessionId, req, resp );
-                break;
-            }
-        }
+        Questrandomizer.originalHandleMethod( req, resp );
     }
 }
 
