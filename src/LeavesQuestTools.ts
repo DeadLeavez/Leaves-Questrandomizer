@@ -521,7 +521,7 @@ export class LeavesQuestTools
         else //Single item
         {
             let tier = this.leavesUtils.getTierFromID( originalItem );
-            if ( tier == -1 )
+            if ( tier === -1 )
             {
                 const cost = this.handbookHelper.getTemplatePrice( originalItem );
                 tier = this.leavesUtils.getClosestTier( Math.round( cost / this.leavesSettingsManager.getConfig().handoverItemUnknownItemValueDivider ) );

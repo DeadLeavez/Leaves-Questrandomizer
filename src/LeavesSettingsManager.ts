@@ -96,29 +96,6 @@ export class LeavesSettingsManager
                 this.handoverCategories[ itemObject._parent ].push( itemObject._id );
             }
         }
-
-        //this.leavesUtils.debugJsonOutput( this.handoverCategories );
-    }
-
-    private loadEditedLocalization()
-    {
-        //Load into database.
-        let localeDB = this.databaseServer.getTables().locales.global;
-
-        for ( const language in this.localizationChanges )
-        {
-
-            for ( const changeID in this.localizationChanges[ language ] )
-            {
-                if ( !localeDB[ language ] )
-                {
-                    localeDB[ language ] = {};
-                }
-                localeDB[ language ][ changeID ] = this.localizationChanges[ language ][ changeID ];
-            }
-        }
-
-        this.leavesUtils.printColor( `[Questrandomizer] Loaded localization bundle!` );
     }
 
     public getLocalizationChangesToSave()

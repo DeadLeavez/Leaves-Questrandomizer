@@ -22,21 +22,22 @@ import { LeavesContextSwitcher } from "./LeavesContextSwitcher";
 import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
 import { IncomingMessage, ServerResponse } from "http";
+import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModService";
 
 // TODO:
 // Way to make compatibility with other mods. At least shiny airdrops
 // Randomize gear if its already there (NOT DONE)
 // Zones
-// Blacklist items
+// Make a profile-profile quest id translator
+
 
 export class Questrandomizer implements IPreSptLoadMod
 {
+    private onUpdateModService: OnUpdateModService;
     private databaseServer: DatabaseServer;
-    private handbookHelper: HandbookHelper;
     private customItemService: CustomItemService;
     private httpServer: HttpServer;
     private static originalHandleMethod;
-
     public static leavesContextSwitcher: LeavesContextSwitcher;
 
     private leavesIdManager: LeavesIdManager;
@@ -45,37 +46,6 @@ export class Questrandomizer implements IPreSptLoadMod
     private leavesQuestGeneration: LeavesQuestGeneration;
     private leavesSettingsManager: LeavesSettingsManager;
     private leavesLocaleGeneration: LeavesLocaleGeneration;
-
-
-
-    private generateCategoryItem( category: string, handbookParent: string ): string
-    {
-        const leavesUp: NewItemFromCloneDetails = {
-            itemTplToClone: "574eb85c245977648157eec3",
-            overrideProperties: {
-                Prefab: {
-                    path: "assets/content/items/barter/item_info_book_bakeezy/item_info_book_bakeezy.bundle",
-                    rcid: ""
-                }
-            },
-            newId: this.leavesIdManager.get( category ),
-            parentId: "567849dd4bdc2d150f8b456e",
-            handbookParentId: handbookParent,
-            fleaPriceRoubles: 10000,
-            handbookPriceRoubles: 10000,
-            locales: {
-                en: {
-                    name: "ERROR",
-                    shortName: "ERROR",
-                    description: "IF YOU EVER SEE THIS SOMETHING HAS GONE WRONG!",
-                },
-            },
-        };
-
-        this.customItemService.createItemFromClone( leavesUp );
-
-        return leavesUp.newId;
-    }
 
     public preSptLoad( container: DependencyContainer ): void
     {
@@ -86,11 +56,19 @@ export class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesQuestGeneration>( "LeavesQuestGeneration", LeavesQuestGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesLocaleGeneration>( "LeavesLocaleGeneration", LeavesLocaleGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesContextSwitcher>( "LeavesContextSwitcher", LeavesContextSwitcher, { lifecycle: Lifecycle.Singleton } );
+
+
+        this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
+
+        this.onUpdateModService.registerOnUpdate(
+            "LeavesContextUnload",
+            ( timeSinceLastRun: number ) => Questrandomizer.leavesContextSwitcher.unloadChecker( timeSinceLastRun ),
+            () => "LeavesContextUnload" // new route name
+        );
     }
 
     public postDBLoad( container: DependencyContainer ): void
     {
-        this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
         this.customItemService = container.resolve<CustomItemService>( "CustomItemService" );
         this.httpServer = container.resolve<HttpServer>( "HttpServer" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
@@ -123,13 +101,6 @@ export class Questrandomizer implements IPreSptLoadMod
         // @ts-ignore
         this.httpServer.handleRequest = this.handleRequestReplacement;
 
-        //Set up quest whitelist
-        let questWhitelist: string[] = [];
-        if ( this.leavesSettingsManager.getConfig().enableQuestWhilelist )
-        {
-            questWhitelist = this.leavesUtils.loadFile( "config/questwhitelist.jsonc" ).whitelist;
-        }
-
         //Set up handbook categories
         this.setupHandbookCategories();
 
@@ -137,6 +108,44 @@ export class Questrandomizer implements IPreSptLoadMod
         this.generateWeaponCategorySheet();
 
         this.leavesIdManager.save( "assets/generated/ids.jsonc" );
+    }
+
+    public async handleRequestReplacement( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
+    {
+        // Pull sessionId out of cookies and store inside app context
+        // @ts-ignore
+        const sessionId = this.getCookies( req ).PHPSESSID;
+        Questrandomizer.leavesContextSwitcher.switchContext( sessionId );
+        Questrandomizer.originalHandleMethod( req, resp );
+    }
+
+    private generateCategoryItem( category: string, handbookParent: string ): string
+    {
+        const leavesUp: NewItemFromCloneDetails = {
+            itemTplToClone: "574eb85c245977648157eec3",
+            overrideProperties: {
+                Prefab: {
+                    path: "assets/content/items/barter/item_info_book_bakeezy/item_info_book_bakeezy.bundle",
+                    rcid: ""
+                }
+            },
+            newId: this.leavesIdManager.get( category ),
+            parentId: "567849dd4bdc2d150f8b456e",
+            handbookParentId: handbookParent,
+            fleaPriceRoubles: 10000,
+            handbookPriceRoubles: 10000,
+            locales: {
+                en: {
+                    name: "ERROR",
+                    shortName: "ERROR",
+                    description: "IF YOU EVER SEE THIS SOMETHING HAS GONE WRONG!",
+                },
+            },
+        };
+
+        this.customItemService.createItemFromClone( leavesUp );
+
+        return leavesUp.newId;
     }
 
     private setupHandbookCategories()
@@ -229,6 +238,10 @@ export class Questrandomizer implements IPreSptLoadMod
             {
                 editedHandoverItemTask = this.editHandoverItemTask( task, editHandOverOverride );
             }
+
+            //Purge visibility conditions.
+            task.visibilityConditions = [];
+
         }
         if ( editedHandoverItemTask )
         {
@@ -544,15 +557,6 @@ export class Questrandomizer implements IPreSptLoadMod
         }
 
         return categorysheet;
-    }
-
-    public async handleRequestReplacement( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
-    {
-        // Pull sessionId out of cookies and store inside app context
-        // @ts-ignore
-        const sessionId = this.getCookies( req ).PHPSESSID;
-        Questrandomizer.leavesContextSwitcher.switchContext( sessionId );
-        Questrandomizer.originalHandleMethod( req, resp );
     }
 }
 

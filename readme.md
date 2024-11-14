@@ -98,6 +98,7 @@ Current Shortcomings
 - Safeguard against other mods adding broken items to quests.
 
 ## 0.1.0
-- Major rework. Quests are now on a per-profile basis.
+- Major rework. Quests are now on a per-profile basis. I have tried to test this as extensively as possible. But consider this even more of a beta than previous releases.
 - Add localization for weapon groups. (Uses locale, then en, and lastly the weapon group name string)
 - Cleaned up console spam if Debug isn't enabled.
+- Unload profiles if they've been inactive for a while.

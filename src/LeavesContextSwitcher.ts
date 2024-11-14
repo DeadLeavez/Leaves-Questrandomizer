@@ -14,6 +14,9 @@ import { LeavesUtils } from "./LeavesUtils";
 import { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import { Questrandomizer } from "./mod";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
+import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModService";
+import { time } from "console";
+
 
 @injectable()
 export class LeavesContextSwitcher
@@ -25,6 +28,8 @@ export class LeavesContextSwitcher
     private hasInit: boolean;
     private questRandomizer: Questrandomizer;
     private currentContex: string;
+    private timeoutTracker: Set<String>;
+    private unloadCheckTime: number;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -35,33 +40,58 @@ export class LeavesContextSwitcher
         @inject( "HashUtil" ) protected hashUtil: HashUtil,
         @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
         @inject( "ProfileHelper" ) protected profileHelper: ProfileHelper,
-        @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager
+        @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
     )
     {
+        this.originalLocaleDB = {};
+        this.originalQuestDB = {};
         this.locales = {};
         this.quests = {};
         this.hasInit = false;
         this.currentContex = "";
+        this.timeoutTracker = new Set<String>();
+        this.unloadCheckTime = this.leavesSettingsManager.getConfig().timeBetweenUnloadChecks;
+    }
+    public unloadChecker( timeSinceLastRun: number ): boolean
+    {
+        if ( timeSinceLastRun > this.unloadCheckTime )
+        {
+            for ( const profileID of Object.keys( this.quests ) )
+            {
+                if ( !this.timeoutTracker.has( profileID ) )
+                {
+                    const name = this.profileHelper.getFullProfile( profileID ).info.username;
+                    this.leavesUtils.printColor( `[Questrandomizer] Unloading profile due to inactivity: ${name} - ${profileID}`, LogTextColor.YELLOW );
+                    delete this.quests[ profileID ];
+                    delete this.locales[ profileID ];
+                }
+            }
+            this.timeoutTracker = new Set<String>();
+            return true;
+        }
+        return false;
     }
 
     public getAllQuests(): any
     {
-        return;
+        return this.quests;
     }
 
     public switchContext( sessionId )
     {
-        if ( !this.hasInit )
+        if ( this.hasInit === false )
         {
-            this.hasInit = true;
+            this.leavesUtils.printColor( "Saving a copy of original DBs" );
             this.originalLocaleDB = structuredClone( this.databaseServer.getTables().locales.global );
             this.originalQuestDB = structuredClone( this.databaseServer.getTables().templates.quests );
+            this.hasInit = true;
         }
 
         if ( sessionId === undefined || sessionId === "undefined" || sessionId === "" || sessionId === null )
         {
             return;
         }
+
         const profileID = this.profileHelper.getFullProfile( sessionId ).info?.id;
 
         if ( profileID === undefined || profileID === "undefined" || profileID === "" || profileID === null )
@@ -76,8 +106,6 @@ export class LeavesContextSwitcher
 
         this.leavesUtils.printColor( `[Questrandomizer] Switching context for PID:${ profileID } SID:${ sessionId }` );
 
-        //We check in order of most likely to save performance, since this will be called a lot
-        //Most likely: Everything is loaded.
         if ( this.quests[ profileID ] )
         {
             this.set( profileID );
@@ -93,13 +121,16 @@ export class LeavesContextSwitcher
     {
         let questDB = {};
         let localeChangesToSave = {};
+
         //Quests have been generated, but aren't loaded.
         if ( this.leavesUtils.checkIfFileExists( `assets/generated/${ profileID }/quests.json` ) )
         {
             questDB = this.leavesUtils.loadFile( `assets/generated/${ profileID }/quests.json` );
             localeChangesToSave = this.leavesUtils.loadFile( `assets/generated/${ profileID }/locales.json` );
-            this.leavesSettingsManager.setLocalzationChangesToSave( localeChangesToSave );
         }
+
+        //Set changes, werther loaded or empty
+        this.leavesSettingsManager.setLocalzationChangesToSave( localeChangesToSave );
 
         //Get some fresh databases in here. 
         this.databaseServer.getTables().templates.quests = structuredClone( this.originalQuestDB );
@@ -136,18 +167,8 @@ export class LeavesContextSwitcher
                 editedQuests++;
             }
         }
-        this.leavesUtils.printColor( "     ____     ____  ", LogTextColor.MAGENTA );
-        this.leavesUtils.printColor( "    / __ \\   / __ \\", LogTextColor.MAGENTA );
-        this.leavesUtils.printColor( "   / / / /  / /_/ /", LogTextColor.MAGENTA );
-        this.leavesUtils.printColor( "  / /_/ /  / _, _/ ", LogTextColor.MAGENTA );
-        this.leavesUtils.printColor( "  \\___\\_\\ /_/ |_|  Leaves Questrandomizer", LogTextColor.MAGENTA );
-        this.leavesUtils.printColor( `┌──────────────────────────────────────────────────┐` );
-        this.leavesUtils.printColor( `│ Found a total of ${ Object.keys( serverQuestDB ).length } quests in the game.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ ----------------------------------------`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ Loaded:  ${ loadedQuests } already edited quests.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ Edited:  ${ editedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ Total:   ${ loadedQuests + editedQuests } quests changed from original.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `└──────────────────────────────────────────────────┘` );
+        //Print logo + info
+        this.printLogo( serverQuestDB, loadedQuests, editedQuests );
 
         //Load localization into the database.
         localeChangesToSave = this.leavesSettingsManager.getLocalizationChangesToSave();
@@ -163,6 +184,22 @@ export class LeavesContextSwitcher
         //Save the changes to file
         this.leavesUtils.saveFile( questDB, `assets/generated/${ profileID }/quests.json` );
         this.leavesUtils.saveFile( localeChangesToSave, `assets/generated/${ profileID }/locales.json` );
+    }
+
+    private printLogo( serverQuestDB: any, loadedQuests: number, editedQuests: number )
+    {
+        this.leavesUtils.printColor( "     ____     ____  ", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "    / __ \\   / __ \\", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "   / / / /  / /_/ /", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "  / /_/ /  / _, _/ ", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( "  \\___\\_\\ /_/ |_|  Leaves Questrandomizer", LogTextColor.MAGENTA );
+        this.leavesUtils.printColor( `┌──────────────────────────────────────────────────┐` );
+        this.leavesUtils.printColor( `│ Found a total of ${ Object.keys( serverQuestDB ).length } quests in the game.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ ----------------------------------------`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Loaded:  ${ loadedQuests } already edited quests.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Edited:  ${ editedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Total:   ${ loadedQuests + editedQuests } quests changed from original.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `└──────────────────────────────────────────────────┘` );
     }
 
     private loadQuestsIntoDatabase( questDB: any )
@@ -196,6 +233,7 @@ export class LeavesContextSwitcher
     //This assumes profileID has been vetted and loaded.
     private set( profileID )
     {
+        this.timeoutTracker.add( profileID );
         this.currentContex = profileID;
         this.databaseServer.getTables().locales.global = this.locales[ profileID ];
         this.databaseServer.getTables().templates.quests = this.quests[ profileID ];

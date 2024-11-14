@@ -18,7 +18,6 @@ export class LeavesUtils
     private modFolder: string;
     private tierList: any;
     private itemTiers: number[];
-    private IDTranslator: any;
     private debug: boolean;
 
     constructor(
@@ -246,10 +245,10 @@ export class LeavesUtils
         return newValue;
     }
 
-    public searchObject( type: string, searchTarget: any )
+    public searchObject( stringToFind: string, object: any )
     {
         //Hackiest shit ever
-        if ( this.jsonUtil.serialize( searchTarget ).search( `${ type }` ) > -1 )
+        if ( this.jsonUtil.serialize( object ).search( `${ stringToFind }` ) > -1 )
         {
             return true;
         }
@@ -471,16 +470,6 @@ export class LeavesUtils
 
             tempTarget = tempTarget[ toCheck ];
         }
-
-        /*//this.leavesUtils.debugJsonOutput( target )
-
-        const itemDB = this.databaseServer.getTables().templates.items;
-        let parentName = this.getLocale( "en", itemDB[ item ]._parent, " Name" );
-        if ( !target[ parentName ] )
-        {
-            target[ parentName ] = {};
-        }
-        target[ parentName ][ item ] = true;//`${ this.getLocale( "en", item, " Name" ) }`;*/
     }
 
 
