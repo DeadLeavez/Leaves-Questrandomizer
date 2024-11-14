@@ -19,6 +19,8 @@
     "AnyWeapon": "Any Weapon",
     "AllRequired": "All Required",
     "OneRequired": "Any Required",
+    "AND": "AND",
+    "OR": "OR",
     "bigmap": "Aduanas",
     "factory4_day": "La Fábrica - De día",
     "factory4_night": "La Fábrica - De noche",
