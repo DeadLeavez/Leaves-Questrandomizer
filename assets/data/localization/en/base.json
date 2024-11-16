@@ -7,7 +7,7 @@
     "atLocation": "at",
     "wearingGear": "wearing",
     "HandoverItem": "Hand over",
-    "ofItem": "", 
+    "ofItem": "",
     "itemsFromThe": "items from the",
     "Category": "Category",
     "FoundInRaid": "found in raid",
@@ -100,5 +100,17 @@
 
     "ITEMCATEGORY_5c99f98d86f7745c314214b3": "Mechanical Key",
     "ITEMCATEGORY_5a341c4686f77469e155819e": "Face Wear",
-    "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear"
+    "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear",
+
+    "QG_ReportThis": "If you see this in-game, please report where you see this.",
+    
+    "QG_WeaponMasteryName": "Weapon Mastery #",
+    "QG_WeaponMasteryDescription": "Show off your prowess with specific weapons.",
+    "QG_WeaponMasteryAccept": "So you're up for the challenge? Let's see how you do!",
+    "QG_WeaponMasterySuccess": "You did it. You crazy son of a bitch, You did it!",
+
+    "QG_FetchName": "Collector #",
+    "QG_FetchDescription": "Finally put that hoard of useless stuff to use.",
+    "QG_FetchAccept": "You probably have all the stuff lying around already.",
+    "QG_FetchSuccess": "I hope that wasn't too difficult. Here's some new stuff for you to hoard instead."
 }

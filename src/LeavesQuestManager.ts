@@ -11,6 +11,8 @@ import { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import { Questrandomizer } from "./mod";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesQuestTools } from "./LeavesQuestTools";
+import { LeavesIdManager } from "./LeavesIdManager";
+import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
 
 
 @injectable()
@@ -37,7 +39,9 @@ export class LeavesQuestManager
         @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
         @inject( "ProfileHelper" ) protected profileHelper: ProfileHelper,
         @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
-        @inject( "LeavesQuestTools" ) protected leavesQuestTools: LeavesQuestTools
+        @inject( "LeavesQuestTools" ) protected leavesQuestTools: LeavesQuestTools,
+        @inject( "LeavesIdManager" ) protected leavesIdManager: LeavesIdManager,
+        @inject( "LeavesQuestGeneration" ) protected leavesQuestGeneration: LeavesQuestGeneration
     )
     {
         this.originalLocaleDB = {};
@@ -187,6 +191,10 @@ export class LeavesQuestManager
                 editedQuests++;
             }
         }
+
+        //Quest Generation
+        this.generateQuests( questDB );
+
         //Print logo + info
         this.printLogo( serverQuestDB, loadedQuests, editedQuests );
 
@@ -204,6 +212,26 @@ export class LeavesQuestManager
         //Save the changes to file
         this.leavesUtils.saveFile( questDB, `assets/generated/${ profileID }/quests.json` );
         this.leavesUtils.saveFile( localeChangesToSave, `assets/generated/${ profileID }/locales.json` );
+        this.leavesIdManager.save();
+    }
+
+    private generateQuests( questDB:any )
+    {
+        const questTrader = this.leavesSettingsManager.getConfig().QuestGen_Trader;
+        let previousQuest = "";
+
+        //Generate weapon mastery quests
+        for ( let i = 0; i < this.leavesSettingsManager.getConfig().QuestGen_TotalWeaponQuests; ++i )
+        {
+            let questName = `WMQ_${ i }`;
+            if ( !questDB[ this.leavesIdManager.get( questName ) ] )
+            {
+                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName );
+                let generatedQuest = this.leavesQuestGeneration.generateWeaponMasteryQuest( questName, previousQuest, questTrader, i );
+                previousQuest = generatedQuest._id;
+                questDB[ generatedQuest._id ] = generatedQuest;
+            }
+        }
     }
 
     private printLogo( serverQuestDB: any, loadedQuests: number, editedQuests: number )

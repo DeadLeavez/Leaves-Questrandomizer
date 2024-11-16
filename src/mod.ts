@@ -41,7 +41,6 @@ export class Questrandomizer implements IPreSptLoadMod
     private leavesIdManager: LeavesIdManager;
     private leavesUtils: LeavesUtils;
     private leavesQuestTools: LeavesQuestTools;
-    private leavesQuestGeneration: LeavesQuestGeneration;
     private leavesSettingsManager: LeavesSettingsManager;
     private leavesLocaleGeneration: LeavesLocaleGeneration;
 
@@ -81,7 +80,6 @@ export class Questrandomizer implements IPreSptLoadMod
 
         this.leavesSettingsManager = container.resolve<LeavesSettingsManager>( "LeavesSettingsManager" );
         this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
-        this.leavesQuestGeneration = container.resolve<LeavesQuestGeneration>( "LeavesQuestGeneration" );
         this.leavesLocaleGeneration = container.resolve<LeavesLocaleGeneration>( "LeavesLocaleGeneration" );
 
         this.leavesUtils.setTierList( "config/itemtierlist.jsonc" );
@@ -117,7 +115,7 @@ export class Questrandomizer implements IPreSptLoadMod
         //Generate a category list
         this.generateWeaponCategorySheet();
 
-        this.leavesIdManager.save( "assets/generated/ids.jsonc" );
+        this.leavesIdManager.save();
     }
 
     public async handleRequestReplacement( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
@@ -214,12 +212,13 @@ export class Questrandomizer implements IPreSptLoadMod
         //Check if quest has kill type
         if ( !this.leavesUtils.searchObject( "Kills", quest.conditions.AvailableForFinish ) && Math.random() < this.leavesSettingsManager.getConfig().addKillObjectiveToQuestChance && !hasKillsFailstate )
         {
-            // MODIFIED ABCD
             const tempTarget = this.leavesSettingsManager.getValidTargets()[ randomInt( this.leavesSettingsManager.getValidTargets().length ) ];
             const tempKillcount = this.leavesSettingsManager.getConfig().addKillObjectiveKillCount;
             this.leavesQuestTools.addKillObjectiveToQuest( quest, tempTarget, tempKillcount );
             this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW, true );
         }
+        
+        //Check if quest has handover type
         let editHandOverOverride = false;
         if ( !this.leavesUtils.searchObject( "HandoverItem", quest.conditions.AvailableForFinish ) && Math.random() < this.leavesSettingsManager.getConfig().addHandOverObjectiveToQuestChance )
         {
@@ -229,6 +228,7 @@ export class Questrandomizer implements IPreSptLoadMod
         }
 
         let editedHandoverItemTask = false;
+
         //Loop all AvailableForFinish conditions
         for ( let task of quest.conditions.AvailableForFinish )
         {

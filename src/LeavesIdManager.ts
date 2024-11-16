@@ -6,6 +6,7 @@ import { LeavesUtils } from "./LeavesUtils";
 export class LeavesIdManager
 {
     private IDTranslator: any;
+    private filepath: string;
 
     constructor(
         @inject( "HashUtil" ) protected hashUtil: HashUtil,
@@ -15,11 +16,12 @@ export class LeavesIdManager
 
     public load( filename: string )
     {
+        this.filepath = filename;
         this.IDTranslator = this.leavesUtils.loadFile( filename );
     }
-    public save( filename: string ) 
+    public save( ) 
     {
-        this.leavesUtils.saveFile( this.IDTranslator, filename );
+        this.leavesUtils.saveFile( this.IDTranslator, this.filepath );
     }
     public get( name: string ): string
     {

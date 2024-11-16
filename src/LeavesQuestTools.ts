@@ -134,7 +134,19 @@ export class LeavesQuestTools
         return "unknown";
     }
 
-    public addKillObjectiveToQuest( quest: IQuest, target: string, count: number ): number
+    public findCounterConditionType( conditions:IQuestConditionCounterCondition[], type: string ): number
+    {
+        for ( let i = 0; i < conditions.length; ++i )
+        {
+            if ( conditions[i].conditionType === type )
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public addKillObjectiveToQuest( quest: IQuest, target: string, count: number )
     {
         //SPT, YOUR TYPES SUCK!
         let objectiveData: any =
@@ -184,7 +196,9 @@ export class LeavesQuestTools
             "visibilityConditions": []
         };
 
-        return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
+        quest.conditions.AvailableForFinish.push( objectiveData );
+        
+        return;
     }
 
     public addGearToQuest( condition: IQuestConditionCounterCondition[], gearPieces: string[] ): number
@@ -399,6 +413,8 @@ export class LeavesQuestTools
 
     public addRandomWeaponGroup( condition: IQuestConditionCounterCondition, flags: any )
     {
+        flags.hasWeapon = 1;
+        
         //Check if were gonna use a category or specific weapon
         if ( Math.random() < this.leavesSettingsManager.getConfig().chanceForSpecificWeapon )
         {
@@ -494,13 +510,11 @@ export class LeavesQuestTools
     public randomizeWeapons( killsCondition: IQuestConditionCounterCondition, flags: any )
     {
         if ( killsCondition.weapon.length > 0 )
-        {
-            flags.hasWeapon = 1;
+        {  
             this.addRandomWeaponGroup( killsCondition, flags );
         }
         else if ( Math.random() < this.leavesSettingsManager.getConfig().chanceToAddWeapon )
         {
-            flags.hasWeapon = 1;
             this.addRandomWeaponGroup( killsCondition, flags );
         }
     }

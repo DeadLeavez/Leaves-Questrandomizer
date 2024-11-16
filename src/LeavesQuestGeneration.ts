@@ -4,7 +4,7 @@ import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest } from "@spt/models/eft/common/tables/IQuest";
+import { IQuest, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
 import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
 import { ELocationName } from "@spt/models/enums/ELocationName";
 import { QuestStatus } from "@spt/models/enums/QuestStatus";
@@ -14,6 +14,8 @@ import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
 import { LeavesIdManager } from "./LeavesIdManager";
+import { randomInt } from "node:crypto";
+import { kill } from "node:process";
 
 @injectable()
 export class LeavesQuestGeneration
@@ -101,70 +103,80 @@ export class LeavesQuestGeneration
 
     public addRewardsToQuest( quest: IQuest, questNumber: number )
     {
+        let rewardTiers = this.leavesSettingsManager.getConfig().QuestGen_RewardPools;
+        let rewardTable = this.leavesSettingsManager.getRewardsTable();
+
+        let selectedTier = "common";
+        selectedTier = questNumber >= rewardTiers.common ? "common" : selectedTier;
+        selectedTier = questNumber >= rewardTiers.rare ? "rare" : selectedTier;
+        selectedTier = questNumber >= rewardTiers.epic ? "epic" : selectedTier;
+
+        const selectedReward = rewardTable[ selectedTier ][ randomInt( rewardTable[ selectedTier ].length ) ];
+
         this.leavesQuestTools.addRewardExperience( quest, this.leavesSettingsManager.getConfig().QuestGen_XPPerQuest * questNumber );
-        this.leavesQuestTools.addRewardItem( quest, "57347c5b245977448d35f6e1", 1, true );
+        this.leavesQuestTools.addRewardItem( quest, selectedReward, 1, true );
         return;
     }
 
     public generateWeaponMasteryQuest( name: string, previousQuest: string, trader: string, questNumber: number ): IQuest
     {
         const questDB = this.databaseServer.getTables().templates.quests;
-        const questID = this.leavesIdManager.get( `WMQ_${ questNumber }` );
-
+        const questID = this.leavesIdManager.get( name );
 
         //Make empty quest
         let newQuest = this.generateEmptyQuest( name, trader, ELocationName.ANY, questID );
-        
+
         if ( questNumber !== 0 )
         {
             this.leavesQuestTools.addPrerequisiteQuest( newQuest, previousQuest, [ QuestStatus.Success ] );
         }
 
         this.addRewardsToQuest( newQuest, questNumber );
-        
-        const killIndex = this.leavesQuestTools.addKillObjectiveToQuest( newQuest, "Any", 1 );
 
-
-        let flags =
+        for ( let i = 0; i < Math.max( 1, questNumber / 10 ); ++i )
         {
-            hasInZone: -1,
-            hasKills: killIndex,
-            hasLocation: -1,
-            whatLoctations: [],
-            hasDistance: -1,
-            hasTime: -1,
-            hasBodyparts: -1,
-            hasWeapon: -1,
-            hasSpecificWeapon: -1,
-            whatWeaponOrGroup: "",
-            hasSavageRole: -1,
-            hasKillFailstate: -1,
-            hasEquipment: -1,
-            questID: newQuest._id,
-            isEasyQuest: false,
-        }
+            this.leavesQuestTools.addKillObjectiveToQuest( newQuest, "Any", 5 + questNumber * 2 );
 
-        //const handoverIndex = this.leavesQuestTools.addHandOverObjectiveToQuest( newQuest, 1, [ this.leavesUtils.getRandomItemFromTier( 5 ) ] );
-        //this.leavesLocaleGeneration.generateHandoverItemLocale( newQuest.conditions.AvailableForFinish[ handoverIndex ], "" );
-        this.leavesLocaleGeneration.generateKillsLocale( newQuest.conditions.AvailableForFinish[ killIndex ], flags );
+            let flags =
+            {
+                hasInZone: -1,
+                hasKills: 0,
+                hasLocation: -1,
+                whatLoctations: [],
+                hasDistance: -1,
+                hasTime: -1,
+                hasBodyparts: -1,
+                hasWeapon: -1,
+                hasSpecificWeapon: -1,
+                whatWeaponOrGroup: "",
+                hasSavageRole: -1,
+                hasKillFailstate: -1,
+                hasEquipment: -1,
+                questID: newQuest._id,
+                isEasyQuest: false,
+            }
+            this.leavesQuestTools.addRandomWeaponGroup( newQuest.conditions.AvailableForFinish[ i ].counter.conditions[ 0 ], flags );
+
+            this.leavesLocaleGeneration.generateKillsLocale( newQuest.conditions.AvailableForFinish[ i ], flags );
+        }
         for ( const locale of this.leavesLocaleGeneration.getLoadedLocales() )
         {
             this.setBaseQuestLocale(
                 newQuest._id,
                 locale,
-                "ACCEPTMESSAGE",
-                "CHANGEQUESTMESSAGE",
-                "COMPLETEMESSAGE",
-                "DESCRIPTION",
-                "FAILMESSAGE",
-                "DECLINEMSSAGE",
-                "STARTEDMESSAGE",
-                "SUCCESSMESSAGE",
-                name,
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 1, //"ACCEPTMESSAGE",
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 2, //"CHANGEQUESTMESSAGE", - //Never shows
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 3, //"COMPLETEMESSAGE", - //Never shows
+                this.leavesLocaleGeneration.getLoc( "QG_WeaponMasteryDescription", locale ), //"DESCRIPTION",
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 4, //"FAILMESSAGE", - //never shows
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 5, //"DECLINEMSSAGE", - //never shows
+                this.leavesLocaleGeneration.getLoc( "QG_WeaponMasteryAccept", locale ), //"STARTEDMESSAGE",
+                this.leavesLocaleGeneration.getLoc( "QG_WeaponMasterySuccess", locale ), //"SUCCESSMESSAGE",
+                this.leavesLocaleGeneration.getLoc( "QG_WeaponMasteryName", locale ) + ( questNumber + 1 ), //QUESTNAME
             )
         }
         questDB[ newQuest._id ] = newQuest;
-        this.leavesUtils.debugJsonOutput( newQuest );
+        //this.leavesUtils.debugJsonOutput( newQuest );
         return newQuest;
     }
 

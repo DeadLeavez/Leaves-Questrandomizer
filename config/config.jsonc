@@ -92,7 +92,7 @@
     ],
 
     //Quest generation.
-    "QuestGen_TotalWeaponQuests": 10, //Amount of quests per type
+    "QuestGen_TotalWeaponQuests": 50, //Amount of quests per type
     "QuestGen_TotalHandoverQuests": 10,
     "QuestGen_TotalPostmanQuests": 10,
     "QuestGen_TotalRunnerQuests": 10,

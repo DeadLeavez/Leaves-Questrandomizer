@@ -22,6 +22,7 @@ export class LeavesSettingsManager
     private easyMaps: string[];
     private locationIDMap;
     private questWhiteList: string[];
+    private rewardTable;
 
     constructor(
         @inject( "PreSptModLoader" ) protected preSptModLoader: PreSptModLoader,
@@ -46,6 +47,7 @@ export class LeavesSettingsManager
         this.validTargets = miscData.validTargets;
         this.bodyParts = miscData.bodyParts;
         this.easyMaps = miscData.easyMaps;
+        this.rewardTable = miscData.rewards;
 
         this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
 
@@ -66,6 +68,11 @@ export class LeavesSettingsManager
     public getQuestWhitelist()
     {
         return this.questWhiteList;
+    }
+
+    public getRewardsTable()
+    {
+        return this.rewardTable;
     }
 
     private loadWeaponCategories()
