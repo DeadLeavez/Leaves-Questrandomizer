@@ -5,8 +5,6 @@ import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/m
 import type { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
 import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { randomInt } from "crypto";
-import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
-import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 import { HttpServer } from "@spt/servers/HttpServer";
 
 //Helpers
@@ -16,7 +14,7 @@ import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
 import { LeavesIdManager } from "./LeavesIdManager";
-import { LeavesContextSwitcher } from "./LeavesContextSwitcher";
+import { LeavesQuestManager } from "./LeavesQuestManager";
 
 //item creation
 import { CustomItemService } from "@spt/services/mod/CustomItemService";
@@ -29,7 +27,7 @@ import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModServic
 // Randomize gear if its already there (NOT DONE)
 // Zones
 // Make a profile-profile quest id translator
-
+// randomize rewards?
 
 export class Questrandomizer implements IPreSptLoadMod
 {
@@ -38,7 +36,7 @@ export class Questrandomizer implements IPreSptLoadMod
     private customItemService: CustomItemService;
     private httpServer: HttpServer;
     private static originalHandleMethod;
-    public static leavesContextSwitcher: LeavesContextSwitcher;
+    public static leavesQuestManager: LeavesQuestManager;
 
     private leavesIdManager: LeavesIdManager;
     private leavesUtils: LeavesUtils;
@@ -55,14 +53,14 @@ export class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestGeneration>( "LeavesQuestGeneration", LeavesQuestGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesLocaleGeneration>( "LeavesLocaleGeneration", LeavesLocaleGeneration, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesContextSwitcher>( "LeavesContextSwitcher", LeavesContextSwitcher, { lifecycle: Lifecycle.Singleton } );
+        container.register<LeavesQuestManager>( "LeavesQuestManager", LeavesQuestManager, { lifecycle: Lifecycle.Singleton } );
 
 
         this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
 
         this.onUpdateModService.registerOnUpdate(
             "LeavesContextUnload",
-            ( timeSinceLastRun: number ) => Questrandomizer.leavesContextSwitcher.unloadChecker( timeSinceLastRun ),
+            ( timeSinceLastRun: number ) => Questrandomizer.leavesQuestManager.unloadChecker( timeSinceLastRun ),
             () => "LeavesContextUnload" // new route name
         );
     }
@@ -78,8 +76,8 @@ export class Questrandomizer implements IPreSptLoadMod
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
         this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
 
-        Questrandomizer.leavesContextSwitcher = container.resolve<LeavesContextSwitcher>( "LeavesContextSwitcher" );
-        Questrandomizer.leavesContextSwitcher.setQuestRandomizerReference( this );
+        Questrandomizer.leavesQuestManager = container.resolve<LeavesQuestManager>( "LeavesQuestManager" );
+        Questrandomizer.leavesQuestManager.setQuestRandomizerReference( this );
 
         this.leavesSettingsManager = container.resolve<LeavesSettingsManager>( "LeavesSettingsManager" );
         this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
@@ -92,6 +90,18 @@ export class Questrandomizer implements IPreSptLoadMod
 
         const questpoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
         this.leavesQuestTools.setQuestPoints( questpoints );
+        this.leavesQuestTools.generateDepthList();
+
+        let easyList: string[] = [];
+        
+        const depthList = this.leavesQuestTools.getDepthList()
+        for ( const questID in depthList )
+        {
+            if ( depthList[ questID ].depth < 2 && depthList[ questID ].level < 5 )
+            {
+                this.leavesUtils.printColor( `\"EasyQ\":\"${ questID }\",` );
+            }
+        }
 
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
 
@@ -115,7 +125,7 @@ export class Questrandomizer implements IPreSptLoadMod
         // Pull sessionId out of cookies and store inside app context
         // @ts-ignore
         const sessionId = this.getCookies( req ).PHPSESSID;
-        Questrandomizer.leavesContextSwitcher.switchContext( sessionId );
+        Questrandomizer.leavesQuestManager.switchContext( sessionId );
         Questrandomizer.originalHandleMethod( req, resp );
     }
 

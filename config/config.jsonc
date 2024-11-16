@@ -26,11 +26,11 @@
     "addKillObjectiveKillCount": 5, //Base kill count to added objectives. Then multiplied by the factors above.
 
     "addHandOverObjectiveToQuestChance": 0.25, //CHance to ADD a handover condition to a quest that does not have it.
-    "addHandOverObjectiveBaseCount": 4.00, //Number of items that need to be handed over by default.
+    "addHandOverObjectiveBaseCount": 4, //Number of items that need to be handed over by default.
     "chanceToEditHandoverCondition": 0.85, //Chance that the handover part of a quest will be randomized. 1 for always. 0 for never. Decimal values are ok.
     "chanceToRequireItemCategory": 0.15, //Chance that instead of a specific item, the quest requires a bunch of items from a category instead.
-    "itemCategoryMultiplier": 2.00, //If it's a category we multiply the needed item count with this. With default settings if a quest normally requires 5 Duct Tape, it now might require 10 medikits.
-    "handoverItemUnknownItemValueDivider": 15000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. Lower value means harder quests.
+    "itemCategoryMultiplier": 2.50, //If it's a category we multiply the needed item count with this. With default settings if a quest normally requires 5 Duct Tape, it now might require 10 medikits.
+    "handoverItemUnknownItemValueDivider": 14000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. Lower value means harder quests.
     "adjustHandoverCountFactorsUpDown": [ 0.25, 0.40 ], //Adjusts how many items are needed for a handover quest. See how it works above.
     "chanceHandoverNeedsFIR": 0.50, //Chance for a quest to require the handover items to be Found In Raid. 1 is always. 0 is never.
     "handoverItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entirely and left alone. Parent categories also work.
@@ -42,7 +42,21 @@
         "59f32c3b86f77472a31742f0", //Dogtag USEC
         "5485a8684bdc2da71d8b4567" //Ammo - Parent
     ],
-    "enableQuestWhilelist": false, //When enabled, will only modify quests from the questwhitelist.jsonc. By default this is all the vanilla quests. Only enable this if you suspect another mod is playing bad with this one.
+    "enableQuestWhilelist": true, //When enabled, will only modify quests from the questwhitelist.jsonc. By default this is all the vanilla quests. Only enable this if you suspect another mod is playing bad with this one.
+    "questXPMultiplier": 0.5, //Multiplier for all quests. Applies to generated quests too. Useful if you spend more time on each quest, so you don't get ahead of the curve.
+    "enableTraderWhitelist": true, //If we want to enable the whitelist below.
+    "traderWhitelist": //If a quest is from a trader that's not on this list, it will be ignored.
+    [
+        "54cb50c76803fa8b248b4571", // PRAPOR
+        "54cb57776803fa99248b456e", // THERAPIST
+        "579dc571d53a0658a154fbec", // FENCE
+        "58330581ace78e27b8b10cee", // SKIER
+        "5935c25fb3acc3127c3d8cd9", // PEACEKEEPER
+        "5a7c2eca46aef81a7ca2145d", // MECHANIC
+        "5ac3b934156ae10c4430e83c", // RAGMAN
+        "5c0647fdd443bc2504c2d371", // JAEGER
+        "6617beeaa9cfa777ca915b7c" // REF
+    ],
 
     /*
     List of quests that are easier. 
@@ -54,7 +68,7 @@
     - - Does not ADD/EDIT gear requirements
     - - Does not EDIT weapon requirements 
     */
-    "easierQuestList": 
+    "easierQuestList":
     [
         "5936d90786f7742b1420ba5b", //Debut
         "5936da9e86f7742d65037edf", //Background Check
@@ -83,25 +97,33 @@
     "QuestGen_TotalPostmanQuests": 10,
     "QuestGen_TotalRunnerQuests": 10,
     "QuestGen_TotalSniperQuests": 10,
-    "QuestGen_Trader":"54cb50c76803fa8b248b4571", //What trader will provide the new quests.
+    "QuestGen_Trader": "54cb50c76803fa8b248b4571", //What trader will provide the new quests.
 
-    //Default Traders
-    // PRAPOR = "54cb50c76803fa8b248b4571"
-    // THERAPIST = "54cb57776803fa99248b456e"
-    // FENCE = "579dc571d53a0658a154fbec"
-    // SKIER = "58330581ace78e27b8b10cee"
-    // PEACEKEEPER = "5935c25fb3acc3127c3d8cd9"
-    // MECHANIC = "5a7c2eca46aef81a7ca2145d"
-    // RAGMAN = "5ac3b934156ae10c4430e83c"
-    // JAEGER = "5c0647fdd443bc2504c2d371"
-    // REF = "6617beeaa9cfa777ca915b7c"
-    
+    "QuestGen_XPPerQuest": 1000, //The amount of xp you get from each quest, multiplied by how far into the questchain you are. 5th quest would give 5 times this number.
+    "QuestGen_RewardPools":
+    {
+        "common": 0,
+        "rare": 5,
+        "epic": 10
+    },
+
     /*
     How long in seconds between checks for inactivity. 
     The actual time to unload can be longer since its since last inactivity check and not since they went inactive. 
     This is to save system memory if there are a lot of people using the server. 
     For a setup without mods its about 50MB per profile in memory usage.
     */
-    "timeBetweenUnloadChecks": 900, 
-    "DebugEnabled": false //Enables a lot of debug logging.
+    "timeBetweenUnloadChecks": 900,
+    "DebugEnabled": true //Enables a lot of debug logging.
 }
+
+//Default Traders
+// PRAPOR = "54cb50c76803fa8b248b4571"
+// THERAPIST = "54cb57776803fa99248b456e"
+// FENCE = "579dc571d53a0658a154fbec"
+// SKIER = "58330581ace78e27b8b10cee"
+// PEACEKEEPER = "5935c25fb3acc3127c3d8cd9"
+// MECHANIC = "5a7c2eca46aef81a7ca2145d"
+// RAGMAN = "5ac3b934156ae10c4430e83c"
+// JAEGER = "5c0647fdd443bc2504c2d371"
+// REF = "6617beeaa9cfa777ca915b7c"

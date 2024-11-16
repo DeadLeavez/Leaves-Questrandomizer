@@ -4,16 +4,16 @@ import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
-import { LeavesUtils } from "./LeavesUtils";
+import { IQuest } from "@spt/models/eft/common/tables/IQuest";
 import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
-import { LeavesQuestTools } from "./LeavesQuestTools";
-import { Traders } from "@spt/models/enums/Traders";
 import { ELocationName } from "@spt/models/enums/ELocationName";
+import { QuestStatus } from "@spt/models/enums/QuestStatus";
+
+import { LeavesUtils } from "./LeavesUtils";
+import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
-import { QuestStatus } from "@spt/models/enums/QuestStatus";
-import { kill } from "process";
+import { LeavesIdManager } from "./LeavesIdManager";
 
 @injectable()
 export class LeavesQuestGeneration
@@ -27,16 +27,15 @@ export class LeavesQuestGeneration
         @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
         @inject( "LeavesQuestTools" ) protected leavesQuestTools: LeavesQuestTools,
         @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
-        @inject( "LeavesLocaleGeneration" ) protected leavesLocaleGeneration: LeavesLocaleGeneration
+        @inject( "LeavesLocaleGeneration" ) protected leavesLocaleGeneration: LeavesLocaleGeneration,
+        @inject( "LeavesIdManager" ) protected leavesIdManager: LeavesIdManager
     )
     {
     }
 
 
-    public generateEmptyQuest( name: string, trader: string, location: string ): IQuest
+    public generateEmptyQuest( name: string, trader: string, location: string, ID: string ): IQuest
     {
-        const ID = this.hashUtil.generate();
-
         let newQuest: any =
         {
             QuestName: name,
@@ -100,19 +99,31 @@ export class LeavesQuestGeneration
         this.leavesLocaleGeneration.editLocaleText( `${ ID } name`, questName, locale );
     }
 
-    public generateWeaponMasteryQuest( name:string, previousQuest:string, trader:string, questNumber:number ):IQuest
+    public addRewardsToQuest( quest: IQuest, questNumber: number )
+    {
+        this.leavesQuestTools.addRewardExperience( quest, this.leavesSettingsManager.getConfig().QuestGen_XPPerQuest * questNumber );
+        this.leavesQuestTools.addRewardItem( quest, "57347c5b245977448d35f6e1", 1, true );
+        return;
+    }
+
+    public generateWeaponMasteryQuest( name: string, previousQuest: string, trader: string, questNumber: number ): IQuest
     {
         const questDB = this.databaseServer.getTables().templates.quests;
+        const questID = this.leavesIdManager.get( `WMQ_${ questNumber }` );
+
 
         //Make empty quest
-        let newQuest = this.generateEmptyQuest( name, trader, ELocationName.ANY );
-        this.leavesQuestTools.addPrerequisiteQuest( newQuest, "657315df034d76585f032e01", [QuestStatus.Success] );
-
-        this.leavesQuestTools.addRewardExperience( newQuest, 666 );
-        this.leavesQuestTools.addRewardItem( newQuest, "57347c5b245977448d35f6e1", 1, true );
-        //this.leavesQuestTools.addPrerequisiteLevel( newQuest, 5 );
-        const killIndex = this.leavesQuestTools.addKillObjectiveToQuest( newQuest, "Any", 5 );
+        let newQuest = this.generateEmptyQuest( name, trader, ELocationName.ANY, questID );
         
+        if ( questNumber !== 0 )
+        {
+            this.leavesQuestTools.addPrerequisiteQuest( newQuest, previousQuest, [ QuestStatus.Success ] );
+        }
+
+        this.addRewardsToQuest( newQuest, questNumber );
+        
+        const killIndex = this.leavesQuestTools.addKillObjectiveToQuest( newQuest, "Any", 1 );
+
 
         let flags =
         {
@@ -149,7 +160,7 @@ export class LeavesQuestGeneration
                 "DECLINEMSSAGE",
                 "STARTEDMESSAGE",
                 "SUCCESSMESSAGE",
-                "QUESTNAME",
+                name,
             )
         }
         questDB[ newQuest._id ] = newQuest;

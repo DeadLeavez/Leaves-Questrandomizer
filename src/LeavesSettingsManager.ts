@@ -1,9 +1,11 @@
-import { DependencyContainer, inject, injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { LeavesUtils } from "./LeavesUtils"
 import { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
+
+
 
 @injectable()
 export class LeavesSettingsManager
@@ -19,6 +21,7 @@ export class LeavesSettingsManager
     private validMaps: string[];
     private easyMaps: string[];
     private locationIDMap;
+    private questWhiteList: string[];
 
     constructor(
         @inject( "PreSptModLoader" ) protected preSptModLoader: PreSptModLoader,
@@ -35,6 +38,7 @@ export class LeavesSettingsManager
 
         this.loadHandoverCategories();
         this.loadWeaponCategories();
+        this.loadQuestWhitelists();
 
         const miscData = this.leavesUtils.loadFile( "assets/data/misc.jsonc" );
         this.locationIDMap = miscData.locationIdMap;
@@ -45,6 +49,23 @@ export class LeavesSettingsManager
 
         this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
 
+    }
+
+    private loadQuestWhitelists()
+    {
+        const whitelistFolder = "config/questwhitelists/enabled/";
+        this.questWhiteList = [];
+        for ( const file of this.leavesUtils.getFilesInFolder( whitelistFolder ) )
+        {
+            this.leavesUtils.printColor( "loading: [" + whitelistFolder + file + "]" );
+            let tempList: string[] = this.leavesUtils.loadFile( whitelistFolder + file ).whitelist;
+            this.questWhiteList.push( ...tempList );
+        }
+    }
+
+    public getQuestWhitelist()
+    {
+        return this.questWhiteList;
     }
 
     private loadWeaponCategories()

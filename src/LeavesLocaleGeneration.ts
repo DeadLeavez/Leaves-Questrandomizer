@@ -1,15 +1,15 @@
-import { DependencyContainer, Lifecycle, inject, injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
+import { IQuestCondition} from "@spt/models/eft/common/tables/IQuest";
 
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 
 //Helpers
-import { LeavesUtils, RTT_Colors } from "./LeavesUtils";
+import { LeavesUtils } from "./LeavesUtils";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 
 @injectable()
@@ -192,27 +192,30 @@ export class LeavesLocaleGeneration
             {
                 line += `${ this.getLoc( "wearingGear", targetLocale ) }:\n`;
                 let tempCount = 0;
-                for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
+                if ( conditions[ flags.hasEquipment ].equipmentInclusive ) 
                 {
-                    line += "[";
-                    for ( const gearID of gearGroup )
+                    for ( const gearGroup of conditions[ flags.hasEquipment ].equipmentInclusive )
                     {
-                        let name = this.leavesUtils.getLocale( targetLocale, gearID, " Name" );
-                        line += `${ name }`;
-                    }
-                    line += "]";
+                        line += "[";
+                        for ( const gearID of gearGroup )
+                        {
+                            let name = this.leavesUtils.getLocale( targetLocale, gearID, " Name" );
+                            line += `${ name }`;
+                        }
+                        line += "]";
 
-                    //Check if we're on the last line, so to not add extra |
-                    if ( tempCount < conditions.length - 1 )
-                    {
-                        line += "|"
-                    }
-                    else
-                    {
-                        line += " ";
-                    }
+                        //Check if we're on the last line, so to not add extra |
+                        if ( tempCount < conditions.length - 1 )
+                        {
+                            line += "|"
+                        }
+                        else
+                        {
+                            line += " ";
+                        }
 
-                    tempCount++;
+                        tempCount++;
+                    }
                 }
             }
 

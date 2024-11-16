@@ -34,6 +34,7 @@ Current Shortcomings
 - Latin American Spanish - ``UralreadyDead``
 - Russian - ``GhostFenixx`` & ``Friend B2``
 - Chinese - ``Echo``
+- EVERYONE ON CROWDIN https://crowdin.com/project/spt-questrandomizer/members
 
 # Changelog
 ## 0.0.1
@@ -102,3 +103,10 @@ Current Shortcomings
 - Add localization for weapon groups. (Uses locale, then en, and lastly the weapon group name string)
 - Cleaned up console spam if Debug isn't enabled.
 - Unload profiles if they've been inactive for a while.
+
+## 0.1.1
+- Check for missing properties more. (Adds compat with AQM)
+- Enabled quest whitelist by default (Which by default includes all vanilla quests)
+- Changed quest whitelist location to be it's own folder. Plan is to make it easy to enable/disable whitelists from other mods. You might not want to randomize AQM, but maybe you've played a ton of other quests mods before, and want them randomized. 
+- Add a trader whitelist, letting you decide what traders to randomize and not. This is in addition to all previously mentioned whitelisting stuff.
+- XP multiplier for quests. In case you want to have more or less xp from quests. Useful for ensuring the quest progression matches level and trader progression. (NOT IMPLEMENTED)

@@ -4,22 +4,17 @@ import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { VFS } from "@spt/utils/VFS";
-import { randomInt } from "crypto";
-import { jsonc } from "jsonc";
-import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { HashUtil } from "@spt/utils/HashUtil";
-import { IItem } from "@spt/models/eft/common/tables/IItem";
 import { LeavesUtils } from "./LeavesUtils";
 import { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import { Questrandomizer } from "./mod";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
-import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModService";
-import { time } from "console";
+import { LeavesQuestTools } from "./LeavesQuestTools";
 
 
 @injectable()
-export class LeavesContextSwitcher
+export class LeavesQuestManager
 {
     private originalQuestDB;
     private originalLocaleDB;
@@ -30,6 +25,7 @@ export class LeavesContextSwitcher
     private currentContex: string;
     private timeoutTracker: Set<String>;
     private unloadCheckTime: number;
+    private weaponEquivalentTable: Record<string, string[]>;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -41,6 +37,7 @@ export class LeavesContextSwitcher
         @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
         @inject( "ProfileHelper" ) protected profileHelper: ProfileHelper,
         @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
+        @inject( "LeavesQuestTools" ) protected leavesQuestTools: LeavesQuestTools
     )
     {
         this.originalLocaleDB = {};
@@ -50,8 +47,24 @@ export class LeavesContextSwitcher
         this.hasInit = false;
         this.currentContex = "";
         this.timeoutTracker = new Set<String>();
+        this.weaponEquivalentTable = {};
         this.unloadCheckTime = this.leavesSettingsManager.getConfig().timeBetweenUnloadChecks;
     }
+
+    public addWeaponEquivalent( originalWeapon: string, equivalentWeapon: string )
+    {
+        if ( !this.weaponEquivalentTable[ originalWeapon ] )
+        {
+            this.weaponEquivalentTable[ originalWeapon ] = [];
+        }
+        this.weaponEquivalentTable[ originalWeapon ].push( equivalentWeapon );
+    }
+
+    public getWeaponEquivalentTable(): Record<string, string[]>
+    {
+        return this.weaponEquivalentTable;
+    }
+
     public unloadChecker( timeSinceLastRun: number ): boolean
     {
         if ( timeSinceLastRun > this.unloadCheckTime )
@@ -61,7 +74,7 @@ export class LeavesContextSwitcher
                 if ( !this.timeoutTracker.has( profileID ) )
                 {
                     const name = this.profileHelper.getFullProfile( profileID ).info.username;
-                    this.leavesUtils.printColor( `[Questrandomizer] Unloading profile due to inactivity: ${name} - ${profileID}`, LogTextColor.YELLOW );
+                    this.leavesUtils.printColor( `[Questrandomizer] Unloading profile due to inactivity: ${ name } - ${ profileID }`, LogTextColor.YELLOW );
                     delete this.quests[ profileID ];
                     delete this.locales[ profileID ];
                 }
@@ -70,11 +83,6 @@ export class LeavesContextSwitcher
             return true;
         }
         return false;
-    }
-
-    public getAllQuests(): any
-    {
-        return this.quests;
     }
 
     public switchContext( sessionId )
@@ -140,16 +148,28 @@ export class LeavesContextSwitcher
         let questWhitelist: string[] = [];
         if ( this.leavesSettingsManager.getConfig().enableQuestWhilelist )
         {
-            questWhitelist = this.leavesUtils.loadFile( "config/questwhitelist.jsonc" ).whitelist;
+            questWhitelist = this.leavesSettingsManager.getQuestWhitelist();
         }
 
         //Iterate the regular quest database see if any new quests are added.
         const serverQuestDB = this.databaseServer.getTables().templates.quests;
         let editedQuests = 0;
         let loadedQuests = Object.keys( questDB ).length;
+        const xpMulti = this.leavesSettingsManager.getConfig().questXPMultiplier;
         for ( const originalQuest in serverQuestDB )
         {
-            //Check whitelist.
+            //Xp multiplier
+            this.leavesQuestTools.changeXPOnQuest( serverQuestDB[ originalQuest ], xpMulti );
+
+            //Check trader whitelist
+            const traderID = serverQuestDB[ originalQuest ].traderId;
+            const traderName = this.leavesUtils.getTraderNickname( traderID );
+            if ( this.leavesSettingsManager.getConfig().traderWhitelist.includes( traderID ) === false && this.leavesSettingsManager.getConfig().enableTraderWhitelist )
+            {
+                this.leavesUtils.printColor( `Ignoring:${ originalQuest } - ${ serverQuestDB[ originalQuest ].QuestName } due to trader ${ traderID } - ${ traderName } not being on whitelist.`, LogTextColor.YELLOW, true );
+                continue;
+            }
+            //Check quest whitelist.
             if ( !questWhitelist.includes( originalQuest ) && this.leavesSettingsManager.getConfig().enableQuestWhilelist )
             {
                 this.leavesUtils.printColor( `Ignoring:${ originalQuest } - ${ serverQuestDB[ originalQuest ].QuestName } due to not being on whitelist.`, LogTextColor.YELLOW, true );

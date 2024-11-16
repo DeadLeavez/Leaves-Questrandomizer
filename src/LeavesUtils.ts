@@ -103,6 +103,13 @@ export class LeavesUtils
         return this.vfs.exists( this.modFolder + file )
     }
 
+    public getTraderNickname( id: string ):string
+    {
+
+            return this.databaseServer.getTables().traders[ id ].base.nickname ?? "Invalid ID";
+
+    }
+
     public dataDump()
     {
         const questDB = this.databaseServer.getTables().templates.quests;

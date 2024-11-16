@@ -6,7 +6,6 @@ import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
 import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
 import { LeavesUtils } from "./LeavesUtils";
-import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
 import { QuestStatus } from "@spt/models/enums/QuestStatus";
 import { QuestRewardType } from "@spt/models/enums/QuestRewardType";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
@@ -16,10 +15,23 @@ import { randomInt } from "crypto";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 
+
+export class Depth
+{
+    constructor()
+    {
+        this.depth = 0;
+        this.level = 0;
+    }
+    depth: number;
+    level: number;
+}
+
 @injectable()
 export class LeavesQuestTools
 {
     private questPoints: any;
+    private depthList: Record<string, Depth>;
 
     constructor(
         @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
@@ -31,9 +43,79 @@ export class LeavesQuestTools
         @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
         @inject( "LeavesLocaleGeneration" ) protected leavesLocaleGeneration: LeavesLocaleGeneration,
         @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper,
-        @inject( "HandbookHelper") protected handbookHelper: HandbookHelper
+        @inject( "HandbookHelper" ) protected handbookHelper: HandbookHelper
     )
     { }
+
+    public changeXPOnQuest( quest: IQuest, multiplier: number )
+    {
+        for ( let reward of quest.rewards.Success )
+        {
+            if ( reward.type === "Experience" )
+            {
+                const previousReward = parseInt( reward.value as string ); //Lmao bsg
+                reward.value = ( previousReward * multiplier ).toString();
+            }
+        }
+        return;
+    }
+
+    public generateDepthList()
+    {
+        this.depthList = {};
+        for ( const QuestID in this.databaseServer.getTables().templates.quests )
+        {
+            this.depthList[ QuestID ] = this.findDepth( this.depthList, QuestID );
+        }
+        this.leavesUtils.printColor( "[Questrandomizer] Generated depth list of all quests" );
+    }
+
+    private findDepth( depthList: Record<string, Depth>, QuestID: string ): Depth
+    {
+        const quest: IQuest = this.databaseServer.getTables().templates.quests[ QuestID ];
+        let currentDepth = new Depth();
+        for ( const condition of quest.conditions.AvailableForStart )
+        {
+            if ( condition.conditionType === "Quest" )
+            {
+                const target = condition.target as string;
+                if ( depthList[ target ] )
+                {
+                    const tempDepth = depthList[ target ].depth + 1;
+                    const tempLevel = depthList[ target ].level;
+                    if ( currentDepth.depth < tempDepth )
+                    {
+                        currentDepth.depth = tempDepth;
+                    }
+                    if ( currentDepth.level < tempLevel )
+                    {
+                        currentDepth.level = tempLevel;
+                    }
+                }
+                else
+                {
+                    depthList[ target ] = this.findDepth( depthList, target );
+                }
+            }
+            if ( condition.conditionType === "Level" )
+            {
+                if ( currentDepth.level < ( condition.value as number ) )
+                {
+                    currentDepth.level = condition.value as number;
+                }
+            }
+        }
+        return currentDepth;
+    }
+
+    public getQuestDepth( questID: string ): Depth
+    {
+        return this.depthList[ questID ];
+    }
+    public getDepthList(): Record<string, Depth>
+    {
+        return this.depthList;
+    }
 
     public setQuestPoints( points: any )
     {
@@ -125,7 +207,7 @@ export class LeavesQuestTools
         return condition.push( tempGear ) - 1;
     }
 
-    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items:string[] ): number
+    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items: string[] ): number
     {
         let objectiveData = {
             "conditionType": "HandoverItem",
