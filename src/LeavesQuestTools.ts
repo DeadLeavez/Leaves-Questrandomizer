@@ -427,6 +427,11 @@ export class LeavesQuestTools
         }
         let group = this.weightedRandomHelper.getWeightedValue<string>( this.leavesSettingsManager.getweaponCategoriesWeighting() );
         flags.whatWeaponOrGroup = group;
+        this.addWeaponGroup( group, condition );
+    }
+
+    public addWeaponGroup( group: string, condition: IQuestConditionCounterCondition )
+    {
         const weaponGroup = this.leavesSettingsManager.getWeaponCategories().categories[ group ];
         condition.weapon = weaponGroup.weapons;
 
@@ -437,12 +442,11 @@ export class LeavesQuestTools
             condition.weaponModsInclusive = this.addModsToWeaponModGroup( modgroup, condition.weaponModsInclusive, modsInclusive[ modgroup ] );
         }
 
-        const modsExclusive = weaponGroup[ "mods-exclusive" ]
+        const modsExclusive = weaponGroup[ "mods-exclusive" ];
         for ( const modgroup in modsExclusive )
         {
             condition.weaponModsExclusive = this.addModsToWeaponModGroup( modgroup, condition.weaponModsExclusive, modsExclusive[ modgroup ] );
         }
-        //this.leavesUtils.debugJsonOutput( condition );
     }
 
     public addModsToWeaponModGroup( modGroup: string, weaponModsCurrent: string[][], merge: boolean ): string[][]

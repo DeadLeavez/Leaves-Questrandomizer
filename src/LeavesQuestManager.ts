@@ -193,10 +193,7 @@ export class LeavesQuestManager
         }
 
         //Quest Generation
-        this.generateQuests( questDB );
-
-        //Print logo + info
-        this.printLogo( serverQuestDB, loadedQuests, editedQuests );
+        const generatedQuests = this.generateQuests( questDB );
 
         //Load localization into the database.
         localeChangesToSave = this.leavesSettingsManager.getLocalizationChangesToSave();
@@ -204,6 +201,9 @@ export class LeavesQuestManager
 
         //Load quests into the database
         this.loadQuestsIntoDatabase( questDB );
+
+        //Print logo + info
+        this.printLogo( serverQuestDB, loadedQuests, editedQuests, generatedQuests );
 
         //Save expanded database into memory.
         this.quests[ profileID ] = structuredClone( this.databaseServer.getTables().templates.quests );
@@ -215,26 +215,44 @@ export class LeavesQuestManager
         this.leavesIdManager.save();
     }
 
-    private generateQuests( questDB:any )
+    private generateQuests( questDB: any ): number
     {
+        let generatedQuests = 0;
         const questTrader = this.leavesSettingsManager.getConfig().QuestGen_Trader;
-        let previousQuest = "";
 
         //Generate weapon mastery quests
+        let previousQuest = "";
         for ( let i = 0; i < this.leavesSettingsManager.getConfig().QuestGen_TotalWeaponQuests; ++i )
         {
-            let questName = `WMQ_${ i }`;
-            if ( !questDB[ this.leavesIdManager.get( questName ) ] )
+            let questName = `QG_WeaponMastery`;
+            if ( !questDB[ this.leavesIdManager.get( questName + i ) ] )
             {
                 this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName );
-                let generatedQuest = this.leavesQuestGeneration.generateWeaponMasteryQuest( questName, previousQuest, questTrader, i );
+                let generatedQuest = this.leavesQuestGeneration.generateKillQuest( questName, previousQuest, questTrader, i, ( 5 + i * 2 ) );
                 previousQuest = generatedQuest._id;
                 questDB[ generatedQuest._id ] = generatedQuest;
+                generatedQuests++;
             }
         }
+
+        //Generate sniper quests
+        const weapongroup = this.leavesSettingsManager.getConfig().QuestGen_SniperWeaponGroup;
+        for ( let i = 0; i < this.leavesSettingsManager.getConfig().QuestGen_TotalWeaponQuests; ++i )
+        {
+            let questName = `QG_Sniper`;
+            if ( !questDB[ this.leavesIdManager.get( questName + i ) ] )
+            {
+                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName + i );
+                let generatedQuest = this.leavesQuestGeneration.generateKillQuest( questName, previousQuest, questTrader, i, 10, weapongroup, true );
+                previousQuest = generatedQuest._id;
+                questDB[ generatedQuest._id ] = generatedQuest;
+                generatedQuests++;
+            }
+        }
+        return generatedQuests;
     }
 
-    private printLogo( serverQuestDB: any, loadedQuests: number, editedQuests: number )
+    private printLogo( serverQuestDB: any, loadedQuests: number, editedQuests: number, generatedQuests: number )
     {
         this.leavesUtils.printColor( "     ____     ____  ", LogTextColor.MAGENTA );
         this.leavesUtils.printColor( "    / __ \\   / __ \\", LogTextColor.MAGENTA );
@@ -244,9 +262,10 @@ export class LeavesQuestManager
         this.leavesUtils.printColor( `┌──────────────────────────────────────────────────┐` );
         this.leavesUtils.printColor( `│ Found a total of ${ Object.keys( serverQuestDB ).length } quests in the game.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
         this.leavesUtils.printColor( `│ ----------------------------------------`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ Loaded:  ${ loadedQuests } already edited quests.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ Edited:  ${ editedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ Total:   ${ loadedQuests + editedQuests } quests changed from original.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Loaded:     ${ loadedQuests } already edited quests.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Edited:     ${ editedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Generated:  ${ generatedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Total:      ${ loadedQuests + editedQuests } quests changed from original.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
         this.leavesUtils.printColor( `└──────────────────────────────────────────────────┘` );
     }
 
