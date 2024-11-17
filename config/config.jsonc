@@ -97,10 +97,11 @@
     "QuestGen_TotalPostmanQuests": 10,
     "QuestGen_TotalRunnerQuests": 10,
     "QuestGen_TotalSniperQuests": 10,
+    "QuestGen_SniperWeaponGroup": "Precision Sniping", 
     "QuestGen_Trader": "54cb50c76803fa8b248b4571", //What trader will provide the new quests.
 
     "QuestGen_XPPerQuest": 1000, //The amount of xp you get from each quest, multiplied by how far into the questchain you are. 5th quest would give 5 times this number.
-    "QuestGen_RewardPools":
+    "QuestGen_RewardPools": //At what quest depth of generated quests we use what reward pools. See the pools in ``assets/data/misc.jsonc``
     {
         "common": 0,
         "rare": 5,
