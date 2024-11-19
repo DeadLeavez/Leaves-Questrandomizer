@@ -8,7 +8,7 @@
     "wearingGear": "穿戴",
     "HandoverItem": "上交",
     "ofItem": "",
-    "itemsFromThe": "items from the",
+    "itemsFromThe": "",
     "Category": "分类",
     "FoundInRaid": "found in raid",
     "SheetCategory": "Category",
@@ -97,7 +97,7 @@
     "ITEMCATEGORY_5a341c4086f77401f2541505": "Head Gear",
     "QG_ReportThis": "If you see this in-game, please report where you see this.",
     "QG_WeaponMasteryName": "Weapon Mastery #",
-    "QG_WeaponMasteryDescription": "Show off your prowess with specific weapons.",
+    "QG_WeaponMasteryDescription": "使用特定武器来证明你的实力",
     "QG_WeaponMasteryAccept": "So you're up for the challenge? Let's see how you do!",
     "QG_WeaponMasterySuccess": "You did it. You crazy son of a bitch, You did it!",
     "QG_FetchName": "Collector #",
@@ -115,5 +115,5 @@
     "QG_SniperName": "Sniper #",
     "QG_SniperDescription": "I need these guys gone. And without any evidence of who did it. Think you can handle that? Excellent.",
     "QG_SniperAccept": "Since you're a pro, Im not providing you any gear. But the rewards will be immense.",
-    "QG_SniperSuccess": "Wow! I have reports from the area that Death came and visited. I'm impressed. I bet they didn't even see it coming."
+    "QG_SniperSuccess": "我收到了一份报告，里面的内容给我留下了深刻的印象，上面说那儿简直像是被死神光顾过一样。我敢打赌没有人会预料到有这种事发生。"
 }
