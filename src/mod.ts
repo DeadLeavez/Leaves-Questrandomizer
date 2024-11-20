@@ -21,11 +21,11 @@ import { CustomItemService } from "@spt/services/mod/CustomItemService";
 import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails";
 import { IncomingMessage, ServerResponse } from "http";
 import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModService";
+import { LeavesQuestrandomizerCompatibility } from "./LeavesQuestrandomizerCompatibility";
 
 // TODO:
-// Way to make compatibility with other mods. At least shiny airdrops
 // Randomize gear if its already there (NOT DONE)
-// Zones
+// Zones (Guh!)
 // Make a profile-profile quest id translator
 // randomize rewards?
 
@@ -53,6 +53,7 @@ export class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesQuestGeneration>( "LeavesQuestGeneration", LeavesQuestGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesLocaleGeneration>( "LeavesLocaleGeneration", LeavesLocaleGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestManager>( "LeavesQuestManager", LeavesQuestManager, { lifecycle: Lifecycle.Singleton } );
+        container.register<LeavesQuestrandomizerCompatibility>("LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
 
 
         this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
@@ -82,7 +83,7 @@ export class Questrandomizer implements IPreSptLoadMod
         this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
         this.leavesLocaleGeneration = container.resolve<LeavesLocaleGeneration>( "LeavesLocaleGeneration" );
 
-        this.leavesUtils.setTierList( "config/itemtierlist.jsonc" );
+        this.leavesUtils.setTierList( "assets/data/itemtierlist.jsonc" );
         this.leavesUtils.setDebug( this.leavesSettingsManager.getConfig().DebugEnabled );
         this.leavesIdManager.load( "assets/generated/ids.jsonc" );
 
@@ -97,7 +98,7 @@ export class Questrandomizer implements IPreSptLoadMod
         {
             if ( depthList[ questID ].depth < 2 && depthList[ questID ].level < 5 )
             {
-                this.leavesUtils.printColor( `\"EasyQ\":\"${ questID }\",` );
+                //this.leavesUtils.printColor( `\"EasyQ\":\"${ questID }\",` );
             }
         }
 
@@ -324,6 +325,7 @@ export class Questrandomizer implements IPreSptLoadMod
 
         //Check if its on the list of "easy" quests
         flags.isEasyQuest = this.leavesSettingsManager.getConfig().easierQuestList.includes( flags.questID );
+        this.leavesUtils.printColor( "Easy quest:" + flags.isEasyQuest );
 
         //Check what countercreator conditions exist
         for ( let counterConditionIndex = 0; counterConditionIndex < conditions.length; counterConditionIndex++ )
@@ -360,8 +362,7 @@ export class Questrandomizer implements IPreSptLoadMod
             //Add location to quest potentially.
             if ( flags.hasLocation === -1 && Math.random() < this.leavesSettingsManager.getConfig().chanceToAddLocations && flags.hasSavageRole < 0 )
             {
-                const tempMaps: string[] = this.leavesUtils.getUniqueValues<string>( this.leavesSettingsManager.getValidMaps(), this.leavesSettingsManager.getConfig().locationCount );
-                flags.hasLocation = this.leavesQuestTools.addLocationToQuest( conditions, tempMaps );
+                flags.hasLocation = this.leavesQuestTools.addLocationToQuest( conditions, flags );
             }
             else if ( flags.hasLocation >= 0 ) //Edit location
             {

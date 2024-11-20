@@ -13,6 +13,7 @@ import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesIdManager } from "./LeavesIdManager";
 import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
+import { IHandbookItem } from "@spt/models/eft/common/tables/IHandbookBase";
 
 
 @injectable()
@@ -53,10 +54,18 @@ export class LeavesQuestManager
         this.timeoutTracker = new Set<String>();
         this.weaponEquivalentTable = {};
         this.unloadCheckTime = this.leavesSettingsManager.getConfig().timeBetweenUnloadChecks;
+
+        //Load weapon equivs from file.
+        const loadedEquivs = this.leavesUtils.loadFile( "config/weaponCompatibility.jsonc" );
+        for ( const entry of loadedEquivs.equivalents )
+        {
+            this.addWeaponEquivalent( entry.originalWeaponID, entry.equivalentWeaponID );
+        }
     }
 
     public addWeaponEquivalent( originalWeapon: string, equivalentWeapon: string )
     {
+        this.leavesUtils.printColor( `[Questrandomizer]Added new equiv: ${ originalWeapon } = ${ equivalentWeapon }`, LogTextColor.WHITE, true );
         if ( !this.weaponEquivalentTable[ originalWeapon ] )
         {
             this.weaponEquivalentTable[ originalWeapon ] = [];
@@ -64,9 +73,13 @@ export class LeavesQuestManager
         this.weaponEquivalentTable[ originalWeapon ].push( equivalentWeapon );
     }
 
-    public getWeaponEquivalentTable(): Record<string, string[]>
+    private getWeaponEquivalents( weaponID: string ): string[]
     {
-        return this.weaponEquivalentTable;
+        if ( this.weaponEquivalentTable[ weaponID ] )
+        {
+            return this.weaponEquivalentTable[ weaponID ];
+        }
+        return [];
     }
 
     public unloadChecker( timeSinceLastRun: number ): boolean
@@ -93,7 +106,7 @@ export class LeavesQuestManager
     {
         if ( this.hasInit === false )
         {
-            this.leavesUtils.printColor( "Saving a copy of original DBs" );
+            this.leavesUtils.printColor( "[Questrandomizer] Saving a copy of original DBs", LogTextColor.GRAY, true );
             this.originalLocaleDB = structuredClone( this.databaseServer.getTables().locales.global );
             this.originalQuestDB = structuredClone( this.databaseServer.getTables().templates.quests );
             this.hasInit = true;
@@ -104,7 +117,7 @@ export class LeavesQuestManager
             return;
         }
 
-        const profileID = this.profileHelper.getFullProfile( sessionId ).info?.id;
+        const profileID = this.profileHelper.getFullProfile( sessionId )?.info?.id;
 
         if ( profileID === undefined || profileID === "undefined" || profileID === "" || profileID === null )
         {
@@ -141,7 +154,7 @@ export class LeavesQuestManager
             localeChangesToSave = this.leavesUtils.loadFile( `assets/generated/${ profileID }/locales.json` );
         }
 
-        //Set changes, werther loaded or empty
+        //Set changes, wether loaded or empty
         this.leavesSettingsManager.setLocalzationChangesToSave( localeChangesToSave );
 
         //Get some fresh databases in here. 
@@ -202,6 +215,9 @@ export class LeavesQuestManager
         //Load quests into the database
         this.loadQuestsIntoDatabase( questDB );
 
+        //Add compat layer of making weapons compatible.
+        this.loadWeaponEquivalents();
+
         //Print logo + info
         this.printLogo( serverQuestDB, loadedQuests, editedQuests, generatedQuests );
 
@@ -213,6 +229,39 @@ export class LeavesQuestManager
         this.leavesUtils.saveFile( questDB, `assets/generated/${ profileID }/quests.json` );
         this.leavesUtils.saveFile( localeChangesToSave, `assets/generated/${ profileID }/locales.json` );
         this.leavesIdManager.save();
+    }
+    private loadWeaponEquivalents()
+    {
+        const quests = this.databaseServer.getTables().templates.quests;
+        for ( const quest in quests )
+        {
+            const availForFinish = quests[ quest ].conditions.AvailableForFinish;
+            for ( const condition of availForFinish )
+            {
+                if ( condition.conditionType !== "CounterCreator" )
+                {
+                    continue;
+                }
+                for ( const subCondition of condition.counter.conditions )
+                {
+                    let newWeapons: string[] = [];
+                    if ( subCondition.weapon )
+                    {
+                        newWeapons = subCondition.weapon as string[];
+                        for ( const originalWeapon of subCondition.weapon )
+                        {
+                            for ( const newWeapon of this.getWeaponEquivalents( originalWeapon ) )
+                            {
+                                newWeapons.push( newWeapon );
+                                this.leavesUtils.printColor( `[Questrandomizer] Added ${ newWeapon } to ${ quest }` );
+                            }
+                        }
+                    }
+                    subCondition.weapon = [ ...newWeapons ];
+                }
+            }
+            //this.leavesUtils.debugJsonOutput( quests[quest] );
+        }
     }
 
     private generateQuests( questDB: any ): number
@@ -249,6 +298,20 @@ export class LeavesQuestManager
                 generatedQuests++;
             }
         }
+
+        //Generate handover quests
+        for ( let i = 0; i < this.leavesSettingsManager.getConfig().QuestGen_TotalHandoverQuests; ++i )
+        {
+            let questName = `QG_Fetch`;
+            if ( !questDB[ this.leavesIdManager.get( questName + i ) ] )
+            {
+                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName + i );
+                let generatedQuest = this.leavesQuestGeneration.generateHandoverQuest( questName, previousQuest, questTrader, i )
+                previousQuest = generatedQuest._id;
+                questDB[ generatedQuest._id ] = generatedQuest;
+                generatedQuests++;
+            }
+        }
         return generatedQuests;
     }
 
@@ -265,7 +328,7 @@ export class LeavesQuestManager
         this.leavesUtils.printColor( `│ Loaded:     ${ loadedQuests } already edited quests.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
         this.leavesUtils.printColor( `│ Edited:     ${ editedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
         this.leavesUtils.printColor( `│ Generated:  ${ generatedQuests } quests this launch.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
-        this.leavesUtils.printColor( `│ Total:      ${ loadedQuests + editedQuests } quests changed from original.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
+        this.leavesUtils.printColor( `│ Total:      ${ loadedQuests + editedQuests + generatedQuests } quests have been touched.`.padEnd( 51, ` ` ) + `│`, LogTextColor.GREEN );
         this.leavesUtils.printColor( `└──────────────────────────────────────────────────┘` );
     }
 
@@ -273,7 +336,7 @@ export class LeavesQuestManager
     {
         for ( const leavesQuestId in questDB )
         {
-            const leavesQuest = questDB[ leavesQuestId ];
+            const leavesQuest = structuredClone( questDB[ leavesQuestId ] );
 
             this.databaseServer.getTables().templates.quests[ leavesQuestId ] = leavesQuest;
         }

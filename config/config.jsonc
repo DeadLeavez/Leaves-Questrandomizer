@@ -69,7 +69,7 @@
     - - Does not ADD/EDIT gear requirements
     - - Does not EDIT weapon requirements 
     */
-    "easierQuestList":
+    "easierQuestList": //Doesnt seem to work?
     [
         "5936d90786f7742b1420ba5b", //Debut
         "5936da9e86f7742d65037edf", //Background Check
@@ -94,11 +94,13 @@
 
     //Quest generation.
     "QuestGen_TotalWeaponQuests": 50, //Amount of quests per type
-    "QuestGen_TotalHandoverQuests": 10,
-    "QuestGen_TotalPostmanQuests": 10,
-    "QuestGen_TotalRunnerQuests": 10,
+    "QuestGen_TotalHandoverQuests": 50,
+    "QuestGen_HandoverFIRChance": 1, //Chance that items in these quests need to be found in raid. 1 is always. 
+    "QuestGen_HandoverMaxTier": 10,
     "QuestGen_TotalSniperQuests": 10,
     "QuestGen_SniperWeaponGroup": "Precision Sniping", 
+    "QuestGen_TotalRunnerQuests": 10, //Not implemented
+    "QuestGen_TotalPostmanQuests": 10, //Not implemented
     "QuestGen_Trader": "54cb50c76803fa8b248b4571", //What trader will provide the new quests.
 
     "QuestGen_XPPerQuest": 1000, //The amount of xp you get from each quest, multiplied by how far into the questchain you are. 5th quest would give 5 times this number.

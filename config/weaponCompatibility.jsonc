@@ -1,0 +1,12 @@
+{
+    //Usage: add original weapons and the equivalent weapons. 
+    //If a mod adds for example a shiny m4, you would put the regular m4 ID in the "originalWeaponID" and the new weapon under "equivalentWeaponID"
+
+    "equivalents":
+    [
+        /*{
+            "originalWeaponID":"",
+            "equivalentWeaponID":""
+        }*/
+    ]
+}

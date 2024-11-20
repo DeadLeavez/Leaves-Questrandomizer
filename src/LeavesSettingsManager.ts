@@ -49,7 +49,7 @@ export class LeavesSettingsManager
         this.easyMaps = miscData.easyMaps;
         this.rewardTable = miscData.rewards;
 
-        this.gearList = this.leavesUtils.loadFile( "config/gearlist.jsonc" );
+        this.gearList = this.leavesUtils.loadFile( "assets/data/gearlist.jsonc" );
 
     }
 
@@ -78,7 +78,7 @@ export class LeavesSettingsManager
     private loadWeaponCategories()
     {
         //Load the file
-        this.weaponCategories = this.leavesUtils.loadFile( "config/weaponcategories.jsonc" );
+        this.weaponCategories = this.leavesUtils.loadFile( "assets/data/weaponcategories.jsonc" );
 
         //Load the weightings
         this.weaponCategoriesWeighting = {};
@@ -91,7 +91,7 @@ export class LeavesSettingsManager
     private loadHandoverCategories()
     {
         //Load the file
-        const categoriesConfig = this.leavesUtils.loadFile( "config/handovercategories.jsonc" );
+        const categoriesConfig = this.leavesUtils.loadFile( "assets/data/handovercategories.jsonc" );
 
         //Populate handover categories.
         this.handoverCategories = {};

@@ -4,18 +4,18 @@ The mod is very configurable. See ``config/config.jsonc`` for a LOT more informa
 
 Will change the following:
 - Randomize the item hand over of quests.
-    - Uses a list of items in tiers similar to my Barter Economy mod. See the ``config/itemtierlist.jsonc`` file for more details.
+    - Uses a list of items in tiers similar to my Barter Economy mod. See the ``assets/data/itemtierlist.jsonc`` file for more details.
     - Add hand over to quests that don't have them.
 - Randomize kill quests in the following ways (configurable in the config)
     - Add kill objectives to quests that don't have them.
     - Add/Randomize gear requirements.
-        - See the ``config/gearlist.jsonc`` file for more details.
+        - See the ``assets/data/gearlist.jsonc`` file for more details.
     - Add/Randomize the kill targets.
     - Add/Randomize the distance requirement.
     - Add/Randomize the required location.
     - Add/Randomize the required time of day.
     - Add/Randomize the required weapons. Using both a bunch of tailor-made categories, and individual weapons.
-        - See the ``config/weaponcategories.jsonc`` file for more details
+        - See the ``assets/data/weaponcategories.jsonc`` file for more details
         - Once the server has started once with this mod. You can find an auto-generated category list in all supported languages in the ``categories/`` folder of this mod.
     - Add/Randomize the body part requirement.
 - Adds a new category in the handbook that shows weapon categories and mods.
@@ -23,6 +23,65 @@ Will change the following:
 Current Shortcomings
 - Removes durability for handover quests.
 - Doesn't have a counter for "found" items for handover quests. (The thing most- but not all BSG handover quests have.) Just a visual thing. Minor.
+
+## Compatibility
+If you made a weapon mod, or just want to make a weapon mod compatible with the randomized quests. I have provided three ways of doing it.
+- Method 1: (user) add weapon to new or existing weapon categories.
+- Method 2: (user) add weapon equivalents.
+- Method 3: (modder) API calls
+
+### Method 1 - Weapon Categories
+The first way is to simply add the weapon IDs to the weapon categories in ``assets/data/weaponcategories.jsonc``. There is more info on how it works inside the file.
+
+### Method 2 - Weapon Compatibility
+The last two ways uses what I call "weapon equivalents" where you match the ID of a new weapon with a vanilla weapon. For example a mod adds a shiny m4a1. If I make that weapon equivalent with the regular m4a1. Then all quests that have a required weapon of m4a1 will also get the shiny m4a1 as a usable weapon for that quest. There can be multiple equivalents per original weapon. There is no limit.
+
+The second way that is recommended for users is to add weapon equivalents to the ``config/weaponCompatibility.jsonc`` file. 
+```json
+"equivalents":
+[
+    {
+        "originalWeaponID":"5447a9cd4bdc2dbd208b4567", // Original m4a1
+        "equivalentWeaponID":"66fd8da18afded28fc000001" // Shiny M4a1
+    },
+    {
+        "originalWeaponID":"576165642459773c7a400233", // Original Saiga 12k
+        "equivalentWeaponID":"66fd8da18afded28fc00000d" // Shiny Saiga 12k
+    },
+]
+```
+
+
+### Method 3 - API
+The third and last way that I recommend for mod developers if they like to add compatibility is to use an API I have provided. Below are instructions on how to use it. The end effect is the same as ``Method 2``, but can be done programmatically.
+
+First you need to resolve the API from the container. (Example copied from my shiny airdrop mod)
+```ts
+//Check for quest randomizer compatibility
+logger.log( "[ShinyAirdropGuns] Checking if Questrandomizer is installed");
+try
+{
+    this.leavesQuestrandomizerCompatibility = container.resolve<unknown>( "LeavesQuestrandomizerCompatibility" );
+    if ( this.leavesQuestrandomizerCompatibility !== undefined )
+    {
+        logger.log( "[ShinyAirdropGuns] Questrandomizer found! Adding shiny weapons to randomized quests!");
+    }
+}
+catch (e)
+{
+    logger.log( "[ShinyAirdropGuns] Questrandomizer cannot be found. Continuing as normal" );
+}
+```
+Once you have resolved the compatibility layer. You can simply do a call like this to add your weapon ID. The only requirement is that you resolve during postdbload or later.
+
+```ts
+if ( this.leavesQuestrandomizerCompatibility !== undefined )
+{
+    // @ts-ignore
+    this.leavesQuestrandomizerCompatibility.addWeaponEquivalent( originalWeapon, newWeapon );
+}
+```
+<sub>Footnote: the ``// @ts-ignore`` will suppress the warning that VScode will give you for trying to call a method it dosnt know about, but it will work.</suub>
 
 ### Translation Credits
 - German - ``Friend B``
@@ -104,10 +163,15 @@ Current Shortcomings
 - Cleaned up console spam if Debug isn't enabled.
 - Unload profiles if they've been inactive for a while.
 
-## 0.1.1
+## 0.2.0
 - Check for missing properties more. (Adds compat with AQM)
 - Enabled quest whitelist by default (Which by default includes all vanilla quests)
 - Changed quest whitelist location to be it's own folder. This is to make it easy to enable/disable whitelists from other mods. You might not want to randomize AQM, but maybe you've played a ton of other quests mods before, and want them randomized. 
 - Add a trader whitelist, letting you decide what traders to randomize and not. This is in addition to all previously mentioned whitelisting stuff.
 - XP multiplier for quests. In case you want to have more or less xp from quests. Useful for ensuring the quest progression matches level and trader progression.
-- Added generated weapon quests. They're a bit basic for now. But will be improved over time.
+- Added first iteration of generated quests. (They're still quite bare-bones, but will be improved upon in the future.)
+- - Added generated weapon quests. 
+- - Added generated sniper quests.
+- - Added generated handover quests.
+- Fixed bug that made "hard" locations sometimes appear on "easy" quests.
+- Added multiple options for compatibility with mods that add new weapons to work with quests. (See ``readme.md`` for more info)

@@ -221,7 +221,7 @@ export class LeavesQuestTools
         return condition.push( tempGear ) - 1;
     }
 
-    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items: string[] ): number
+    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items: string[], FIR:boolean = false ): number
     {
         let objectiveData = {
             "conditionType": "HandoverItem",
@@ -233,7 +233,7 @@ export class LeavesQuestTools
             "isEncoded": false,
             "maxDurability": 100,
             "minDurability": 0,
-            "onlyFoundInRaid": false,
+            "onlyFoundInRaid": FIR,
             "parentId": "",
             "target": [],
             "value": count,
@@ -245,15 +245,17 @@ export class LeavesQuestTools
         return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
     }
 
-    public addLocationToQuest( conditions: IQuestConditionCounterCondition[], maps: string[] ): number
+    public addLocationToQuest( conditions: IQuestConditionCounterCondition[], flags:any ): number
     {
         let locationData =
         {
             "conditionType": "Location",
             "dynamicLocale": false,
             "id": this.hashUtil.generate(),
-            "target": maps
+            "target": []
         }
+
+        this.randomizeLocations( locationData, flags );
 
         //Index will be the length minus 1
         return conditions.push( locationData ) - 1;
@@ -660,7 +662,7 @@ export class LeavesQuestTools
             return;
         }
 
-        let mapCount = 1
+        const mapCount = this.leavesSettingsManager.getConfig().locationCount;
 
         //Generate new map
         if ( flags.isEasyQuest ) //If a quest is on the list, we use the easy map setup.

@@ -200,4 +200,58 @@ export class LeavesQuestGeneration
         return newQuest;
     }
 
+    public generateHandoverQuest( name: string, previousQuest: string, trader: string, questNumber: number ): IQuest
+    {
+        const questID = this.leavesIdManager.get( name + questNumber );
+
+        //Make empty quest
+        let newQuest = this.generateEmptyQuest( name, trader, ELocationName.ANY, questID );
+
+        //Add previous quest, unless we're at the first quest
+        if ( questNumber !== 0 )
+        {
+            this.leavesQuestTools.addPrerequisiteQuest( newQuest, previousQuest, [ QuestStatus.Success ] );
+        }
+
+        this.addRewardsToQuest( newQuest, questNumber );
+
+        //Add the handover objective
+
+        let tier = this.leavesUtils.getClosestTier( questNumber );
+        const maxtier = this.leavesSettingsManager.getConfig().QuestGen_HandoverMaxTier;
+        if ( tier > maxtier )
+        {
+            tier = this.leavesUtils.getClosestTier( maxtier );
+        }
+
+        const itemToFind:string = this.leavesUtils.getRandomItemFromTier(tier); 
+
+        const needsFoundInRaid = Math.random() < this.leavesSettingsManager.getConfig().QuestGen_HandoverFIRChance;
+        this.leavesQuestTools.addHandOverObjectiveToQuest( newQuest, 5, [ itemToFind ], needsFoundInRaid );
+
+        //Generate locale for the kill condition
+        this.leavesLocaleGeneration.generateHandoverItemLocale( newQuest.conditions.AvailableForFinish[ 0 ], "" );
+
+        //Generate quest locales
+        for ( const locale of this.leavesLocaleGeneration.getLoadedLocales() )
+        {
+            this.setBaseQuestLocale(
+                newQuest._id,
+                locale,
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 1, //"ACCEPTMESSAGE",
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 2, //"CHANGEQUESTMESSAGE", - //Never shows
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 3, //"COMPLETEMESSAGE", - //Never shows
+                this.leavesLocaleGeneration.getLoc( `${ name }Description`, locale ), //"DESCRIPTION",
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 4, //"FAILMESSAGE", - //never shows
+                this.leavesLocaleGeneration.getLoc( "QG_ReportThis", locale ) + 5, //"DECLINEMSSAGE", - //never shows
+                this.leavesLocaleGeneration.getLoc( `${ name }Accept`, locale ), //"STARTEDMESSAGE",
+                this.leavesLocaleGeneration.getLoc( `${ name }Success`, locale ), //"SUCCESSMESSAGE",
+                this.leavesLocaleGeneration.getLoc( `${ name }Name`, locale ) + ( questNumber + 1 ), //QUESTNAME
+            )
+        }
+
+        //Reteurn generated quest
+        return newQuest;
+    }
+
 }
