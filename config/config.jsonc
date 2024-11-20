@@ -92,12 +92,12 @@
         "5d24b81486f77439c92d6ba8" //Acquaintance
     ],
 
-    //Quest generation.
-    "QuestGen_TotalWeaponQuests": 50, //Amount of quests per type
-    "QuestGen_TotalHandoverQuests": 50,
-    "QuestGen_HandoverFIRChance": 1, //Chance that items in these quests need to be found in raid. 1 is always. 
+    //Quest generation. If you want MORE quests later you can increase the numbers here. You cannot reduce the number on an already created profile however.
+    "QuestGen_TotalWeaponQuests": 20, //Amount of quests per type
+    "QuestGen_TotalHandoverQuests": 20,
+    "QuestGen_HandoverFIRChance": 0.8, //Chance that items in these quests need to be found in raid. 1 is always. 0 is never. 
     "QuestGen_HandoverMaxTier": 10,
-    "QuestGen_TotalSniperQuests": 10,
+    "QuestGen_TotalSniperQuests": 20,
     "QuestGen_SniperWeaponGroup": "Precision Sniping", 
     "QuestGen_TotalRunnerQuests": 10, //Not implemented
     "QuestGen_TotalPostmanQuests": 10, //Not implemented
