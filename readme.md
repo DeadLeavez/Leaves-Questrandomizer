@@ -55,6 +55,8 @@ The second way that is recommended for users is to add weapon equivalents to the
 ### Method 3 - API
 The third and last way that I recommend for mod developers if they like to add compatibility is to use an API I have provided. Below are instructions on how to use it. The end effect is the same as ``Method 2``, but can be done programmatically.
 
+The API inits during ``preSptLoad``, but to ensure load-order is not a problem, I recommend calling during ``postDBLoad``. The actual injection of weapon equivalents happens on profile load so.
+
 First you need to resolve the API from the container. (Example copied from my shiny airdrop mod)
 ```ts
 //Check for quest randomizer compatibility
@@ -72,7 +74,7 @@ catch (e)
     logger.log( "[ShinyAirdropGuns] Questrandomizer cannot be found. Continuing as normal" );
 }
 ```
-Once you have resolved the compatibility layer. You can simply do a call like this to add your weapon ID. The only requirement is that you resolve during postdbload or later.
+Once you have resolved the compatibility layer. You can simply do a call like this to add your weapon ID. T
 
 ```ts
 if ( this.leavesQuestrandomizerCompatibility !== undefined )
@@ -164,6 +166,7 @@ if ( this.leavesQuestrandomizerCompatibility !== undefined )
 - Unload profiles if they've been inactive for a while.
 
 ## 0.2.0
+This will be the last version before 3.10
 - Check for missing properties more. (Adds compat with AQM)
 - Enabled quest whitelist by default (Which by default includes all vanilla quests)
 - Changed quest whitelist location to be it's own folder. This is to make it easy to enable/disable whitelists from other mods. You might not want to randomize AQM, but maybe you've played a ton of other quests mods before, and want them randomized. 
