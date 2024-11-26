@@ -56,8 +56,6 @@ export class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesQuestManager>( "LeavesQuestManager", LeavesQuestManager, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestrandomizerCompatibility>("LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
 
-        this.leavesUtils.printColor( "[Questrandomizer] Starting up!", LogTextColor.CYAN );
-
         this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
 
         this.onUpdateModService.registerOnUpdate(
@@ -77,6 +75,8 @@ export class Questrandomizer implements IPreSptLoadMod
         this.leavesIdManager = container.resolve<LeavesIdManager>( "LeavesIdManager" );
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
         this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
+
+        this.leavesUtils.printColor( "[Questrandomizer] Starting up!", LogTextColor.CYAN );
 
         Questrandomizer.leavesQuestManager = container.resolve<LeavesQuestManager>( "LeavesQuestManager" );
         Questrandomizer.leavesQuestManager.setQuestRandomizerReference( this );
