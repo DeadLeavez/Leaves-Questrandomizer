@@ -278,7 +278,6 @@ export class LeavesUtils
         }
         return closestTier;
     }
-
     public getRandomItemFromTier( tier: number ): string
     {
         if ( !this.tierList[ tier ] )

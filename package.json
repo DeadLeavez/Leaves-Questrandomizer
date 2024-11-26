@@ -4,7 +4,7 @@
     "main": "src/mod.js",
     "license": "MIT",
     "author": "Leaves",
-    "sptVersion": ">= 3.9.0",
+    "sptVersion": ">= 3.10.0",
     "scripts": {
         "setup": "npm i",
         "build": "node ./build.mjs",
