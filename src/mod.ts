@@ -28,6 +28,7 @@ import { LeavesQuestrandomizerCompatibility } from "./LeavesQuestrandomizerCompa
 // Zones (Guh!)
 // Make a profile-profile quest id translator
 // randomize rewards?
+// Fix tons of debug output
 
 export class Questrandomizer implements IPreSptLoadMod
 {
@@ -55,6 +56,7 @@ export class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesQuestManager>( "LeavesQuestManager", LeavesQuestManager, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestrandomizerCompatibility>("LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
 
+        this.leavesUtils.printColor( "[Questrandomizer] Starting up!", LogTextColor.CYAN );
 
         this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
 
@@ -89,7 +91,8 @@ export class Questrandomizer implements IPreSptLoadMod
 
         const questpoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
         this.leavesQuestTools.setQuestPoints( questpoints );
-        this.leavesQuestTools.generateDepthList();
+        
+        /*this.leavesQuestTools.generateDepthList();
 
         let easyList: string[] = [];
         
@@ -100,7 +103,7 @@ export class Questrandomizer implements IPreSptLoadMod
             {
                 //this.leavesUtils.printColor( `\"EasyQ\":\"${ questID }\",` );
             }
-        }
+        }*/
 
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
 
@@ -117,6 +120,8 @@ export class Questrandomizer implements IPreSptLoadMod
         this.generateWeaponCategorySheet();
 
         this.leavesIdManager.save();
+
+        this.leavesUtils.printColor( "[Questrandomizer] Startup Finished. Enjoy!", LogTextColor.CYAN );
     }
 
     public async handleRequestReplacement( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
@@ -325,7 +330,6 @@ export class Questrandomizer implements IPreSptLoadMod
 
         //Check if its on the list of "easy" quests
         flags.isEasyQuest = this.leavesSettingsManager.getConfig().easierQuestList.includes( flags.questID );
-        this.leavesUtils.printColor( "Easy quest:" + flags.isEasyQuest );
 
         //Check what countercreator conditions exist
         for ( let counterConditionIndex = 0; counterConditionIndex < conditions.length; counterConditionIndex++ )

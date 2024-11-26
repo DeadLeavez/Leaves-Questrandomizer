@@ -55,7 +55,7 @@ The second way that is recommended for users is to add weapon equivalents to the
 ### Method 3 - API
 The third and last way that I recommend for mod developers if they like to add compatibility is to use an API I have provided. Below are instructions on how to use it. The end effect is the same as ``Method 2``, but can be done programmatically.
 
-The API inits during ``preSptLoad``, but to ensure load-order is not a problem, I recommend calling during ``postDBLoad``. The actual injection of weapon equivalents happens on profile load so.
+The API inits during ``preSptLoad``, but to ensure load-order is not a problem, I recommend calling during ``postDBLoad``. The actual injection of weapon equivalents happens on profile load. Enable ``debug`` in ``config/config.jsonc`` if you want visual confirmation that your API-call worked.
 
 First you need to resolve the API from the container. (Example copied from my shiny airdrop mod)
 ```ts
@@ -178,3 +178,7 @@ This will be the last version before 3.10
 - - Added generated handover quests.
 - Fixed bug that made "hard" locations sometimes appear on "easy" quests.
 - Added multiple options for compatibility with mods that add new weapons to work with quests. (See ``readme.md`` for more info)
+
+## 0.2.1
+- 3.10.0 Release
+- Cleaned up output to be neater.

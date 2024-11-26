@@ -13,7 +13,6 @@ import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesIdManager } from "./LeavesIdManager";
 import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
-import { IHandbookItem } from "@spt/models/eft/common/tables/IHandbookBase";
 
 
 @injectable()
@@ -129,7 +128,7 @@ export class LeavesQuestManager
             return;
         }
 
-        this.leavesUtils.printColor( `[Questrandomizer] Switching context for PID:${ profileID } SID:${ sessionId }` );
+        this.leavesUtils.printColor( `[Questrandomizer] Switching context for PID:${ profileID } SID:${ sessionId }`, LogTextColor.WHITE );
 
         if ( this.quests[ profileID ] )
         {
@@ -253,7 +252,7 @@ export class LeavesQuestManager
                             for ( const newWeapon of this.getWeaponEquivalents( originalWeapon ) )
                             {
                                 newWeapons.push( newWeapon );
-                                this.leavesUtils.printColor( `[Questrandomizer] Added ${ newWeapon } to ${ quest }` );
+                                this.leavesUtils.printColor( `[Questrandomizer] Added Equiv ${ newWeapon } = ${ quest }`, LogTextColor.WHITE, true );
                             }
                         }
                     }
@@ -276,7 +275,7 @@ export class LeavesQuestManager
             let questName = `QG_WeaponMastery`;
             if ( !questDB[ this.leavesIdManager.get( questName + i ) ] )
             {
-                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName );
+                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName + i, LogTextColor.GRAY, true );
                 let generatedQuest = this.leavesQuestGeneration.generateKillQuest( questName, previousQuest, questTrader, i, ( 5 + i * 2 ) );
                 previousQuest = generatedQuest._id;
                 questDB[ generatedQuest._id ] = generatedQuest;
@@ -291,7 +290,7 @@ export class LeavesQuestManager
             let questName = `QG_Sniper`;
             if ( !questDB[ this.leavesIdManager.get( questName + i ) ] )
             {
-                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName + i );
+                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName + i, LogTextColor.GRAY, true );
                 let generatedQuest = this.leavesQuestGeneration.generateKillQuest( questName, previousQuest, questTrader, i, 10, weapongroup, true );
                 previousQuest = generatedQuest._id;
                 questDB[ generatedQuest._id ] = generatedQuest;
@@ -305,7 +304,7 @@ export class LeavesQuestManager
             let questName = `QG_Fetch`;
             if ( !questDB[ this.leavesIdManager.get( questName + i ) ] )
             {
-                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName + i );
+                this.leavesUtils.printColor( "[Questrandomizer]Generating quest: " + questName + i, LogTextColor.GRAY, true );
                 let generatedQuest = this.leavesQuestGeneration.generateHandoverQuest( questName, previousQuest, questTrader, i )
                 previousQuest = generatedQuest._id;
                 questDB[ generatedQuest._id ] = generatedQuest;

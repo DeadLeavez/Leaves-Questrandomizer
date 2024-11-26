@@ -118,7 +118,7 @@
     For a setup without mods its about 50MB per profile in memory usage.
     */
     "timeBetweenUnloadChecks": 900,
-    "DebugEnabled": true //Enables a lot of debug logging.
+    "DebugEnabled": false //Enables a lot of debug logging.
 }
 
 //Default Traders

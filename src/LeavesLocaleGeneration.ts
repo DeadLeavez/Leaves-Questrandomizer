@@ -5,7 +5,6 @@ import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
 import { IQuestCondition} from "@spt/models/eft/common/tables/IQuest";
-
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 
 //Helpers

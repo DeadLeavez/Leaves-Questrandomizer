@@ -4,7 +4,7 @@ import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuest, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
+import { IQuest } from "@spt/models/eft/common/tables/IQuest";
 import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
 import { ELocationName } from "@spt/models/enums/ELocationName";
 import { QuestStatus } from "@spt/models/enums/QuestStatus";
@@ -15,7 +15,6 @@ import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
 import { LeavesIdManager } from "./LeavesIdManager";
 import { randomInt } from "node:crypto";
-import { kill } from "node:process";
 
 @injectable()
 export class LeavesQuestGeneration
