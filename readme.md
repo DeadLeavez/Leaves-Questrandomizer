@@ -182,3 +182,10 @@ This will be the last version before 3.10
 ## 0.2.1
 - 3.10.0 Release
 - Cleaned up output to be neater.
+
+## 0.2.2
+- Fix filepath in linux (capitalization)
+- Fix missing locale for usec/bear in kill quests (name changed in 3.10)
+- Fix easy quests with weapon requirements becoming invisible.
+
+Can be applied to existing profile. Will not fix the locale for invisible quests requirement. (Should only be stirrup in default settings(use pistols to complete the quest))

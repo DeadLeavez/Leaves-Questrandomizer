@@ -74,7 +74,7 @@ export class Questrandomizer implements IPreSptLoadMod
         //Helper Classes
         this.leavesIdManager = container.resolve<LeavesIdManager>( "LeavesIdManager" );
         this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
-        this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-Questrandomizer" ) }/` );
+        this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-questrandomizer" ) }/` );
 
         this.leavesUtils.printColor( "[Questrandomizer] Starting up!", LogTextColor.CYAN );
 
@@ -451,9 +451,12 @@ export class Questrandomizer implements IPreSptLoadMod
         }
 
         //Weapon
-        if ( killsCondition.weapon && !flags.isEasyQuest )
+        if ( killsCondition.weapon )
         {
-            this.leavesQuestTools.randomizeWeapons( killsCondition, flags );
+            if ( killsCondition.weapon.length > 0 || !flags.isEasyQuest )
+            {
+                this.leavesQuestTools.randomizeWeapons( killsCondition, flags );
+            }
         }
 
         //Gear
