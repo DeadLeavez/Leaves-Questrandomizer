@@ -82,6 +82,8 @@
     "pmcbear": "ЧВК Bear",
     "pmcusec": "ЧВК USEC",
     "pmcbot": "Рейдер",
+    "usec": "USEC PMC",
+    "bear": "Bear PMC",
     "arenafighterevent": "Погоня",
     "spiritspring": "Весенний Дух",
     "spiritwinter": "Зимний Дух",
@@ -115,5 +117,5 @@
     "QG_SniperName": "Снайпер #",
     "QG_SniperDescription": "Мне нужно, чтобы эти ребята пропали. И без каких либо доказательств того, кто это сделал. Думаю ты сможешь справиться с этим? Отлично.",
     "QG_SniperAccept": "Так как ты профессионал, я не дам тебе никакого снаряжения. Но награда будет огромной.",
-    "QG_SniperSuccess": "Wow! I have reports from the area that Death came and visited. I'm impressed. I bet they didn't even see it coming."
+    "QG_SniperSuccess": "Ого! Мне доложили что их навестила Смерть. Я впечатлен. Держу пари, они даже не ожидали этого."
 }
