@@ -83,7 +83,7 @@ if ( this.leavesQuestrandomizerCompatibility !== undefined )
     this.leavesQuestrandomizerCompatibility.addWeaponEquivalent( originalWeapon, newWeapon );
 }
 ```
-<sub>Footnote: the ``// @ts-ignore`` will suppress the warning that VScode will give you for trying to call a method it dosnt know about, but it will work.</suub>
+<sub>Footnote: the ``// @ts-ignore`` will suppress the warning that VScode will give you for trying to call a method it doesn't know about, but it will work.</sub>
 
 ### Translation Credits
 - German - ``Friend B``
@@ -192,3 +192,4 @@ Can be applied to existing profile. Will not fix the locale for invisible quests
 
 ## 0.2.3
 - Fix issue with weapon mods not getting purged when randomizing kill quests.
+- Newest locale updates from crowdin. Thank you everyone!
