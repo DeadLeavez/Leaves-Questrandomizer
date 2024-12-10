@@ -22,13 +22,16 @@ import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails
 import { IncomingMessage, ServerResponse } from "http";
 import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModService";
 import { LeavesQuestrandomizerCompatibility } from "./LeavesQuestrandomizerCompatibility";
+import { kill } from "process";
 
 // TODO:
 // Randomize gear if its already there (NOT DONE)
 // Zones (Guh!)
 // Make a profile-profile quest id translator
 // randomize rewards?
-// Fix tons of debug output
+// Add categories to weapons themselves.
+// Always generate locale for all handover quests.
+// 
 
 export class Questrandomizer implements IPreSptLoadMod
 {
@@ -424,6 +427,9 @@ export class Questrandomizer implements IPreSptLoadMod
 
     private editKillsDetails( killsCondition: IQuestConditionCounterCondition, flags: any )
     {
+        //Purge previous data.
+        killsCondition.weaponModsExclusive = [];
+        killsCondition.weaponModsInclusive = [];
 
         //Target
         if ( this.leavesSettingsManager.getValidTargets().includes( killsCondition.target as string ) )

@@ -110,7 +110,11 @@ export class LeavesQuestTools
 
     public getQuestDepth( questID: string ): Depth
     {
-        return this.depthList[ questID ];
+        if ( this.depthList[ questID ] )
+        {
+            return this.depthList[ questID ];
+        }
+        return null;1
     }
     public getDepthList(): Record<string, Depth>
     {
@@ -134,11 +138,11 @@ export class LeavesQuestTools
         return "unknown";
     }
 
-    public findCounterConditionType( conditions:IQuestConditionCounterCondition[], type: string ): number
+    public findCounterConditionType( conditions: IQuestConditionCounterCondition[], type: string ): number
     {
         for ( let i = 0; i < conditions.length; ++i )
         {
-            if ( conditions[i].conditionType === type )
+            if ( conditions[ i ].conditionType === type )
             {
                 return i;
             }
@@ -197,7 +201,7 @@ export class LeavesQuestTools
         };
 
         quest.conditions.AvailableForFinish.push( objectiveData );
-        
+
         return;
     }
 
@@ -221,7 +225,7 @@ export class LeavesQuestTools
         return condition.push( tempGear ) - 1;
     }
 
-    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items: string[], FIR:boolean = false ): number
+    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items: string[], FIR: boolean = false ): number
     {
         let objectiveData = {
             "conditionType": "HandoverItem",
@@ -245,7 +249,7 @@ export class LeavesQuestTools
         return quest.conditions.AvailableForFinish.push( objectiveData ) - 1;
     }
 
-    public addLocationToQuest( conditions: IQuestConditionCounterCondition[], flags:any ): number
+    public addLocationToQuest( conditions: IQuestConditionCounterCondition[], flags: any ): number
     {
         let locationData =
         {
@@ -416,7 +420,7 @@ export class LeavesQuestTools
     public addRandomWeaponGroup( condition: IQuestConditionCounterCondition, flags: any )
     {
         flags.hasWeapon = 1;
-        
+
         //Check if were gonna use a category or specific weapon
         if ( Math.random() < this.leavesSettingsManager.getConfig().chanceForSpecificWeapon )
         {
@@ -516,7 +520,7 @@ export class LeavesQuestTools
     public randomizeWeapons( killsCondition: IQuestConditionCounterCondition, flags: any )
     {
         if ( killsCondition.weapon.length > 0 )
-        {  
+        {
             this.addRandomWeaponGroup( killsCondition, flags );
         }
         else if ( Math.random() < this.leavesSettingsManager.getConfig().chanceToAddWeapon )

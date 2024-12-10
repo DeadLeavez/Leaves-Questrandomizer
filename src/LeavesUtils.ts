@@ -70,6 +70,17 @@ export class LeavesUtils
     {
         return jsonc.parse( this.vfs.readFile( this.modFolder + file ) );
     }
+    public saveFile( data: any, file: string, serialize: boolean = true )
+    {
+        let dataCopy = structuredClone( data );
+
+        if ( serialize )
+        {
+            dataCopy = this.jsonUtil.serialize( data, true );
+        }
+
+        this.vfs.writeFile( `${ this.modFolder }${ file }`, dataCopy );
+    }
 
     public getFoldersInFolder( folder: string ): string[]
     {
@@ -86,17 +97,6 @@ export class LeavesUtils
         return this.vfs.stripExtension( file );
     }
 
-    public saveFile( data: any, file: string, serialize: boolean = true )
-    {
-        let dataCopy = structuredClone( data );
-
-        if ( serialize )
-        {
-            dataCopy = this.jsonUtil.serialize( data, true );
-        }
-
-        this.vfs.writeFile( `${ this.modFolder }${ file }`, dataCopy );
-    }
 
     public checkIfFileExists( file: string ):boolean
     {

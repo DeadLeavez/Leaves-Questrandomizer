@@ -189,3 +189,6 @@ This will be the last version before 3.10
 - Fix easy quests with weapon requirements becoming invisible.
 
 Can be applied to existing profile. Will not fix the locale for invisible quests requirement. (Should only be stirrup in default settings(use pistols to complete the quest))
+
+## 0.2.3
+- Fix issue with weapon mods not getting purged when randomizing kill quests.
