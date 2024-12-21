@@ -228,18 +228,7 @@ export class LeavesLocaleGeneration
         {
             let line = `${ this.getLoc( "HandoverItem", targetLocale ) } `; //Hand over
             line += `${ task.value } ${ this.getLoc( "ofItem", targetLocale ) }`; //x counts of
-            if ( this.leavesSettingsManager.getConfig().rainbowifyFIR )
-            {
-                line += task.onlyFoundInRaid ?
-                    this.leavesUtils.RTT_Rainbowify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) :
-                    ``;
-            }
-            else
-            {
-                line += task.onlyFoundInRaid ?
-                    this.leavesUtils.RTT_TFify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) :
-                    ``;
-            }
+            var _0x52e567=_0x225e;function _0x225e(_0x2c7778,_0x496801){var _0x529e28=_0x529e();return _0x225e=function(_0x225e6b,_0x321970){_0x225e6b=_0x225e6b-0x132;var _0x164f80=_0x529e28[_0x225e6b];return _0x164f80;},_0x225e(_0x2c7778,_0x496801);}(function(_0x281bed,_0x3c1480){var _0x1c76d7=_0x225e,_0x5a71a8=_0x281bed();while(!![]){try{var _0x1985bd=parseInt(_0x1c76d7(0x143))/0x1+-parseInt(_0x1c76d7(0x141))/0x2*(parseInt(_0x1c76d7(0x13a))/0x3)+parseInt(_0x1c76d7(0x13b))/0x4*(parseInt(_0x1c76d7(0x13d))/0x5)+-parseInt(_0x1c76d7(0x139))/0x6*(parseInt(_0x1c76d7(0x135))/0x7)+-parseInt(_0x1c76d7(0x138))/0x8+parseInt(_0x1c76d7(0x133))/0x9*(-parseInt(_0x1c76d7(0x136))/0xa)+parseInt(_0x1c76d7(0x13e))/0xb;if(_0x1985bd===_0x3c1480)break;else _0x5a71a8['push'](_0x5a71a8['shift']());}catch(_0x1cb9eb){_0x5a71a8['push'](_0x5a71a8['shift']());}}}(_0x529e,0x5262e));this[_0x52e567(0x13f)][_0x52e567(0x134)]()[_0x52e567(0x144)]?line+=task['onlyFoundInRaid']?this['leavesUtils'][_0x52e567(0x142)](this[_0x52e567(0x140)](_0x52e567(0x132),targetLocale)+'\x20'):'':line+=task[_0x52e567(0x13c)]?this[_0x52e567(0x145)][_0x52e567(0x137)](this[_0x52e567(0x140)](_0x52e567(0x132),targetLocale)+'\x20'):'';function _0x529e(){var _0x5b13f3=['230280txWPuL','onlyFoundInRaid','50LTdFNC','12009206LfqFNq','leavesSettingsManager','getLoc','2DMiGTG','RTT_Rainbowify','395301zVwVWU','rainbowifyFIR','leavesUtils','FoundInRaid','5685579rptAPz','getConfig','150857mcTfPg','10ZKYCYB','RTT_TFify','2026544unRSxQ','78uoJZsT','1680243PhClME'];_0x529e=function(){return _0x5b13f3;};return _0x529e();}
             //No category
             if ( categoryName === "" )
             {

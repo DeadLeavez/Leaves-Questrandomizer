@@ -1,0 +1,12 @@
+            if ( this.leavesSettingsManager.getConfig().rainbowifyFIR )
+            {
+                line += task.onlyFoundInRaid ?
+                    this.leavesUtils.RTT_Rainbowify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) :
+                    ``;
+            }
+            else
+            {
+                line += task.onlyFoundInRaid ?
+                    this.leavesUtils.RTT_TFify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) :
+                    ``;
+            }
