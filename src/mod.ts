@@ -430,6 +430,7 @@ export class Questrandomizer implements IPreSptLoadMod
         //Purge previous data.
         killsCondition.weaponModsExclusive = [];
         killsCondition.weaponModsInclusive = [];
+        killsCondition.enemyHealthEffects = [];
 
         //Target
         if ( this.leavesSettingsManager.getValidTargets().includes( killsCondition.target as string ) )

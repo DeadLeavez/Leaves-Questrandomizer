@@ -386,6 +386,53 @@ export class LeavesUtils
         }
         return newString;
     }
+    public RTT_TFify( original: string ): string
+    {
+        let newString = "";
+        let step = 0;
+        for ( let char of original )
+        {
+            const color = this.TFifyColor( step, original.length );
+            let hexstring = `#${ color.r.toString( 16 ).padStart( 2, `0` ) }${ color.g.toString( 16 ).padStart( 2, `0` ) }${ color.b.toString( 16 ).padStart( 2, `0` ) }`;
+            newString += this.RTT_Color( char, hexstring );
+            step++;
+        }
+        return newString;
+    }
+    private TFifyColor( step, length ): any
+    {
+        let colorb =
+        {
+            r: 91,
+            g: 206,
+            b: 250
+        };
+        let colorp =
+        {
+            r: 245,
+            g: 169,
+            b: 184
+        };
+        let colorw =
+        {
+            r: 255,
+            g: 255,
+            b: 255
+        };
+
+        if ( step / length <= 0.2 )
+            return colorb;
+        if ( step / length > 0.2 && step / length <= 0.4 )
+            return colorp;
+        if ( step / length > 0.4 && step / length <= 0.6 )
+            return colorw;
+        if ( step / length > 0.6 && step / length <= 0.8 )
+            return colorp;
+        if ( step / length > 0.8 )
+            return colorb;
+
+        return colorp;
+    }
     public RTT_Size( original: string, size: string ): string
     {
         return `<size=${ size }>${ original }</size>`;

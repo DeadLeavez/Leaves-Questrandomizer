@@ -4,7 +4,7 @@ import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { VFS } from "@spt/utils/VFS";
-import { IQuestCondition} from "@spt/models/eft/common/tables/IQuest";
+import { IQuestCondition } from "@spt/models/eft/common/tables/IQuest";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 
 //Helpers
@@ -228,7 +228,18 @@ export class LeavesLocaleGeneration
         {
             let line = `${ this.getLoc( "HandoverItem", targetLocale ) } `; //Hand over
             line += `${ task.value } ${ this.getLoc( "ofItem", targetLocale ) }`; //x counts of
-            line += task.onlyFoundInRaid ? this.leavesUtils.RTT_Rainbowify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) : ``;
+            if ( this.leavesSettingsManager.getConfig().rainbowifyFIR )
+            {
+                line += task.onlyFoundInRaid ?
+                    this.leavesUtils.RTT_Rainbowify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) :
+                    ``;
+            }
+            else
+            {
+                line += task.onlyFoundInRaid ?
+                    this.leavesUtils.RTT_TFify( `${ this.getLoc( "FoundInRaid", targetLocale ) } ` ) :
+                    ``;
+            }
             //No category
             if ( categoryName === "" )
             {

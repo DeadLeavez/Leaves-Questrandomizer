@@ -193,3 +193,14 @@ Can be applied to existing profile. Will not fix the locale for invisible quests
 ## 0.2.3
 - Fix issue with weapon mods not getting purged when randomizing kill quests.
 - Newest locale updates from crowdin. Thank you everyone!
+
+Will not fix already generated quests.
+
+## 0.2.4
+- Fix issue of generating the wrong amount of sniper quests. Thanks to Jaxander for finding this issue.
+- Add DVL 500mm barrel to big silencer category.
+- Purge enemyHealthEffects from randomized quests.
+- Added an option to disable the rainbow "Found in raid" text. You need to make a new profile for it to take effect.
+
+
+Will not fix already generated quests.

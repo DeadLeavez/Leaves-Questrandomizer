@@ -285,7 +285,7 @@ export class LeavesQuestManager
 
         //Generate sniper quests
         const weapongroup = this.leavesSettingsManager.getConfig().QuestGen_SniperWeaponGroup;
-        for ( let i = 0; i < this.leavesSettingsManager.getConfig().QuestGen_TotalWeaponQuests; ++i )
+        for ( let i = 0; i < this.leavesSettingsManager.getConfig().QuestGen_TotalSniperQuests; ++i )
         {
             let questName = `QG_Sniper`;
             if ( !questDB[ this.leavesIdManager.get( questName + i ) ] )

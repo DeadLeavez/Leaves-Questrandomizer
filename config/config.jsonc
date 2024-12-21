@@ -33,6 +33,7 @@
     "handoverItemUnknownItemValueDivider": 14000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. Lower value means harder quests.
     "adjustHandoverCountFactorsUpDown": [ 0.25, 0.40 ], //Adjusts how many items are needed for a handover quest. See how it works above.
     "chanceHandoverNeedsFIR": 0.50, //Chance for a quest to require the handover items to be Found In Raid. 1 is always. 0 is never.
+    "rainbowifyFIR": true,
     "handoverItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entirely and left alone. Parent categories also work.
     [
         "5696686a4bdc2da3298b456a", //Dollars
