@@ -4,9 +4,21 @@
 
     "equivalents":
     [
-        /*{
-            "originalWeaponID":"",
-            "equivalentWeaponID":""
-        }*/
+        {
+            "originalWeaponID":"628a60ae6b1d481ff772e9c8", //RD-704
+            "equivalentWeaponID":"6671ebcdd32bd95eb398e920" // WTT AK5C
+        },
+        {
+            "originalWeaponID":"606587252535c57a13424cfd", //MUTANT
+            "equivalentWeaponID":"6671ebcdd32bd95eb398e920" // WTT AK5C
+        },
+        {
+            "originalWeaponID":"6513ef33e06849f06c0957ca", //RPD
+            "equivalentWeaponID":"66e718dc498d978477e0ba75" // WTT M249
+        },
+        {
+            "originalWeaponID":"65268d8ecb944ff1e90ea385", //RPDN
+            "equivalentWeaponID":"66e718dc498d978477e0ba75" // WTT M249
+        }
     ]
 }
