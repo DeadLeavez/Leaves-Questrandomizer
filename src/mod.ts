@@ -6,6 +6,8 @@ import type { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
 import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { randomInt } from "crypto";
 import { HttpServer } from "@spt/servers/HttpServer";
+import { ConfigServer } from "@spt/servers/ConfigServer";
+import { ITraderConfig } from "@spt/models/spt/config/ITraderConfig";
 
 //Helpers
 import { LeavesUtils, RTT_Colors } from "./LeavesUtils";
@@ -22,7 +24,7 @@ import type { NewItemFromCloneDetails } from "@spt/models/spt/mod/NewItemDetails
 import { IncomingMessage, ServerResponse } from "http";
 import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModService";
 import { LeavesQuestrandomizerCompatibility } from "./LeavesQuestrandomizerCompatibility";
-import { kill } from "process";
+import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
 
 // TODO:
 // Randomize gear if its already there (NOT DONE)
@@ -39,6 +41,7 @@ export class Questrandomizer implements IPreSptLoadMod
     private databaseServer: DatabaseServer;
     private customItemService: CustomItemService;
     private httpServer: HttpServer;
+    private configServer: ConfigServer;
     private static originalHandleMethod;
     public static leavesQuestManager: LeavesQuestManager;
 
@@ -57,7 +60,7 @@ export class Questrandomizer implements IPreSptLoadMod
         container.register<LeavesQuestGeneration>( "LeavesQuestGeneration", LeavesQuestGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesLocaleGeneration>( "LeavesLocaleGeneration", LeavesLocaleGeneration, { lifecycle: Lifecycle.Singleton } );
         container.register<LeavesQuestManager>( "LeavesQuestManager", LeavesQuestManager, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesQuestrandomizerCompatibility>("LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
+        container.register<LeavesQuestrandomizerCompatibility>( "LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
 
         this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
 
@@ -73,6 +76,7 @@ export class Questrandomizer implements IPreSptLoadMod
         this.customItemService = container.resolve<CustomItemService>( "CustomItemService" );
         this.httpServer = container.resolve<HttpServer>( "HttpServer" );
         const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
+        this.configServer = container.resolve<ConfigServer>( "ConfigServer" );
 
         //Helper Classes
         this.leavesIdManager = container.resolve<LeavesIdManager>( "LeavesIdManager" );
@@ -94,7 +98,7 @@ export class Questrandomizer implements IPreSptLoadMod
 
         const questpoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
         this.leavesQuestTools.setQuestPoints( questpoints );
-        
+
         /*this.leavesQuestTools.generateDepthList();
 
         let easyList: string[] = [];
@@ -226,7 +230,7 @@ export class Questrandomizer implements IPreSptLoadMod
             this.leavesQuestTools.addKillObjectiveToQuest( quest, tempTarget, tempKillcount );
             this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW, true );
         }
-        
+
         //Check if quest has handover type
         let editHandOverOverride = false;
         if ( !this.leavesUtils.searchObject( "HandoverItem", quest.conditions.AvailableForFinish ) && Math.random() < this.leavesSettingsManager.getConfig().addHandOverObjectiveToQuestChance )
@@ -476,15 +480,19 @@ export class Questrandomizer implements IPreSptLoadMod
 
     public generateWeaponCategorySheet()
     {
+        let traderConfig: ITraderConfig = this.configServer.getConfig( ConfigTypes.TRADER );
+        const frenceBlacklist = traderConfig.fence.blacklist;
         //Generate the items
         for ( const category in this.leavesSettingsManager.getWeaponCategories().categories )
         {
-            this.generateCategoryItem( category, this.leavesIdManager.get( "WeaponCategoryHandbookID" ) );
+            const newID = this.generateCategoryItem( category, this.leavesIdManager.get( "WeaponCategoryHandbookID" ) );
+            frenceBlacklist.push( newID );
         }
 
         for ( const modGroup in this.leavesSettingsManager.getWeaponCategories().modCategories )
         {
-            this.generateCategoryItem( modGroup, this.leavesIdManager.get( "ModCategoryHandbookID" ) );
+            const newID = this.generateCategoryItem( modGroup, this.leavesIdManager.get( "ModCategoryHandbookID" ) );
+            frenceBlacklist.push( newID );
         }
 
         //Create the files and generate locales
