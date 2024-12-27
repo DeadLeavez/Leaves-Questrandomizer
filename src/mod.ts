@@ -31,7 +31,7 @@ import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
 // Zones (Guh!)
 // Make a profile-profile quest id translator
 // randomize rewards?
-// Add categories to weapons themselves.
+// Add categories to weapons themselves. (Into their description)
 // Always generate locale for all handover quests.
 // 
 
@@ -99,18 +99,9 @@ export class Questrandomizer implements IPreSptLoadMod
         const questpoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
         this.leavesQuestTools.setQuestPoints( questpoints );
 
-        /*this.leavesQuestTools.generateDepthList();
-
-        let easyList: string[] = [];
-        
-        const depthList = this.leavesQuestTools.getDepthList()
-        for ( const questID in depthList )
-        {
-            if ( depthList[ questID ].depth < 2 && depthList[ questID ].level < 5 )
-            {
-                //this.leavesUtils.printColor( `\"EasyQ\":\"${ questID }\",` );
-            }
-        }*/
+        this.leavesQuestTools.generateDepthList();
+        //const depthList = this.leavesQuestTools.getDepthList()
+        //this.leavesUtils.debugJsonOutput( depthList );
 
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
 
@@ -227,7 +218,7 @@ export class Questrandomizer implements IPreSptLoadMod
         {
             const tempTarget = this.leavesSettingsManager.getValidTargets()[ randomInt( this.leavesSettingsManager.getValidTargets().length ) ];
             const tempKillcount = this.leavesSettingsManager.getConfig().addKillObjectiveKillCount;
-            this.leavesQuestTools.addKillObjectiveToQuest( quest, tempTarget, tempKillcount );
+            this.leavesQuestTools.addKillObjectiveToQuest( quest, tempTarget, tempKillcount, true );
             this.leavesUtils.printColor( "Added Kill objective to quest", LogTextColor.YELLOW, true );
         }
 
@@ -235,7 +226,7 @@ export class Questrandomizer implements IPreSptLoadMod
         let editHandOverOverride = false;
         if ( !this.leavesUtils.searchObject( "HandoverItem", quest.conditions.AvailableForFinish ) && Math.random() < this.leavesSettingsManager.getConfig().addHandOverObjectiveToQuestChance )
         {
-            this.leavesQuestTools.addHandOverObjectiveToQuest( quest, this.leavesSettingsManager.getConfig().addHandOverObjectiveBaseCount, [ this.leavesUtils.getRandomItemFromTier( 5 ) ] );
+            this.leavesQuestTools.addHandOverObjectiveToQuest( quest, this.leavesSettingsManager.getConfig().addHandOverObjectiveBaseCount, [ this.leavesUtils.getRandomItemFromTier( 5 ) ], false, true );
             editHandOverOverride = true;
             this.leavesUtils.printColor( "Added Hand Over objective to quest", LogTextColor.YELLOW, true );
         }

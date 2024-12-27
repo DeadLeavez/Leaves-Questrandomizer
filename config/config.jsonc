@@ -23,17 +23,22 @@
     "killCountWhenTargetTypeChangesFactor": 1.5, //Ill tell how this works later. Idk
 
     "addKillObjectiveToQuestChance": 0.60, //Chance to add a kill objective to quests that don't naturally have them.
-    "addKillObjectiveKillCount": 5, //Base kill count to added objectives. Then multiplied by the factors above.
+    "addKillObjectiveKillCount": 3, //Base kill count to added objectives. Then multiplied by the factors above.
+    "addKillOBjectiveDepthFactor": 0.2, //Will add quest depth * factor to the total kill count. Depth is how many quests is before it.
+    "addKillOBjectiveLevelFactor": 0.15, //Will add quest level * factor to the total kill count. Level is the minimum required level to start the quest.
 
-    "addHandOverObjectiveToQuestChance": 0.25, //CHance to ADD a handover condition to a quest that does not have it.
-    "addHandOverObjectiveBaseCount": 4, //Number of items that need to be handed over by default.
+    "addHandOverObjectiveToQuestChance": 0.35, //CHance to ADD a handover condition to a quest that does not have it.
+    "addHandOverObjectiveBaseCount": 2, //Number of items that need to be handed over by default.
+    "addHandOverObjectiveDepthFactor": 0.15, //Will add quest depth * factor to the total kill count. Depth is how many quests is before it.
+    "addHandOverObjectiveLevelFactor": 0.1, //Will add quest level * factor to the total kill count. Level is the minimum required level to start the quest.
+    
     "chanceToEditHandoverCondition": 0.85, //Chance that the handover part of a quest will be randomized. 1 for always. 0 for never. Decimal values are ok.
     "chanceToRequireItemCategory": 0.15, //Chance that instead of a specific item, the quest requires a bunch of items from a category instead.
     "itemCategoryMultiplier": 2.50, //If it's a category we multiply the needed item count with this. With default settings if a quest normally requires 5 Duct Tape, it now might require 10 medikits.
     "handoverItemUnknownItemValueDivider": 14000, //The divisor that determines the tier of an item. Rounded to nearest tier. An item worth 34000 rubles with be 34000/15000 ~ 2. Lower value means harder quests.
     "adjustHandoverCountFactorsUpDown": [ 0.25, 0.40 ], //Adjusts how many items are needed for a handover quest. See how it works above.
     "chanceHandoverNeedsFIR": 0.50, //Chance for a quest to require the handover items to be Found In Raid. 1 is always. 0 is never.
-    "rainbowifyFIR": true,
+    "rainbowifyFIR": true, //IF set to false, will make the "found in raid" text no longer be rainbow.
     "handoverItemBlacklist": //Any quest that requires you to handover an item from this list will be skipped entirely and left alone. Parent categories also work.
     [
         "5696686a4bdc2da3298b456a", //Dollars
@@ -119,6 +124,7 @@
     For a setup without mods its about 50MB per profile in memory usage.
     */
     "timeBetweenUnloadChecks": 900,
+    "allowAllProfilesToDoAllQuests": true,
     "DebugEnabled": false //Enables a lot of debug logging.
 }
 

@@ -204,3 +204,7 @@ Will not fix already generated quests.
 
 
 Will not fix already generated quests.
+
+## 0.3.0
+- Made quests difficulty depend on how far in the quest is. (Scales of level and depth)
+- 

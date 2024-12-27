@@ -73,29 +73,32 @@ export class LeavesQuestTools
     private findDepth( depthList: Record<string, Depth>, QuestID: string ): Depth
     {
         const quest: IQuest = this.databaseServer.getTables().templates.quests[ QuestID ];
+        //this.leavesUtils.printColor( `Current:${ quest.QuestName }` );
         let currentDepth = new Depth();
         for ( const condition of quest.conditions.AvailableForStart )
         {
             if ( condition.conditionType === "Quest" )
             {
                 const target = condition.target as string;
-                if ( depthList[ target ] )
+                if ( !depthList[ target ] )
                 {
-                    const tempDepth = depthList[ target ].depth + 1;
-                    const tempLevel = depthList[ target ].level;
-                    if ( currentDepth.depth < tempDepth )
-                    {
-                        currentDepth.depth = tempDepth;
-                    }
-                    if ( currentDepth.level < tempLevel )
-                    {
-                        currentDepth.level = tempLevel;
-                    }
-                }
-                else
-                {
+                    //this.leavesUtils.printColor( `Go deper:${ target }` );
                     depthList[ target ] = this.findDepth( depthList, target );
                 }
+
+                const tempDepth = depthList[ target ].depth + 1;
+                const tempLevel = depthList[ target ].level;
+                if ( currentDepth.depth < tempDepth )
+                {
+                    currentDepth.depth = tempDepth;
+                    //this.leavesUtils.printColor( `Depth:${ currentDepth.depth }` );
+                }
+                if ( currentDepth.level < tempLevel )
+                {
+                    currentDepth.level = tempLevel;
+                    //this.leavesUtils.printColor( `Level:${ currentDepth.level }` );
+                }
+
             }
             if ( condition.conditionType === "Level" )
             {
@@ -114,9 +117,9 @@ export class LeavesQuestTools
         {
             return this.depthList[ questID ];
         }
-        return null;1
+        return null; 1
     }
-    
+
     public getDepthList(): Record<string, Depth>
     {
         return this.depthList;
@@ -151,8 +154,22 @@ export class LeavesQuestTools
         return -1;
     }
 
-    public addKillObjectiveToQuest( quest: IQuest, target: string, count: number )
+    public addKillObjectiveToQuest( quest: IQuest, target: string, count: number, useDepth = false )
     {
+        if ( useDepth && !this.depthList[ quest._id ] )
+        {
+            this.leavesUtils.printColor( `[Questrandomizer] Used DEPTH on a quest that doesn't have it. Quest:${ quest._id }`, LogTextColor.RED );
+        }
+        if ( useDepth )
+        {
+            const qDepth: Depth = this.depthList[ quest._id ];
+            let newCount = this.leavesSettingsManager.getConfig().addKillObjectiveKillCount;
+            newCount += qDepth.depth * this.leavesSettingsManager.getConfig().addKillOBjectiveDepthFactor;
+            newCount += qDepth.level * this.leavesSettingsManager.getConfig().addKillOBjectiveLevelFactor;
+            count = Math.round( newCount );
+            this.leavesUtils.printColor( `[Questrandomizer]${ quest.QuestName } Killcount = ${ count }`, LogTextColor.CYAN, false );
+        }
+
         //SPT, YOUR TYPES SUCK!
         let objectiveData: any =
         {
@@ -226,8 +243,21 @@ export class LeavesQuestTools
         return condition.push( tempGear ) - 1;
     }
 
-    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items: string[], FIR: boolean = false ): number
+    public addHandOverObjectiveToQuest( quest: IQuest, count: number, items: string[], FIR: boolean = false, useDepth = false ): number
     {
+        if ( useDepth && !this.depthList[ quest._id ] )
+        {
+            this.leavesUtils.printColor( `[Questrandomizer] Used DEPTH on a quest that doesn't have it. Quest:${ quest._id }`, LogTextColor.RED );
+        }
+        if ( useDepth )
+        {
+            const qDepth: Depth = this.depthList[ quest._id ];
+            let newCount = this.leavesSettingsManager.getConfig().addHandOverObjectiveBaseCount;
+            newCount += qDepth.depth * this.leavesSettingsManager.getConfig().addHandOverObjectiveDepthFactor;
+            newCount += qDepth.level * this.leavesSettingsManager.getConfig().addHandOverObjectiveLevelFactor;
+            count = Math.round( newCount );
+            this.leavesUtils.printColor( `[Questrandomizer]${ quest.QuestName } Handover count = ${ count }`, LogTextColor.CYAN, false );
+        }
         let objectiveData = {
             "conditionType": "HandoverItem",
             "dogtagLevel": 0,
