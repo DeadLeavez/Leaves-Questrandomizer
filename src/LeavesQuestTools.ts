@@ -167,7 +167,7 @@ export class LeavesQuestTools
             newCount += qDepth.depth * this.leavesSettingsManager.getConfig().addKillOBjectiveDepthFactor;
             newCount += qDepth.level * this.leavesSettingsManager.getConfig().addKillOBjectiveLevelFactor;
             count = Math.round( newCount );
-            this.leavesUtils.printColor( `[Questrandomizer]${ quest.QuestName } Killcount = ${ count }`, LogTextColor.CYAN, false );
+            this.leavesUtils.printColor( `[Questrandomizer]${ quest.QuestName } Killcount = ${ count }`, LogTextColor.CYAN, true );
         }
 
         //SPT, YOUR TYPES SUCK!
@@ -256,7 +256,7 @@ export class LeavesQuestTools
             newCount += qDepth.depth * this.leavesSettingsManager.getConfig().addHandOverObjectiveDepthFactor;
             newCount += qDepth.level * this.leavesSettingsManager.getConfig().addHandOverObjectiveLevelFactor;
             count = Math.round( newCount );
-            this.leavesUtils.printColor( `[Questrandomizer]${ quest.QuestName } Handover count = ${ count }`, LogTextColor.CYAN, false );
+            this.leavesUtils.printColor( `[Questrandomizer]${ quest.QuestName } Handover count = ${ count }`, LogTextColor.CYAN, true );
         }
         let objectiveData = {
             "conditionType": "HandoverItem",

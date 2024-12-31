@@ -25,6 +25,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { OnUpdateModService } from "@spt/services/mod/onUpdate/OnUpdateModService";
 import { LeavesQuestrandomizerCompatibility } from "./LeavesQuestrandomizerCompatibility";
 import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
+import { IItemConfig } from "@spt/models/spt/config/IItemConfig";
 
 // TODO:
 // Randomize gear if its already there (NOT DONE)
@@ -472,18 +473,22 @@ export class Questrandomizer implements IPreSptLoadMod
     public generateWeaponCategorySheet()
     {
         let traderConfig: ITraderConfig = this.configServer.getConfig( ConfigTypes.TRADER );
-        const frenceBlacklist = traderConfig.fence.blacklist;
+        let itemConfig = this.configServer.getConfig<IItemConfig>( ConfigTypes.ITEM );
+
+        const fenceBlacklist = traderConfig.fence.blacklist;
         //Generate the items
         for ( const category in this.leavesSettingsManager.getWeaponCategories().categories )
         {
             const newID = this.generateCategoryItem( category, this.leavesIdManager.get( "WeaponCategoryHandbookID" ) );
-            frenceBlacklist.push( newID );
+            fenceBlacklist.push( newID );
+            itemConfig.blacklist.push( newID );
         }
 
         for ( const modGroup in this.leavesSettingsManager.getWeaponCategories().modCategories )
         {
             const newID = this.generateCategoryItem( modGroup, this.leavesIdManager.get( "ModCategoryHandbookID" ) );
-            frenceBlacklist.push( newID );
+            fenceBlacklist.push( newID );
+            itemConfig.blacklist.push( newID );
         }
 
         //Create the files and generate locales

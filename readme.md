@@ -207,4 +207,12 @@ Will not fix already generated quests.
 
 ## 0.3.0
 - Made quests difficulty depend on how far in the quest is. (Scales of level and depth)
-- 
+- - Earlier quests are easier
+- - Later quests are harder
+- - All Configurable in the config. Like always.
+- Blacklisted the handbook items in the fence blacklist.
+- Blacklisted the handbook items in the generic item blacklist.
+
+Note: From extensive testing, it seems mostly fine to re-generate quests on an already existing profile. You might lose progress is some parts of some quests. Always make a backup first. No support will be provided. To do this, remove the folder matching your profile ID from ``user/mods/questrandomizer/assets/generated/<id>``.
+
+Will not fix already generated quests.
