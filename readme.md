@@ -217,3 +217,6 @@ Will not fix already generated quests.
 Note: From extensive testing, it seems mostly fine to re-generate quests on an already existing profile. You might lose progress is some parts of some quests. Always make a backup first. No support will be provided. To do this, remove the folder matching your profile ID from ``user/mods/questrandomizer/assets/generated/<id>``.
 
 Will not fix already generated quests.
+
+## 0.3.1
+- Add a limit to the depth search, to prevent call stack overflow. 

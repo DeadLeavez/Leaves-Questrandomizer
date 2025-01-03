@@ -65,13 +65,17 @@ export class LeavesQuestTools
         this.depthList = {};
         for ( const QuestID in this.databaseServer.getTables().templates.quests )
         {
-            this.depthList[ QuestID ] = this.findDepth( this.depthList, QuestID );
+            let checkedQuests: string[] = []; //To ensure we don't get into any circular references.
+            this.depthList[ QuestID ] = this.findDepth( this.depthList, QuestID, checkedQuests );
         }
         this.leavesUtils.printColor( "[Questrandomizer] Generated depth list of all quests" );
     }
 
-    private findDepth( depthList: Record<string, Depth>, QuestID: string ): Depth
+    private findDepth( depthList: Record<string, Depth>, QuestID: string, checkedQuests: string[] ): Depth
     {
+        //Add this quest to the list.
+        checkedQuests.push( QuestID );
+
         const quest: IQuest = this.databaseServer.getTables().templates.quests[ QuestID ];
         //this.leavesUtils.printColor( `Current:${ quest.QuestName }` );
         let currentDepth = new Depth();
@@ -83,7 +87,10 @@ export class LeavesQuestTools
                 if ( !depthList[ target ] )
                 {
                     //this.leavesUtils.printColor( `Go deper:${ target }` );
-                    depthList[ target ] = this.findDepth( depthList, target );
+                    if ( !checkedQuests.includes( target ) )
+                    {
+                        depthList[ target ] = this.findDepth( depthList, target, checkedQuests );
+                    }
                 }
 
                 const tempDepth = depthList[ target ].depth + 1;
