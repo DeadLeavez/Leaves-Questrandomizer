@@ -57,7 +57,7 @@ export class LeavesUtils
             {
                 if ( !itemDB[ item ] )
                 {
-                    this.printColor( `[Questrandomizer]Found broken item in tierlist: ${ item } Ignore this in 3.9.x`);
+                    this.printColor( `[Questrandomizer]Found broken item in tierlist: ${ item } Ignore this in 3.9.x` );
                     currentTier.splice( currentTier.indexOf( item ), 1 );
                 }
             }
@@ -98,16 +98,32 @@ export class LeavesUtils
     }
 
 
-    public checkIfFileExists( file: string ):boolean
+    public checkIfFileExists( file: string ): boolean
     {
         return this.vfs.exists( this.modFolder + file )
     }
 
-    public getTraderNickname( id: string ):string
+    public doesQuestExist( questID: string )
     {
+        if ( this.databaseServer.getTables().templates.quests[ questID ] )
+        {
+            return true;
+        }
+        return false;
+    }
 
-            return this.databaseServer.getTables().traders[ id ].base.nickname ?? "Invalid ID";
-
+    public getTraderNickname( id: string ): string
+    {
+        let name = "";
+        try
+        {
+            name = this.databaseServer.getTables().traders[ id ].base.nickname ?? "Invalid ID"; 3
+        } catch ( error )
+        {
+            this.printColor( `[Questrandomizer] Found *VERY* broken trader:${ id }. Consider contact the author of the trader and yell at them. XD`, LogTextColor.RED, false );
+            name = "ERROR";
+        }
+        return name;
     }
 
     public dataDump()

@@ -77,19 +77,35 @@ export class LeavesQuestTools
         checkedQuests.push( QuestID );
 
         const quest: IQuest = this.databaseServer.getTables().templates.quests[ QuestID ];
-        //this.leavesUtils.printColor( `Current:${ quest.QuestName }` );
+        this.leavesUtils.printColor( `Current:${ quest.QuestName }`, LogTextColor.RED, true );
         let currentDepth = new Depth();
         for ( const condition of quest.conditions.AvailableForStart )
         {
             if ( condition.conditionType === "Quest" )
             {
                 const target = condition.target as string;
+                if ( !this.leavesUtils.doesQuestExist( target ) )
+                {
+                    this.leavesUtils.printColor( `Found quest with invalid data. Pre-req quest does not exist. Quest with issue: [${ quest.QuestName }]-[${ quest._id }]. Required quest(missing): [${ target }]`, LogTextColor.RED, false );
+                    continue;
+                }
+
                 if ( !depthList[ target ] )
                 {
-                    //this.leavesUtils.printColor( `Go deper:${ target }` );
+                    this.leavesUtils.printColor( `Go deper:${ target }`, LogTextColor.RED, true );
                     if ( !checkedQuests.includes( target ) )
                     {
                         depthList[ target ] = this.findDepth( depthList, target, checkedQuests );
+                    }
+                    else
+                    {
+                        //Found circular reference.
+                        const quest = this.databaseServer.getTables().templates.quests[ QuestID ]
+                        this.leavesUtils.printColor( `Found circular quest reference. This is an issue with modded quests. :S QuestID:\"${ quest._id }\" - and name:\"${ quest.QuestName }\"`, LogTextColor.RED, false );
+                        let tempDepth = new Depth();
+                        tempDepth.depth = 0;
+                        tempDepth.level = 0;
+                        return tempDepth;
                     }
                 }
 
@@ -98,12 +114,12 @@ export class LeavesQuestTools
                 if ( currentDepth.depth < tempDepth )
                 {
                     currentDepth.depth = tempDepth;
-                    //this.leavesUtils.printColor( `Depth:${ currentDepth.depth }` );
+                    this.leavesUtils.printColor( `Depth:${ currentDepth.depth }`, LogTextColor.RED, true );
                 }
                 if ( currentDepth.level < tempLevel )
                 {
                     currentDepth.level = tempLevel;
-                    //this.leavesUtils.printColor( `Level:${ currentDepth.level }` );
+                    this.leavesUtils.printColor( `Level:${ currentDepth.level }`, LogTextColor.RED, true );
                 }
 
             }

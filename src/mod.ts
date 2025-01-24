@@ -34,7 +34,8 @@ import { IItemConfig } from "@spt/models/spt/config/IItemConfig";
 // randomize rewards?
 // Add categories to weapons themselves. (Into their description)
 // Always generate locale for all handover quests.
-// 
+// Purge "optional"
+// Purge 
 
 export class Questrandomizer implements IPreSptLoadMod
 {
