@@ -219,4 +219,7 @@ Note: From extensive testing, it seems mostly fine to re-generate quests on an a
 Will not fix already generated quests.
 
 ## 0.3.1
-- Add a limit to the depth search, to prevent call stack overflow. 
+- Add a limit to the depth search, to prevent call stack overflow.  (Caused by mods with broken quest data)
+- Added more failsafes to prevent issues. (Caused by mods with broken quest data)
+
+This brings no new content or fixes. This is only for people who run a ton of shoddy mods that aren't set up correctly.
