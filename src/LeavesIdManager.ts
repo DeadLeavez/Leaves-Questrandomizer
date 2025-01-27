@@ -1,25 +1,26 @@
-import { inject, injectable } from "tsyringe";
+import { DependencyContainer } from "tsyringe";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { LeavesUtils } from "./LeavesUtils";
 
-@injectable()
 export class LeavesIdManager
 {
     private IDTranslator: any;
     private filepath: string;
 
-    constructor(
-        @inject( "HashUtil" ) protected hashUtil: HashUtil,
-        @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
-    )
-    {}
+    private hashUtils: HashUtil;
+
+    constructor( container: DependencyContainer, private leavesUtils:LeavesUtils )
+    {
+        this.hashUtils = container.resolve<HashUtil>( "HashUtil" );
+        this.leavesUtils = leavesUtils;
+    }
 
     public load( filename: string )
     {
         this.filepath = filename;
         this.IDTranslator = this.leavesUtils.loadFile( filename );
     }
-    public save( ) 
+    public save() 
     {
         this.leavesUtils.saveFile( this.IDTranslator, this.filepath );
     }
@@ -27,9 +28,8 @@ export class LeavesIdManager
     {
         if ( !this.IDTranslator[ name ] )
         {
-            this.IDTranslator[ name ] = this.hashUtil.generate();
+            this.IDTranslator[ name ] = this.hashUtils.generate();
         }
-
         return this.IDTranslator[ name ];
     }
 }

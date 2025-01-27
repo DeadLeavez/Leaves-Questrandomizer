@@ -1,9 +1,5 @@
-import { inject, injectable } from "tsyringe";
-import { ILogger } from "@spt/models/spt/utils/ILogger";
+import { DependencyContainer } from "tsyringe";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { JsonUtil } from "@spt/utils/JsonUtil";
-import { HashUtil } from "@spt/utils/HashUtil";
-import { VFS } from "@spt/utils/VFS";
 import { IQuestCondition } from "@spt/models/eft/common/tables/IQuest";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 
@@ -11,23 +7,22 @@ import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { LeavesUtils } from "./LeavesUtils";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 
-@injectable()
 export class LeavesLocaleGeneration
 {
     private loadedModLocalization;
     private weaponCategoriesLocalization;
     private targetLocales: Set<string>;
 
+    private databaseServer: DatabaseServer;
+
     constructor(
-        @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
-        @inject( "VFS" ) protected vfs: VFS,
-        @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
-        @inject( "HashUtil" ) protected hashUtil: HashUtil,
-        @inject( "WinstonLogger" ) protected logger: ILogger,
-        @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
-        @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager
+        private leavesUtils: LeavesUtils,
+        private leavesSettingsManager: LeavesSettingsManager,
+        container: DependencyContainer
     )
     {
+        this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
+
         this.loadedModLocalization = [];
         this.weaponCategoriesLocalization = [];
         const localeRoot = "assets/data/localization";
@@ -305,6 +300,4 @@ export class LeavesLocaleGeneration
         this.addLocaleTo( language, shortname, `${ targetID } ShortName` );
         this.addLocaleTo( language, description, `${ targetID } Description` );
     }
-
-
 }

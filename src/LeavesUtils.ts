@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { DependencyContainer, inject } from "tsyringe";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
@@ -8,11 +8,8 @@ import { randomInt } from "crypto";
 import { jsonc } from "jsonc";
 import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
-import { HashUtil } from "@spt/utils/HashUtil";
 import { IItem } from "@spt/models/eft/common/tables/IItem";
 
-
-@injectable()
 export class LeavesUtils
 {
     private modFolder: string;
@@ -20,15 +17,21 @@ export class LeavesUtils
     private itemTiers: number[];
     private debug: boolean;
 
-    constructor(
-        @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
-        @inject( "VFS" ) protected vfs: VFS,
-        @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
-        @inject( "WinstonLogger" ) protected logger: ILogger,
-        @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper,
-        @inject( "HashUtil" ) protected hashUtil: HashUtil
-    )
+    private databaseServer: DatabaseServer;
+    private vfs: VFS;
+    private jsonUtil: JsonUtil;
+    private logger: ILogger;
+    private weightedRandomHelper: WeightedRandomHelper;
+
+
+    constructor( container: DependencyContainer )
     {
+        this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
+        this.vfs = container.resolve<VFS>( "VFS" );
+        this.jsonUtil = container.resolve<JsonUtil>( "JsonUtil" );
+        this.logger = container.resolve<ILogger>( "WinstonLogger" );
+        this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
+
         this.modFolder = path.resolve( __dirname, `../` );
         this.debug = false;
     }

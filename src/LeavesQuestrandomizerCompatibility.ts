@@ -4,10 +4,14 @@ import { LeavesQuestManager } from "./LeavesQuestManager";
 @injectable()
 export class LeavesQuestrandomizerCompatibility
 {
-    constructor(
-        @inject( "LeavesQuestManager") protected leavesQuestManager: LeavesQuestManager
-    )
+    private leavesQuestManager: LeavesQuestManager
+    constructor()
     {}
+
+    public giveQuestManager( leavesQuestManager: LeavesQuestManager )
+    {
+        this.leavesQuestManager = leavesQuestManager;
+    }
 
     public addWeaponEquivalent( originalWeapon: string, equivalentWeapon: string )
     {

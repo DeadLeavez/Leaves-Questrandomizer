@@ -31,7 +31,7 @@
     "addHandOverObjectiveBaseCount": 2, //Number of items that need to be handed over by default.
     "addHandOverObjectiveDepthFactor": 0.15, //Will add quest depth * factor to the total kill count. Depth is how many quests is before it.
     "addHandOverObjectiveLevelFactor": 0.1, //Will add quest level * factor to the total kill count. Level is the minimum required level to start the quest.
-    
+
     "chanceToEditHandoverCondition": 0.85, //Chance that the handover part of a quest will be randomized. 1 for always. 0 for never. Decimal values are ok.
     "chanceToRequireItemCategory": 0.15, //Chance that instead of a specific item, the quest requires a bunch of items from a category instead.
     "itemCategoryMultiplier": 2.50, //If it's a category we multiply the needed item count with this. With default settings if a quest normally requires 5 Duct Tape, it now might require 10 medikits.
@@ -104,7 +104,7 @@
     "QuestGen_HandoverFIRChance": 0.8, //Chance that items in these quests need to be found in raid. 1 is always. 0 is never. 
     "QuestGen_HandoverMaxTier": 10,
     "QuestGen_TotalSniperQuests": 20,
-    "QuestGen_SniperWeaponGroup": "Precision Sniping", 
+    "QuestGen_SniperWeaponGroup": "Precision Sniping",
     "QuestGen_TotalRunnerQuests": 10, //Not implemented
     "QuestGen_TotalPostmanQuests": 10, //Not implemented
     "QuestGen_Trader": "54cb50c76803fa8b248b4571", //What trader will provide the new quests.
@@ -125,7 +125,35 @@
     */
     "timeBetweenUnloadChecks": 900,
     "allowAllProfilesToDoAllQuests": true,
-    "DebugEnabled": false //Enables a lot of debug logging.
+    "DebugEnabled": false, //Enables a lot of debug logging.
+
+    "purgeQuests": //Will purge these quests from all profiles at server startup. Remove the lines from here before next startup or it will keep purging them. Useful for rerolling or unbricking specific quests
+    [
+        /*
+		// Special Comms
+		"66ab970848ddbe9d4a0c49a8",
+
+		// Cream of the Crop
+		"66e01ae0c391e4c94903d220",
+
+		// Sample IV
+		"67040c78bf4be8a4ef041a65",
+
+		// Foresters Duty
+		"66ab9da7eb102b9bcd08591c",
+
+		// New Day New Paths
+		"66aa58245ab22944110db6e9",
+
+		// Know your place
+		"66aa61663aa37705c5024277",
+
+		// Secrets of Polikhim
+		"66aa74571e5e199ecd094f18",
+		// Beneath the streets
+		"66aba85403e0ee3101042877"
+    */
+    ]
 }
 
 //Default Traders

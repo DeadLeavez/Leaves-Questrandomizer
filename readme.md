@@ -223,3 +223,6 @@ Will not fix already generated quests.
 - Added more failsafes to prevent issues. (Caused by mods with broken quest data)
 
 This brings no new content or fixes. This is only for people who run a ton of shoddy mods that aren't set up correctly.
+
+## 0.3.2
+- Added a config to purge quests from profiles. Good for re-rolling quests that are too difficult or broken. I personally made it to use with shibdib's no transit tasks, to re-roll them without the transit requirements.

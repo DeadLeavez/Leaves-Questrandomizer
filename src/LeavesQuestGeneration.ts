@@ -1,9 +1,3 @@
-import { inject, injectable } from "tsyringe";
-import { ILogger } from "@spt/models/spt/utils/ILogger";
-import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { JsonUtil } from "@spt/utils/JsonUtil";
-import { HashUtil } from "@spt/utils/HashUtil";
-import { VFS } from "@spt/utils/VFS";
 import { IQuest } from "@spt/models/eft/common/tables/IQuest";
 import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
 import { ELocationName } from "@spt/models/enums/ELocationName";
@@ -16,23 +10,16 @@ import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
 import { LeavesIdManager } from "./LeavesIdManager";
 import { randomInt } from "node:crypto";
 
-@injectable()
 export class LeavesQuestGeneration
 {
     constructor(
-        @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
-        @inject( "VFS" ) protected vfs: VFS,
-        @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
-        @inject( "HashUtil" ) protected hashUtil: HashUtil,
-        @inject( "WinstonLogger" ) protected logger: ILogger,
-        @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
-        @inject( "LeavesQuestTools" ) protected leavesQuestTools: LeavesQuestTools,
-        @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
-        @inject( "LeavesLocaleGeneration" ) protected leavesLocaleGeneration: LeavesLocaleGeneration,
-        @inject( "LeavesIdManager" ) protected leavesIdManager: LeavesIdManager
+        private leavesUtils: LeavesUtils,
+        private leavesQuestTools: LeavesQuestTools,
+        private leavesSettingsManager: LeavesSettingsManager,
+        private leavesLocaleGeneration: LeavesLocaleGeneration,
+        private leavesIdManager: LeavesIdManager
     )
-    {
-    }
+    { }
 
 
     public generateEmptyQuest( name: string, trader: string, location: string, ID: string ): IQuest
@@ -117,7 +104,7 @@ export class LeavesQuestGeneration
         return;
     }
 
-    public generateKillQuest( name: string, previousQuest: string, trader: string, questNumber: number, killCount:number, specificWeaponGroup: string = "", distance: boolean = false ): IQuest
+    public generateKillQuest( name: string, previousQuest: string, trader: string, questNumber: number, killCount: number, specificWeaponGroup: string = "", distance: boolean = false ): IQuest
     {
         const questID = this.leavesIdManager.get( name + questNumber );
 
@@ -223,7 +210,7 @@ export class LeavesQuestGeneration
             tier = this.leavesUtils.getClosestTier( maxtier );
         }
 
-        const itemToFind:string = this.leavesUtils.getRandomItemFromTier(tier); 
+        const itemToFind: string = this.leavesUtils.getRandomItemFromTier( tier );
 
         const needsFoundInRaid = Math.random() < this.leavesSettingsManager.getConfig().QuestGen_HandoverFIRChance;
         this.leavesQuestTools.addHandOverObjectiveToQuest( newQuest, 5, [ itemToFind ], needsFoundInRaid );

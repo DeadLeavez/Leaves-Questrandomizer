@@ -1,13 +1,7 @@
-import { inject, injectable } from "tsyringe";
-import { ILogger } from "@spt/models/spt/utils/ILogger";
+import { DependencyContainer } from "tsyringe";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { HashUtil } from "@spt/utils/HashUtil";
 import { LeavesUtils } from "./LeavesUtils"
-import { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
 
-
-
-@injectable()
 export class LeavesSettingsManager
 {
     private config: any;
@@ -24,14 +18,14 @@ export class LeavesSettingsManager
     private questWhiteList: string[];
     private rewardTable;
 
+    private databaseServer: DatabaseServer
+
     constructor(
-        @inject( "PreSptModLoader" ) protected preSptModLoader: PreSptModLoader,
-        @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
-        @inject( "HashUtil" ) protected hashUtil: HashUtil,
-        @inject( "WinstonLogger" ) protected logger: ILogger,
-        @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
+        private leavesUtils: LeavesUtils,
+        container: DependencyContainer
     )
     {
+        this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
         this.config = this.leavesUtils.loadFile( "config/config.jsonc" );
 
         //Load localization bundle

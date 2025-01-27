@@ -1,11 +1,6 @@
-import { inject, injectable } from "tsyringe";
-import { ILogger } from "@spt/models/spt/utils/ILogger";
+import { DependencyContainer } from "tsyringe";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { JsonUtil } from "@spt/utils/JsonUtil";
-import { VFS } from "@spt/utils/VFS";
-import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
-import { HashUtil } from "@spt/utils/HashUtil";
 import { LeavesUtils } from "./LeavesUtils";
 import { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import { Questrandomizer } from "./mod";
@@ -14,8 +9,6 @@ import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesIdManager } from "./LeavesIdManager";
 import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
 
-
-@injectable()
 export class LeavesQuestManager
 {
     private originalQuestDB;
@@ -29,21 +22,22 @@ export class LeavesQuestManager
     private unloadCheckTime: number;
     private weaponEquivalentTable: Record<string, string[]>;
 
+
+    private databaseServer: DatabaseServer;
+    private profileHelper: ProfileHelper;
+
     constructor(
-        @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
-        @inject( "VFS" ) protected vfs: VFS,
-        @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
-        @inject( "WinstonLogger" ) protected logger: ILogger,
-        @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper,
-        @inject( "HashUtil" ) protected hashUtil: HashUtil,
-        @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
-        @inject( "ProfileHelper" ) protected profileHelper: ProfileHelper,
-        @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
-        @inject( "LeavesQuestTools" ) protected leavesQuestTools: LeavesQuestTools,
-        @inject( "LeavesIdManager" ) protected leavesIdManager: LeavesIdManager,
-        @inject( "LeavesQuestGeneration" ) protected leavesQuestGeneration: LeavesQuestGeneration
+        private leavesUtils: LeavesUtils,
+        private leavesIdManager: LeavesIdManager,
+        private leavesSettingsManager: LeavesSettingsManager,
+        private leavesQuestTools: LeavesQuestTools,
+        private leavesQuestGeneration: LeavesQuestGeneration,
+        container: DependencyContainer
     )
     {
+        this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
+        this.profileHelper = container.resolve<ProfileHelper>( "ProfileHelper" );
+
         this.originalLocaleDB = {};
         this.originalQuestDB = {};
         this.locales = {};

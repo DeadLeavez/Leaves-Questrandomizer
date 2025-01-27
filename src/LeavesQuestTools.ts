@@ -1,20 +1,17 @@
-import { inject, injectable } from "tsyringe";
-import { ILogger } from "@spt/models/spt/utils/ILogger";
+import { DependencyContainer } from "tsyringe";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { JsonUtil } from "@spt/utils/JsonUtil";
 import { HashUtil } from "@spt/utils/HashUtil";
-import { VFS } from "@spt/utils/VFS";
 import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
-import { LeavesUtils } from "./LeavesUtils";
 import { QuestStatus } from "@spt/models/enums/QuestStatus";
 import { QuestRewardType } from "@spt/models/enums/QuestRewardType";
-import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
-import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { randomInt } from "crypto";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 
+import { LeavesUtils } from "./LeavesUtils";
+import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
+import { LeavesSettingsManager } from "./LeavesSettingsManager";
 
 export class Depth
 {
@@ -27,25 +24,31 @@ export class Depth
     level: number;
 }
 
-@injectable()
 export class LeavesQuestTools
 {
     private questPoints: any;
     private depthList: Record<string, Depth>;
 
+    private databaseServer: DatabaseServer;
+    private hashUtil: HashUtil;
+    private weightedRandomHelper: WeightedRandomHelper;
+    private handbookHelper: HandbookHelper;
+
     constructor(
-        @inject( "DatabaseServer" ) protected databaseServer: DatabaseServer,
-        @inject( "VFS" ) protected vfs: VFS,
-        @inject( "JsonUtil" ) protected jsonUtil: JsonUtil,
-        @inject( "HashUtil" ) protected hashUtil: HashUtil,
-        @inject( "WinstonLogger" ) protected logger: ILogger,
-        @inject( "LeavesUtils" ) protected leavesUtils: LeavesUtils,
-        @inject( "LeavesSettingsManager" ) protected leavesSettingsManager: LeavesSettingsManager,
-        @inject( "LeavesLocaleGeneration" ) protected leavesLocaleGeneration: LeavesLocaleGeneration,
-        @inject( "WeightedRandomHelper" ) protected weightedRandomHelper: WeightedRandomHelper,
-        @inject( "HandbookHelper" ) protected handbookHelper: HandbookHelper
+        private leavesUtils: LeavesUtils,
+        private leavesSettingsManager: LeavesSettingsManager,
+        private leavesLocaleGeneration: LeavesLocaleGeneration,
+        container: DependencyContainer
     )
-    { }
+    { 
+        this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
+        this.hashUtil = container.resolve<  HashUtil>( "HashUtil" );
+        this.weightedRandomHelper = container.resolve<  WeightedRandomHelper>( "WeightedRandomHelper" );
+        this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
+        
+        this.questPoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
+        this.generateDepthList();
+    }
 
     public changeXPOnQuest( quest: IQuest, multiplier: number )
     {
@@ -146,11 +149,6 @@ export class LeavesQuestTools
     public getDepthList(): Record<string, Depth>
     {
         return this.depthList;
-    }
-
-    public setQuestPoints( points: any )
-    {
-        this.questPoints = points;
     }
 
     public zoneIDToMap( zoneID: string ): string

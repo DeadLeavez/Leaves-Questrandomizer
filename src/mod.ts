@@ -2,8 +2,8 @@ import { DependencyContainer, Lifecycle } from "tsyringe";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
-import type { PreSptModLoader } from "@spt/loaders/PreSptModLoader";
-import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
+import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
+import type { PostDBModLoader } from "@spt/loaders/PostDBModLoader";
 import { randomInt } from "crypto";
 import { HttpServer } from "@spt/servers/HttpServer";
 import { ConfigServer } from "@spt/servers/ConfigServer";
@@ -35,9 +35,9 @@ import { IItemConfig } from "@spt/models/spt/config/IItemConfig";
 // Add categories to weapons themselves. (Into their description)
 // Always generate locale for all handover quests.
 // Purge "optional"
-// Purge 
+// Show forbidden stuff
 
-export class Questrandomizer implements IPreSptLoadMod
+export class Questrandomizer implements IPostDBLoadMod
 {
     private onUpdateModService: OnUpdateModService;
     private databaseServer: DatabaseServer;
@@ -52,16 +52,32 @@ export class Questrandomizer implements IPreSptLoadMod
     private leavesQuestTools: LeavesQuestTools;
     private leavesSettingsManager: LeavesSettingsManager;
     private leavesLocaleGeneration: LeavesLocaleGeneration;
+    private leavesQuestGeneration: LeavesQuestGeneration;
 
-    public preSptLoad( container: DependencyContainer ): void
+    public postDBLoad( container: DependencyContainer ): void
     {
-        container.register<LeavesIdManager>( "LeavesIdManager", LeavesIdManager, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesUtils>( "LeavesUtils", LeavesUtils, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesSettingsManager>( "LeavesSettingsManager", LeavesSettingsManager, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesQuestTools>( "LeavesQuestTools", LeavesQuestTools, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesQuestGeneration>( "LeavesQuestGeneration", LeavesQuestGeneration, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesLocaleGeneration>( "LeavesLocaleGeneration", LeavesLocaleGeneration, { lifecycle: Lifecycle.Singleton } );
-        container.register<LeavesQuestManager>( "LeavesQuestManager", LeavesQuestManager, { lifecycle: Lifecycle.Singleton } );
+        const postDBModLoader = container.resolve<PostDBModLoader>( "PostDBModLoader" );
+        
+        this.leavesUtils = new LeavesUtils( container );
+        this.leavesUtils.printColor( "[Questrandomizer] Starting up!", LogTextColor.CYAN );
+        this.leavesUtils.setModFolder( `${ postDBModLoader.getModPath( "leaves-questrandomizer" ) }/` );
+        this.leavesUtils.setTierList( "assets/data/itemtierlist.jsonc" );
+        
+        this.leavesIdManager = new LeavesIdManager( container, this.leavesUtils );
+        this.leavesIdManager.load( "assets/generated/ids.jsonc" );
+
+        this.leavesSettingsManager = new LeavesSettingsManager( this.leavesUtils, container );
+        this.leavesUtils.setDebug( this.leavesSettingsManager.getConfig().DebugEnabled );
+
+        this.leavesLocaleGeneration = new LeavesLocaleGeneration( this.leavesUtils, this.leavesSettingsManager, container );
+
+        this.leavesQuestTools = new LeavesQuestTools( this.leavesUtils, this.leavesSettingsManager, this.leavesLocaleGeneration, container );
+
+        this.leavesQuestGeneration = new LeavesQuestGeneration( this.leavesUtils, this.leavesQuestTools, this.leavesSettingsManager, this.leavesLocaleGeneration, this.leavesIdManager );
+
+        Questrandomizer.leavesQuestManager = new LeavesQuestManager( this.leavesUtils, this.leavesIdManager, this.leavesSettingsManager, this.leavesQuestTools, this.leavesQuestGeneration, container );
+        Questrandomizer.leavesQuestManager.setQuestRandomizerReference( this );
+
         container.register<LeavesQuestrandomizerCompatibility>( "LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
 
         this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
@@ -71,41 +87,19 @@ export class Questrandomizer implements IPreSptLoadMod
             ( timeSinceLastRun: number ) => Questrandomizer.leavesQuestManager.unloadChecker( timeSinceLastRun ),
             () => "LeavesContextUnload" // new route name
         );
-    }
 
-    public postDBLoad( container: DependencyContainer ): void
-    {
         this.customItemService = container.resolve<CustomItemService>( "CustomItemService" );
         this.httpServer = container.resolve<HttpServer>( "HttpServer" );
-        const preSptModLoader = container.resolve<PreSptModLoader>( "PreSptModLoader" );
         this.configServer = container.resolve<ConfigServer>( "ConfigServer" );
-
-        //Helper Classes
-        this.leavesIdManager = container.resolve<LeavesIdManager>( "LeavesIdManager" );
-        this.leavesUtils = container.resolve<LeavesUtils>( "LeavesUtils" );
-        this.leavesUtils.setModFolder( `${ preSptModLoader.getModPath( "leaves-questrandomizer" ) }/` );
-
-        this.leavesUtils.printColor( "[Questrandomizer] Starting up!", LogTextColor.CYAN );
-
-        Questrandomizer.leavesQuestManager = container.resolve<LeavesQuestManager>( "LeavesQuestManager" );
-        Questrandomizer.leavesQuestManager.setQuestRandomizerReference( this );
-
-        this.leavesSettingsManager = container.resolve<LeavesSettingsManager>( "LeavesSettingsManager" );
-        this.leavesQuestTools = container.resolve<LeavesQuestTools>( "LeavesQuestTools" );
-        this.leavesLocaleGeneration = container.resolve<LeavesLocaleGeneration>( "LeavesLocaleGeneration" );
-
-        this.leavesUtils.setTierList( "assets/data/itemtierlist.jsonc" );
-        this.leavesUtils.setDebug( this.leavesSettingsManager.getConfig().DebugEnabled );
-        this.leavesIdManager.load( "assets/generated/ids.jsonc" );
-
-        const questpoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
-        this.leavesQuestTools.setQuestPoints( questpoints );
-
-        this.leavesQuestTools.generateDepthList();
-        //const depthList = this.leavesQuestTools.getDepthList()
-        //this.leavesUtils.debugJsonOutput( depthList );
-
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
+        
+        //Purge quests
+        const purgeQuestList = this.leavesSettingsManager.getConfig().purgeQuests;
+        if ( Object.keys( purgeQuestList ).length > 0 )
+        {
+            this.purgeQuests( purgeQuestList );
+        }
+
 
         //Override the handle
         // @ts-ignore
@@ -122,6 +116,27 @@ export class Questrandomizer implements IPreSptLoadMod
         this.leavesIdManager.save();
 
         this.leavesUtils.printColor( "[Questrandomizer] Startup Finished. Enjoy!", LogTextColor.CYAN );
+    }
+
+    private purgeQuests( purgeQuestList: any )
+    {
+        const folders = this.leavesUtils.getFoldersInFolder( "assets/generated/" );
+        this.leavesUtils.debugJsonOutput( folders );
+        for ( let folder of folders )
+        {
+            let filepath = "assets/generated/" + folder + "/quests.json";
+            this.leavesUtils.printColor( "Loading quests from: " + filepath, LogTextColor.YELLOW, false );
+            let file = this.leavesUtils.loadFile( filepath );
+            for ( const questID of purgeQuestList )
+            {
+                if ( file[ questID ] )
+                {
+                    this.leavesUtils.printColor( "Deleting: " + questID, LogTextColor.RED, false );
+                    delete file[ questID ];
+                }
+            }
+            this.leavesUtils.saveFile( file, filepath, true );
+        }
     }
 
     public async handleRequestReplacement( req: IncomingMessage, resp: ServerResponse<IncomingMessage> ): Promise<void>
