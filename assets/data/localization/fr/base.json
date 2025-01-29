@@ -21,6 +21,8 @@
     "OneRequired": "N'importe Lequel Requis",
     "AND": "ET",
     "OR": "OU",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "Douanes",
     "factory4_day": "Usine - Jour",
     "factory4_night": "Usine - Nuit",
