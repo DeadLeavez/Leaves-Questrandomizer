@@ -167,13 +167,25 @@ export class LeavesSettingsManager
         return this.locationIDMap;
     }
 
-    public getweaponCategoriesWeighting()
+    public getWeaponCategoriesWeighting()
     {
         return this.weaponCategoriesWeighting;
     }
     public getWeaponCategories()
     {
         return this.weaponCategories;
+    }
+    public getCategoriesWeaponIsPartOf( weaponID: string ): string[]
+    {
+        let categories: string[];
+        for ( const categoryName of Object.keys( this.weaponCategories.categories ) )
+        {
+            if ( this.weaponCategories.categories[categoryName].weapons.includes(weaponID) )
+            {
+                categories.push(categoryName)
+            }
+        }
+        return categories;
     }
     public gethandoverCategories()
     {

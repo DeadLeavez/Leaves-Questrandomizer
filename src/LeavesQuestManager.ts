@@ -8,6 +8,7 @@ import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesIdManager } from "./LeavesIdManager";
 import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
+import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
 
 export class LeavesQuestManager
 {
@@ -32,6 +33,7 @@ export class LeavesQuestManager
         private leavesSettingsManager: LeavesSettingsManager,
         private leavesQuestTools: LeavesQuestTools,
         private leavesQuestGeneration: LeavesQuestGeneration,
+        private leavesLocaleGeneration: LeavesLocaleGeneration,
         container: DependencyContainer
     )
     {
@@ -64,6 +66,7 @@ export class LeavesQuestManager
             this.weaponEquivalentTable[ originalWeapon ] = [];
         }
         this.weaponEquivalentTable[ originalWeapon ].push( equivalentWeapon );
+        this.leavesLocaleGeneration.addEquivalentToWeapon( originalWeapon, equivalentWeapon );
     }
 
     private getWeaponEquivalents( weaponID: string ): string[]

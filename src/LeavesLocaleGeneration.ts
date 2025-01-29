@@ -305,4 +305,28 @@ export class LeavesLocaleGeneration
         this.addLocaleTo( language, shortname, `${ targetID } ShortName` );
         this.addLocaleTo( language, description, `${ targetID } Description` );
     }
+
+    public addWeaponGroupToWeapon( weaponGroup: string, weaponID: string )
+    {
+        for ( const locale in this.databaseServer.getTables().locales.global )
+        {
+            let desc = this.databaseServer.getTables().locales.global[ locale ][ `${ weaponID } Description` ];
+            desc += `\n`;
+            desc += this.leavesUtils.RTT_Bold( "{QR} " + this.getLoc( "PartOf", locale ) );
+            desc += this.leavesUtils.RTT_Italic( " [" + this.getWeaponCategoryLocale( weaponGroup, locale ) + "]" );
+            this.databaseServer.getTables().locales.global[ locale ][ `${ weaponID } Description` ] = desc;
+        }
+    }
+
+    public addEquivalentToWeapon( originalID: string, equivalentID: string )
+    {
+        for ( const locale in this.databaseServer.getTables().locales.global )
+        {
+            let desc = this.databaseServer.getTables().locales.global[ locale ][ `${ equivalentID } Description` ];
+            desc += `\n`;
+            desc += this.leavesUtils.RTT_Bold( "{QR} " + this.getLoc( "EquivalentTo", locale ) );
+            desc += this.leavesUtils.RTT_Italic( " [" + this.leavesUtils.getLocale( locale, originalID, " Name" ) + "]" );
+            this.databaseServer.getTables().locales.global[ locale ][ `${ equivalentID } Description` ] = desc;
+        }
+    }
 }

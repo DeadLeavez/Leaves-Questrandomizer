@@ -30,11 +30,8 @@ import { IItemConfig } from "@spt/models/spt/config/IItemConfig";
 // TODO:
 // Randomize gear if its already there (NOT DONE)
 // Zones (Guh!)
-// Make a profile-profile quest id translator //DONE
 // randomize rewards?
 // Add categories to weapons themselves. (Into their description)
-// Always generate locale for all handover quests. //DONE
-// Purge "optional" //DONE
 // Show forbidden stuff
 
 export class Questrandomizer implements IPostDBLoadMod
@@ -75,10 +72,11 @@ export class Questrandomizer implements IPostDBLoadMod
 
         this.leavesQuestGeneration = new LeavesQuestGeneration( this.leavesUtils, this.leavesQuestTools, this.leavesSettingsManager, this.leavesLocaleGeneration, this.leavesIdManager );
 
-        Questrandomizer.leavesQuestManager = new LeavesQuestManager( this.leavesUtils, this.leavesIdManager, this.leavesSettingsManager, this.leavesQuestTools, this.leavesQuestGeneration, container );
+        Questrandomizer.leavesQuestManager = new LeavesQuestManager( this.leavesUtils, this.leavesIdManager, this.leavesSettingsManager, this.leavesQuestTools, this.leavesQuestGeneration, this.leavesLocaleGeneration, container );
         Questrandomizer.leavesQuestManager.setQuestRandomizerReference( this );
 
         container.register<LeavesQuestrandomizerCompatibility>( "LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
+        container.resolve<LeavesQuestrandomizerCompatibility>( "LeavesQuestrandomizerCompatibility" ).giveQuestManager( Questrandomizer.leavesQuestManager );
 
         this.onUpdateModService = container.resolve<OnUpdateModService>( "OnUpdateModService" );
 
@@ -584,6 +582,21 @@ export class Questrandomizer implements IPostDBLoadMod
                 sheet += modGroupSheet;
             }
             this.leavesUtils.saveFile( sheet, `categories/categories_${ language }.txt`, false );
+        }
+
+        this.addCategoriesToWeapons();
+    }
+
+    addCategoriesToWeapons()
+    {
+        const weaponCategories = this.leavesSettingsManager.getWeaponCategories().categories;
+        for ( const categoryName of Object.keys( weaponCategories ) )
+        {
+            for ( const weaponID of weaponCategories[ categoryName ].weapons )
+            {
+                this.leavesLocaleGeneration.addWeaponGroupToWeapon( categoryName, weaponID );
+                this.leavesUtils.printColor( `Adding ${ categoryName } to ${ weaponID }`, LogTextColor.YELLOW, true );
+            }
         }
     }
 

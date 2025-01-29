@@ -237,3 +237,11 @@ This brings no new content or fixes. This is only for people who run a ton of sh
 - Updated to latest translations from crowdin. Thank you to everyone who helps out. <3
 
 OLD CONFIGS ARE NOT COMPATIBLE.
+
+## 0.4.1
+- Add weapon categories to weapons.
+- Add weapon equivalencies to weapons.
+- Fix crash on startup when mods use the compatability API. Ooops
+
+## 0.4.2
+- Fix so it doesn't spam the console with equivs. :D

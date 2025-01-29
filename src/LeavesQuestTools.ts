@@ -504,7 +504,7 @@ export class LeavesQuestTools
             condition.weapon = [ weapon ];
             return;
         }
-        let group = this.weightedRandomHelper.getWeightedValue<string>( this.leavesSettingsManager.getweaponCategoriesWeighting() );
+        let group = this.weightedRandomHelper.getWeightedValue<string>( this.leavesSettingsManager.getWeaponCategoriesWeighting() );
         flags.whatWeaponOrGroup = group;
         this.addWeaponGroup( group, condition );
     }

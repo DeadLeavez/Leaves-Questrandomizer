@@ -22,6 +22,8 @@
     "OneRequired": "Any Required",
     "AND": "AND",
     "OR": "OR",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
 
     "bigmap": "Customs",
     "factory4_day": "Factory - Day",
