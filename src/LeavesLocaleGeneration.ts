@@ -139,13 +139,18 @@ export class LeavesLocaleGeneration
             //Body part hit requirement
             if ( flags.hasBodyparts >= 0 )
             {
-                let bodypartsline = `${ this.getLoc( "inBodyPart", targetLocale ) }: `;
-                //for ( let partindex = 0; partindex < conditions[ flags.hasKills ].bodyPart.length; partindex++ )
-                for ( const bodyPart of conditions[ flags.hasKills ].bodyPart )
+                let bodyPartsLine = `${ this.getLoc( "inBodyPart", targetLocale ) }: [`;
+                const bodyParts = conditions[ flags.hasKills ].bodyPart;
+                for ( let i = 0; i < bodyParts.length; i++ )
                 {
-                    bodypartsline += `${ this.getLoc( bodyPart, targetLocale ) } `
+                    bodyPartsLine += `${ this.getLoc( bodyParts[ i ], targetLocale ) }`;
+                    if ( i !== bodyParts.length - 1 )
+                    {
+                        bodyPartsLine += " or ";
+                    }
                 }
-                line += bodypartsline;
+                bodyPartsLine += "]";
+                line += bodyPartsLine;
             }
 
             //Location

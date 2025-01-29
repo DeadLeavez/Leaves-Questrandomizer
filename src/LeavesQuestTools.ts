@@ -26,6 +26,7 @@ export class Depth
 
 export class LeavesQuestTools
 {
+
     private questPoints: any;
     private depthList: Record<string, Depth>;
 
@@ -40,12 +41,12 @@ export class LeavesQuestTools
         private leavesLocaleGeneration: LeavesLocaleGeneration,
         container: DependencyContainer
     )
-    { 
+    {
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
-        this.hashUtil = container.resolve<  HashUtil>( "HashUtil" );
-        this.weightedRandomHelper = container.resolve<  WeightedRandomHelper>( "WeightedRandomHelper" );
+        this.hashUtil = container.resolve<HashUtil>( "HashUtil" );
+        this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
         this.handbookHelper = container.resolve<HandbookHelper>( "HandbookHelper" );
-        
+
         this.questPoints = this.leavesUtils.loadFile( "assets/data/questpoints.jsonc" );
         this.generateDepthList();
     }
@@ -417,6 +418,26 @@ export class LeavesQuestTools
         }
     }
 
+    purgeOptionalTasks( tasks: IQuestCondition[] )
+    {
+        let toPurge = [];
+        for ( let i = 0; i < tasks.length; i++ )
+        {
+            //Find "optional" tasks.
+            //Tasks with NO parentId is ALWAYS necessary. Why? Ask bsg. WTF? 
+            //What about the "isNecessary" property? It's always false or missing (which defaults it to false) so its a useless property.
+            if ( tasks[ i ].hasOwnProperty( "parentId" ) && tasks[ i ].parentId !== "" )
+            {
+                //We unshift (reverse push) so we get a reversed order to purge. To easier purge later.
+                toPurge.unshift( i );
+            }
+        }
+        for ( const purgeIndex of toPurge )
+        {
+            tasks.splice( purgeIndex, 1 );
+        }
+    }
+
     public addPrerequisiteQuest( targetQuest: IQuest, previousQuestID: string, statuses: QuestStatus[] )
     {
         let prereqQuestCondition: any =
@@ -634,13 +655,13 @@ export class LeavesQuestTools
         if ( killsCondition.bodyPart.length > 0 )
         {
             //check if the quest has body part requirement.
-            killsCondition.bodyPart = this.leavesSettingsManager.getBodypartSelection( killsCondition.bodyPart.length );
+            killsCondition.bodyPart = this.leavesSettingsManager.getBodypartSelection();
             flags.hasBodyparts = killsCondition.bodyPart.length;
         }
         else if ( Math.random() < this.leavesSettingsManager.getConfig().chanceToAddBodypart )
         {
             //Chance to add it.
-            killsCondition.bodyPart = this.leavesSettingsManager.getBodypartSelection( 2 );
+            killsCondition.bodyPart = this.leavesSettingsManager.getBodypartSelection();
             flags.hasBodyparts = 2;
         }
     }

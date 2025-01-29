@@ -1,6 +1,7 @@
 import { DependencyContainer } from "tsyringe";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { LeavesUtils } from "./LeavesUtils"
+import { randomInt } from "node:crypto";
 
 export class LeavesSettingsManager
 {
@@ -10,7 +11,7 @@ export class LeavesSettingsManager
     private weaponCategoriesWeighting: any;
     private gearList: any;
     private localizationChanges: any;
-    private bodyParts: string[];
+    private bodyParts: string[][];
     private validTargets: string[];
     private validMaps: string[];
     private easyMaps: string[];
@@ -139,33 +140,16 @@ export class LeavesSettingsManager
         return this.easyMaps;
     }
 
-    public getBodyParts()
+    public getBodyParts():string[][]
     {
         return this.bodyParts;
     }
 
-    public getBodypartSelection( count: number ): string[]
+    public getBodypartSelection( ): string[]
     {
-        let tempArray = this.leavesUtils.getUniqueValues( this.getBodyParts(), count );
-        let newArray = [];
-        for ( const item of tempArray )
-        {
-            switch ( item )
-            {
-                case "Arms":
-                    newArray.push( "LeftArm" );
-                    newArray.push( "RightArm" );
-                    break;
-                case "Legs":
-                    newArray.push( "LeftLeg" );
-                    newArray.push( "RightLeg" );
-                    break;
-                default:
-                    newArray.push( item );
-                    break;
-            }
-        }
-        return newArray;
+        const bodyPartsList = this.getBodyParts();
+        const chosen = randomInt( bodyPartsList.length );
+        return bodyPartsList[ chosen ];
     }
 
     public getValidTargets()

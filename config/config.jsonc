@@ -4,6 +4,7 @@
         "5c0d190cd09282029f5390d8", //Grenadier
         "5d25aed386f77442734d25d2", //The Survivalist Path - Unprotected but Dangerous
         "5d25e2d886f77442734d335e", //The Huntsman Path - Controller
+        "5d25e29d86f7740a22516326", //The Survivalist Path - Eagle-Owl
         "60e729cf5698ee7b05057439" //Swift one
     ],
 
@@ -75,7 +76,7 @@
     - - Does not ADD/EDIT gear requirements
     - - Does not EDIT weapon requirements 
     */
-    "easierQuestList": //Doesnt seem to work?
+    "easierQuestList":
     [
         "5936d90786f7742b1420ba5b", //Debut
         "5936da9e86f7742d65037edf", //Background Check
@@ -153,7 +154,13 @@
 		// Beneath the streets
 		"66aba85403e0ee3101042877"
     */
-    ]
+    ],
+    "profileTranslator": //Any profile ID that appears here will use the specified profile's quests instead. OR you can use "original" (match caps) to use the games original unmodified quests.
+    //Not that original profiles WILL NOT get any of the generated quests. DO NOT CHAIN PROFILES. IT WILL CRASH THE SERVER
+    {
+        "679a31c90002036669e3baec":"original", //Leaves profile :]
+        "66aa61663aa37705c5024277":"66aa74571e5e199ecd094f18" //Example. THE LEFT <- HAND PROFILE, WILL USE THE QUESTS FROM THE RIGHT -> HAND PROFILE.
+    }
 }
 
 //Default Traders

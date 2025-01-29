@@ -49,11 +49,9 @@
     ],
     "bodyParts":
     [
-        "Head",
-        "Chest",
-        "Stomach",
-        "Arms",
-        "Legs"
+        ["Head"],
+        ["Chest", "LeftArm", "RightArm"],
+        ["Stomach", "LeftLeg", "RightLeg"]
     ],
     "rewards":
     {

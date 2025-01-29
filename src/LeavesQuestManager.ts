@@ -17,7 +17,7 @@ export class LeavesQuestManager
     private quests;
     private hasInit: boolean;
     private questRandomizer: Questrandomizer;
-    private currentContex: string;
+    private currentContext: string;
     private timeoutTracker: Set<String>;
     private unloadCheckTime: number;
     private weaponEquivalentTable: Record<string, string[]>;
@@ -43,7 +43,7 @@ export class LeavesQuestManager
         this.locales = {};
         this.quests = {};
         this.hasInit = false;
-        this.currentContex = "";
+        this.currentContext = "";
         this.timeoutTracker = new Set<String>();
         this.weaponEquivalentTable = {};
         this.unloadCheckTime = this.leavesSettingsManager.getConfig().timeBetweenUnloadChecks;
@@ -81,7 +81,7 @@ export class LeavesQuestManager
         {
             for ( const profileID of Object.keys( this.quests ) )
             {
-                if ( !this.timeoutTracker.has( profileID ) )
+                if ( !this.timeoutTracker.has( profileID ) && profileID !== "original" )
                 {
                     const name = this.profileHelper.getFullProfile( profileID ).info.username;
                     this.leavesUtils.printColor( `[Questrandomizer] Unloading profile due to inactivity: ${ name } - ${ profileID }`, LogTextColor.YELLOW );
@@ -110,19 +110,36 @@ export class LeavesQuestManager
             return;
         }
 
-        const profileID = this.profileHelper.getFullProfile( sessionId )?.info?.id;
+        let profileID = this.profileHelper.getFullProfile( sessionId )?.info?.id;
 
         if ( profileID === undefined || profileID === "undefined" || profileID === "" || profileID === null )
         {
             return;
         }
 
-        if ( this.currentContex === profileID ) //If we're already in the context for that profile.
+        //Profile ID translator. Let one profile use quest-list from another.
+        if ( Object.keys( this.leavesSettingsManager.getConfig().profileTranslator ).includes( profileID ) )
         {
-            return;
+            profileID = this.leavesSettingsManager.getConfig().profileTranslator[ profileID ];
+            if ( this.currentContext === "original" && profileID === "original" )
+            {
+                return;
+            }
         }
 
+        if ( this.currentContext === profileID) //If we're already in the context for that profile.
+        {
+            this.timeoutTracker.add( profileID );
+            return;
+        }
         this.leavesUtils.printColor( `[Questrandomizer] Switching context for PID:${ profileID } SID:${ sessionId }`, LogTextColor.WHITE );
+
+        if ( profileID === "original" )
+        {
+            this.currentContext === "original";
+            this.setOriginalDB();
+            return;
+        }
 
         if ( this.quests[ profileID ] )
         {
@@ -357,9 +374,16 @@ export class LeavesQuestManager
     private set( profileID )
     {
         this.timeoutTracker.add( profileID );
-        this.currentContex = profileID;
+        this.currentContext = profileID;
         this.databaseServer.getTables().locales.global = this.locales[ profileID ];
         this.databaseServer.getTables().templates.quests = this.quests[ profileID ];
+    }
+
+    private setOriginalDB()
+    {
+        this.currentContext = "original";
+        this.databaseServer.getTables().locales.global = this.originalLocaleDB;
+        this.databaseServer.getTables().templates.quests = this.originalQuestDB;
     }
 
     public setQuestRandomizerReference( questRandomizer: Questrandomizer )

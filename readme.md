@@ -224,5 +224,16 @@ Will not fix already generated quests.
 
 This brings no new content or fixes. This is only for people who run a ton of shoddy mods that aren't set up correctly.
 
-## 0.3.2
-- Added a config to purge quests from profiles. Good for re-rolling quests that are too difficult or broken. I personally made it to use with shibdib's no transit tasks, to re-roll them without the transit requirements.
+## 0.4.0
+- Added a config to purge quests from profiles. Good for re-rolling quests that are too difficult or broken.
+- Added a config to allow certain profiles to use the same quest list or opt out of the randomization system entirely.
+- Fix profiles unloading no matter what if you're alone on the server. (Was harmless, just caused a minor server stutter.)
+- Change body part generation to use some preset templates instead of pure random. Some combinations could be really awful.
+- Purge optional tasks. (HOLY FUCK BSG, WHAT ARE YOU DOING. GET HELP! IYKYK)
+- Hopefully purge all "find" tasks. Was causing some problems.
+- Add eagle-owl quest to blacklist (locale generation doesn't support it yet.)
+- Always generates locale for handover quests. No more "hand over the item", making you none the wiser.
+- Improved Locale generation
+- Updated to latest translations from crowdin. Thank you to everyone who helps out. <3
+
+OLD CONFIGS ARE NOT COMPATIBLE.

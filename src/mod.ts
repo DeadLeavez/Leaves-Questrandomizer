@@ -30,11 +30,11 @@ import { IItemConfig } from "@spt/models/spt/config/IItemConfig";
 // TODO:
 // Randomize gear if its already there (NOT DONE)
 // Zones (Guh!)
-// Make a profile-profile quest id translator
+// Make a profile-profile quest id translator //DONE
 // randomize rewards?
 // Add categories to weapons themselves. (Into their description)
-// Always generate locale for all handover quests.
-// Purge "optional"
+// Always generate locale for all handover quests. //DONE
+// Purge "optional" //DONE
 // Show forbidden stuff
 
 export class Questrandomizer implements IPostDBLoadMod
@@ -57,12 +57,12 @@ export class Questrandomizer implements IPostDBLoadMod
     public postDBLoad( container: DependencyContainer ): void
     {
         const postDBModLoader = container.resolve<PostDBModLoader>( "PostDBModLoader" );
-        
+
         this.leavesUtils = new LeavesUtils( container );
         this.leavesUtils.printColor( "[Questrandomizer] Starting up!", LogTextColor.CYAN );
         this.leavesUtils.setModFolder( `${ postDBModLoader.getModPath( "leaves-questrandomizer" ) }/` );
         this.leavesUtils.setTierList( "assets/data/itemtierlist.jsonc" );
-        
+
         this.leavesIdManager = new LeavesIdManager( container, this.leavesUtils );
         this.leavesIdManager.load( "assets/generated/ids.jsonc" );
 
@@ -92,7 +92,7 @@ export class Questrandomizer implements IPostDBLoadMod
         this.httpServer = container.resolve<HttpServer>( "HttpServer" );
         this.configServer = container.resolve<ConfigServer>( "ConfigServer" );
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
-        
+
         //Purge quests
         const purgeQuestList = this.leavesSettingsManager.getConfig().purgeQuests;
         if ( Object.keys( purgeQuestList ).length > 0 )
@@ -268,16 +268,23 @@ export class Questrandomizer implements IPostDBLoadMod
             else if ( task.conditionType === "HandoverItem" )
             {
                 editedHandoverItemTask = this.editHandoverItemTask( task, editHandOverOverride );
+
+                if ( !editedHandoverItemTask ) //Regardless if we edited it or not, we will generate locale.
+                {
+                    if ( task.target.length === 1 ) //As long as its a single item type to hand over.
+                    {
+                        this.leavesLocaleGeneration.generateHandoverItemLocale( task, "" );
+                    }
+                }
             }
 
             //Purge visibility conditions.
             task.visibilityConditions = [];
 
         }
-        if ( editedHandoverItemTask )
-        {
-            this.leavesQuestTools.purgeFindItemTasks( quest.conditions.AvailableForFinish );
-        }
+
+        this.leavesQuestTools.purgeFindItemTasks( quest.conditions.AvailableForFinish );
+        this.leavesQuestTools.purgeOptionalTasks( quest.conditions.AvailableForFinish );
 
         //Edit quest location
         quest.location = this.leavesSettingsManager.getLocationIDMap()[ this.leavesQuestTools.getQuestLocationText( quest ).toLocaleLowerCase() ];
