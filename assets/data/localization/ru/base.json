@@ -21,6 +21,8 @@
     "OneRequired": "Любые необходимые",
     "AND": "И",
     "OR": "Или",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "на Таможне",
     "factory4_day": "на Заводе - Днем",
     "factory4_night": "на Заводе - Ночью",
