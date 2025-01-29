@@ -21,6 +21,8 @@
     "OneRequired": "Any Required",
     "AND": "AND",
     "OR": "OR",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "Skład Celny",
     "factory4_day": "Fabryka",
     "factory4_night": "Fabryka nocą",
