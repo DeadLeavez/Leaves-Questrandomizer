@@ -21,6 +21,8 @@
     "OneRequired": "任何要求",
     "AND": "並",
     "OR": "或",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "海关",
     "factory4_day": "工厂 - 日间",
     "factory4_night": "工厂 - 夜间",
