@@ -21,6 +21,8 @@
     "OneRequired": "Any Required",
     "AND": "AND",
     "OR": "OR",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "세관",
     "factory4_day": "공장 - 주간",
     "factory4_night": "공장 - 야간",

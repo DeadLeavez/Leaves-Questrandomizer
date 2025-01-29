@@ -21,6 +21,8 @@
     "OneRequired": "Alle erforderlich",
     "AND": "UND",
     "OR": "ODER",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "Zollgebäude",
     "factory4_day": "Fabrik - Tag",
     "factory4_night": "Fabrik - Nacht",

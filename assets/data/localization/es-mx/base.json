@@ -21,6 +21,8 @@
     "OneRequired": "Any Required",
     "AND": "AND",
     "OR": "OR",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "Aduanas",
     "factory4_day": "Fabrica - Dia",
     "factory4_night": "Fabrica - Noche",
