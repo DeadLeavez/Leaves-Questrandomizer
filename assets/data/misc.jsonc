@@ -59,20 +59,17 @@
         [
             "665886abdaadd1069736c539", //Unlocked valuables crate (Common)
             "6658876e146af22739040fad", //Unlocked equipment crate (Common)
-            //"665888282c4a1b73af576b77", //Unlocked weapon crate (Common)
             "6658892e6e007c6f33662002" //Unlocked supply crate (Common)
         ],
         "rare":
         [
             "665730fa4de4820934746c48", //Unlocked equipment crate (Rare)
-            //"665732e7ac60f009f270d1ef", //Unlocked weapon crate (Rare)
             "665732f4464c4b4ba4670fa9", //Unlocked supply crate (Rare)
             "66573310a1657263d816a139" //Unlocked valuables crate (Rare)
         ],
         "epic":
         [
             "6658291eefd94e2d665b14a4", //Unlocked equipment crate (Epic)
-            //"665829424de4820934746ce6", //Unlocked weapon crate (Epic)
             "66582972ac60f009f270d2aa", //Unlocked supply crate (Epic)
             "665829a6efd94e2d665b14a8" //Unlocked valuables crate (Epic)
         ]

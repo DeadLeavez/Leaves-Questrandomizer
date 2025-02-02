@@ -67,6 +67,7 @@ export class LeavesQuestManager
         }
         this.weaponEquivalentTable[ originalWeapon ].push( equivalentWeapon );
         this.leavesLocaleGeneration.addEquivalentToWeapon( originalWeapon, equivalentWeapon );
+        this.questRandomizer.addCategoriesToWeapon( originalWeapon, equivalentWeapon );
     }
 
     private getWeaponEquivalents( weaponID: string ): string[]

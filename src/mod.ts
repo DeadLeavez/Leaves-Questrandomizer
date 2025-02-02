@@ -378,6 +378,13 @@ export class Questrandomizer implements IPostDBLoadMod
             {
                 flags.hasEquipment = counterConditionIndex;
             }
+            else if ( conditions[ counterConditionIndex ].conditionType === "HealthEffect" )
+            {
+                //remove health effects for now.
+                conditions.splice( counterConditionIndex, 1 );
+                counterConditionIndex--;
+                continue;
+            }
         }
 
         //Edit kill quests
@@ -587,7 +594,7 @@ export class Questrandomizer implements IPostDBLoadMod
         this.addCategoriesToWeapons();
     }
 
-    addCategoriesToWeapons()
+    public addCategoriesToWeapons()
     {
         const weaponCategories = this.leavesSettingsManager.getWeaponCategories().categories;
         for ( const categoryName of Object.keys( weaponCategories ) )
@@ -596,6 +603,19 @@ export class Questrandomizer implements IPostDBLoadMod
             {
                 this.leavesLocaleGeneration.addWeaponGroupToWeapon( categoryName, weaponID );
                 this.leavesUtils.printColor( `Adding ${ categoryName } to ${ weaponID }`, LogTextColor.YELLOW, true );
+            }
+        }
+    }
+
+    public addCategoriesToWeapon( originalID: string, equivalentID: string )
+    {
+        const weaponCategories = this.leavesSettingsManager.getWeaponCategories().categories;
+        for ( const categoryName of Object.keys( weaponCategories ) )
+        {
+            if ( weaponCategories[ categoryName ].weapons.includes( originalID ) )
+            {
+                this.leavesLocaleGeneration.addWeaponGroupToWeapon( categoryName, equivalentID );
+                this.leavesUtils.printColor( `Adding ${ categoryName } to ${ equivalentID }`, LogTextColor.YELLOW, true );
             }
         }
     }

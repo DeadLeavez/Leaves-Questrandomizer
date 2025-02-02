@@ -244,4 +244,7 @@ OLD CONFIGS ARE NOT COMPATIBLE.
 - Fix crash on startup when mods use the compatability API. Ooops
 
 ## 0.4.2
-- Fix so it doesn't spam the console with equivs. :D
+- Change so it doesn't spam the console with equivs. :D
+- Slight adjustments to item tiers and balancing.
+- Purge player health effects for now.
+- Add categories to API added weapons.
