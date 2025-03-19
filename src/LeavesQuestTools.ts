@@ -3,15 +3,32 @@ import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { HashUtil } from "@spt/utils/HashUtil";
 import { IQuest, IQuestCondition, IQuestConditionCounterCondition } from "@spt/models/eft/common/tables/IQuest";
 import { QuestStatus } from "@spt/models/enums/QuestStatus";
-import { QuestRewardType } from "@spt/models/enums/QuestRewardType";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { randomInt } from "crypto";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { HandbookHelper } from "@spt/helpers/HandbookHelper";
 
-import { LeavesUtils } from "./LeavesUtils";
+import { LeavesUtils } from "./deps/LeavesUtils";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
+
+export enum QuestRewardType {
+    SKILL = "Skill",
+    EXPERIENCE = "Experience",
+    TRADER_STANDING = "TraderStanding",
+    TRADER_UNLOCK = "TraderUnlock",
+    ITEM = "Item",
+    ASSORTMENT_UNLOCK = "AssortmentUnlock",
+    PRODUCTIONS_SCHEME = "ProductionScheme",
+    TRADER_STANDING_RESET = "TraderStandingReset",
+    TRADER_STANDING_RESTORE = "TraderStandingRestore",
+    STASH_ROWS = "StashRows",
+    ACHIEVEMENT = "Achievement",
+    POCKETS = "Pockets",
+    CUSTOMIZATION_DIRECT = "CustomizationDirect",
+    CUSTOMIZATION_OFFER = "CustomizationOffer",
+    EXTRA_DAILY_QUEST = "ExtraDailyQuest",
+}
 
 export class Depth
 {

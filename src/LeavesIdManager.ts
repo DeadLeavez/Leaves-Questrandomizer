@@ -1,6 +1,6 @@
 import { DependencyContainer } from "tsyringe";
 import { HashUtil } from "@spt/utils/HashUtil";
-import { LeavesUtils } from "./LeavesUtils";
+import { LeavesUtils } from "./deps/LeavesUtils";
 
 export class LeavesIdManager
 {

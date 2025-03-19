@@ -10,7 +10,7 @@ import { ConfigServer } from "@spt/servers/ConfigServer";
 import { ITraderConfig } from "@spt/models/spt/config/ITraderConfig";
 
 //Helpers
-import { LeavesUtils, RTT_Colors } from "./LeavesUtils";
+import { LeavesUtils, RTT_Colors } from "./deps/LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesQuestGeneration } from "./LeavesQuestGeneration";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
@@ -33,6 +33,8 @@ import { IItemConfig } from "@spt/models/spt/config/IItemConfig";
 // randomize rewards?
 // Add categories to weapons themselves. (Into their description)
 // Show forbidden stuff
+// Sell to trader quest type (SellItemToTrader)
+// Fix forbidden weapon mods. Adds them wrongly. Should just be a long list.
 
 export class Questrandomizer implements IPostDBLoadMod
 {
@@ -72,8 +74,7 @@ export class Questrandomizer implements IPostDBLoadMod
 
         this.leavesQuestGeneration = new LeavesQuestGeneration( this.leavesUtils, this.leavesQuestTools, this.leavesSettingsManager, this.leavesLocaleGeneration, this.leavesIdManager );
 
-        Questrandomizer.leavesQuestManager = new LeavesQuestManager( this.leavesUtils, this.leavesIdManager, this.leavesSettingsManager, this.leavesQuestTools, this.leavesQuestGeneration, this.leavesLocaleGeneration, container );
-        Questrandomizer.leavesQuestManager.setQuestRandomizerReference( this );
+        Questrandomizer.leavesQuestManager = new LeavesQuestManager( this.leavesUtils, this.leavesIdManager, this.leavesSettingsManager, this.leavesQuestTools, this.leavesQuestGeneration, this.leavesLocaleGeneration, this, container );
 
         container.register<LeavesQuestrandomizerCompatibility>( "LeavesQuestrandomizerCompatibility", LeavesQuestrandomizerCompatibility, { lifecycle: Lifecycle.Singleton } );
         container.resolve<LeavesQuestrandomizerCompatibility>( "LeavesQuestrandomizerCompatibility" ).giveQuestManager( Questrandomizer.leavesQuestManager );
@@ -98,6 +99,7 @@ export class Questrandomizer implements IPostDBLoadMod
             this.purgeQuests( purgeQuestList );
         }
 
+        this.leavesUtils.dataDump();
 
         //Override the handle
         // @ts-ignore
@@ -114,6 +116,49 @@ export class Questrandomizer implements IPostDBLoadMod
         this.leavesIdManager.save();
 
         this.leavesUtils.printColor( "[Questrandomizer] Startup Finished. Enjoy!", LogTextColor.CYAN );
+        //this.findAll();
+    }
+
+    private findAll()
+    {
+        let itemDB = this.databaseServer.getTables().templates.items;
+        for ( const quest of Object.values( this.databaseServer.getTables().templates.quests ) )
+        {
+            const questName = quest.QuestName;
+            for ( const condition of quest.conditions.AvailableForFinish )
+            {
+                if ( condition.conditionType === "FindItem" )
+                {
+                    if ( itemDB[ condition.target[ 0 ] ]._props.QuestItem )
+                    {
+                        this.leavesUtils.printColor( `QuestItemFind - "${ this.leavesUtils.getLocale( "en", condition.target[ 0 ], " Name" ) }"  - ${ questName }` );
+                    }
+                }
+            }
+        }
+        for ( const quest of Object.values( this.databaseServer.getTables().templates.quests ) )
+        {
+            const questName = quest.QuestName;
+            for ( const condition of quest.conditions.AvailableForFinish )
+            {
+                if ( condition.conditionType === "LeaveItemAtLocation" )
+                {
+                    this.leavesUtils.printColor( `LeaveItemLocation - ${ condition.zoneId } - ${ this.leavesUtils.getLocale( "en", condition.target[ 0 ], " Name" ) } - ${ questName }"` );
+                }
+            }
+
+        }
+        for ( const quest of Object.values( this.databaseServer.getTables().templates.quests ) )
+        {
+            const questName = quest.QuestName;
+            for ( const condition of quest.conditions.AvailableForFinish )
+            {
+                if ( condition.conditionType === "PlaceBeacon" )
+                {
+                    this.leavesUtils.printColor( `Beacon Location - ${ condition.zoneId } - ${ questName }` );
+                }
+            }
+        }
     }
 
     private purgeQuests( purgeQuestList: any )
@@ -228,7 +273,7 @@ export class Questrandomizer implements IPostDBLoadMod
             hasKillsFailstate = this.leavesUtils.searchObject( "Kills", quest.conditions.Fail );
         }
 
-        //Check if quest has kill type
+        //Check if quest has doesn't have kills, or kill failstate. And then we add to it if that passes.
         if ( !this.leavesUtils.searchObject( "Kills", quest.conditions.AvailableForFinish ) && Math.random() < this.leavesSettingsManager.getConfig().addKillObjectiveToQuestChance && !hasKillsFailstate )
         {
             const tempTarget = this.leavesSettingsManager.getValidTargets()[ randomInt( this.leavesSettingsManager.getValidTargets().length ) ];

@@ -4,7 +4,7 @@ import { IQuestCondition } from "@spt/models/eft/common/tables/IQuest";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 
 //Helpers
-import { LeavesUtils } from "./LeavesUtils";
+import { LeavesUtils } from "./deps/LeavesUtils";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 
 export class LeavesLocaleGeneration
@@ -149,7 +149,7 @@ export class LeavesLocaleGeneration
                         bodyPartsLine += " or ";
                     }
                 }
-                bodyPartsLine += "]";
+                bodyPartsLine += "] ";
                 line += bodyPartsLine;
             }
 

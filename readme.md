@@ -243,8 +243,17 @@ OLD CONFIGS ARE NOT COMPATIBLE.
 - Add weapon equivalencies to weapons.
 - Fix crash on startup when mods use the compatability API. Ooops
 
-## 0.4.2
+## 0.4.2 (UNRELEASED)
 - Change so it doesn't spam the console with equivs. :D
 - Slight adjustments to item tiers and balancing.
 - Purge player health effects for now.
 - Add categories to API added weapons.
+- Fix some locale issues
+- new weapons to categories
+- - Added Sako TRG M10
+- - Saiga 12k Automatic
+- - FN SCAR H X-17
+- - Aklys Velociraptor
+- Added quests for 3.11 to vanilla whitelist
+- Added btr to config (disabled by default)
+- Updated for 3.11 (still works on 3.10)

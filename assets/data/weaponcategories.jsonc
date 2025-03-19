@@ -15,6 +15,7 @@ This file holds all weapon and mod categories, and a list of individual weapons 
                 "5bfd297f0db834001a669119", //Mosin 7.62x54R bolt-action rifle (Infantry)
                 "5ae08f0a5acfc408fb1398a1", //Mosin 7.62x54R bolt-action rifle (Sniper)
                 "55801eed4bdc2d89578b4588", //SV-98 7.62x54R bolt-action sniper rifle
+                "673cab3e03c6a20581028bc1", //Sako TRG M10 .338 LM bolt-action sniper rifle
                 "5df24cf80dee1b22f862e9bc" //ORSIS T-5000M 7.62x51 bolt-action sniper rifle
             ],
             /*
@@ -139,18 +140,8 @@ This file holds all weapon and mod categories, and a list of individual weapons 
                 "60db29ce99594040e04c4a27", //MTs-255-12 12ga shotgun
                 "66ffa9b66e19cc902401c5e8", //AA-12 GEN 1
                 "67124dcfa3541f2a1f0e788b", //AA-12 GEN 2
-                "576165642459773c7a400233" //Saiga-12K ver.10 12ga semi-automatic shotgun
-
-            ],
-            "mods-inclusive": { },
-            "mods-exclusive": { }
-        },
-        "4gauge":
-        {
-            "weight": 1,
-            "weapons":
-            [
-                "5e848cc2988a8701445df1e8" //TOZ KS-23M 23x75mm pump-action shotgun
+                "576165642459773c7a400233", //Saiga-12K ver.10 12ga semi-automatic shotgun
+                "674fe9a75e51f1c47c04ec23" //Saiga-12K 12ga automatic shotgun
 
             ],
             "mods-inclusive": { },
@@ -344,6 +335,7 @@ This file holds all weapon and mod categories, and a list of individual weapons 
                 "5b0bbe4e5acfc40dc528a72d", //DS Arms SA-58 7.62x51 assault rifle
                 "6183afd850224f204c1da514", //FN SCAR-H 7.62x51 assault rifle
                 "6165ac306ef05c2ce828ef74", //FN SCAR-H 7.62x51 assault rifle (FDE)
+                "676176d362e0497044079f4c", //FN SCAR-H X-17 7.62x51 assault rifle
                 "588892092459774ac91d4b11", //Lobaev Arms DVL-10 7.62x51 bolt-action sniper rifle
                 "5bfea6e90db834001b7347f3", //Remington Model 700 7.62x51 bolt-action sniper rifle
                 "5df24cf80dee1b22f862e9bc", //ORSIS T-5000M 7.62x51 bolt-action sniper rifle
@@ -415,7 +407,8 @@ This file holds all weapon and mod categories, and a list of individual weapons 
                 "55801eed4bdc2d89578b4588", //SV-98 7.62x54R bolt-action sniper rifle
                 "5df24cf80dee1b22f862e9bc", //ORSIS T-5000M 7.62x51 bolt-action sniper rifle
                 "5de652c31b7e3716273428be", //Molot Arms VPO-215 Gornostay .366 TKM bolt-action rifle
-                "5a38e6bac4a2826c6e06d79b" //TOZ-106 20ga bolt-action shotgun
+                "5a38e6bac4a2826c6e06d79b", //TOZ-106 20ga bolt-action shotgun
+                "673cab3e03c6a20581028bc1" //Sako TRG M10 .338 LM bolt-action sniper rifle
 
             ],
             "mods-inclusive": { },
@@ -473,6 +466,7 @@ This file holds all weapon and mod categories, and a list of individual weapons 
                 "606dae0ab0e443224b421bb7", //MP-155 12ga semi-automatic shotgun
                 "60db29ce99594040e04c4a27", //MTs-255-12 12ga shotgun
                 "576165642459773c7a400233", //Saiga-12K ver.10 12ga semi-automatic shotgun
+                "674fe9a75e51f1c47c04ec23", //Saiga-12K 12ga automatic shotgun
                 "66ffa9b66e19cc902401c5e8", //AA-12 GEN 1
                 "67124dcfa3541f2a1f0e788b", //AA-12 GEN 2
                 "5a38e6bac4a2826c6e06d79b" //TOZ-106 20ga bolt-action shotgun
@@ -909,7 +903,8 @@ This file holds all weapon and mod categories, and a list of individual weapons 
                 "5e81ebcd8e146c7080625e15", //FN40GL Mk2 40mm grenade launcher
                 "5cc82d76e24e8d00134b4b83", //FN P90 5.7x28 submachine gun
                 "5d3eb3b0a4b93615055e84d2", //FN Five-seveN MK2 5.7x28 pistol
-                "5d67abc1a4b93614ec50137f" //FN Five-seveN MK2 5.7x28 pistol (FDE)
+                "5d67abc1a4b93614ec50137f", //FN Five-seveN MK2 5.7x28 pistol (FDE)
+                "676176d362e0497044079f4c" //FN SCAR-H X-17 7.62x51 assault rifle
 
             ],
             "mods-inclusive": { },
@@ -1117,7 +1112,8 @@ This file holds all weapon and mod categories, and a list of individual weapons 
                 "5ab8e9fcd8ce870019439434", //Kalashnikov AKS-74N 5.45x39 assault rifle
                 "57dc2fa62459775949412633", //Kalashnikov AKS-74U 5.45x39 assault rifle
                 "5839a40f24597726f856b511", //Kalashnikov AKS-74UB 5.45x39 assault rifle
-                "583990e32459771419544dd2" //Kalashnikov AKS-74UN 5.45x39 assault rifle
+                "583990e32459771419544dd2", //Kalashnikov AKS-74UN 5.45x39 assault rifle
+                "674d6121c09f69dfb201a888" //Aklys Defense Velociraptor .300 Blackout assault rifle
 
             ],
             "mods-inclusive": { },

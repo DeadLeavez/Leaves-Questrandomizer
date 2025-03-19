@@ -1,7 +1,7 @@
 import { DependencyContainer } from "tsyringe";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { LeavesUtils } from "./LeavesUtils";
+import { LeavesUtils } from "./deps/LeavesUtils";
 import { ProfileHelper } from "@spt/helpers/ProfileHelper";
 import { Questrandomizer } from "./mod";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
@@ -17,7 +17,6 @@ export class LeavesQuestManager
     private locales;
     private quests;
     private hasInit: boolean;
-    private questRandomizer: Questrandomizer;
     private currentContext: string;
     private timeoutTracker: Set<String>;
     private unloadCheckTime: number;
@@ -34,6 +33,7 @@ export class LeavesQuestManager
         private leavesQuestTools: LeavesQuestTools,
         private leavesQuestGeneration: LeavesQuestGeneration,
         private leavesLocaleGeneration: LeavesLocaleGeneration,
+        private questRandomizer: Questrandomizer,
         container: DependencyContainer
     )
     {
@@ -388,10 +388,5 @@ export class LeavesQuestManager
         this.currentContext = "original";
         this.databaseServer.getTables().locales.global = this.originalLocaleDB;
         this.databaseServer.getTables().templates.quests = this.originalQuestDB;
-    }
-
-    public setQuestRandomizerReference( questRandomizer: Questrandomizer )
-    {
-        this.questRandomizer = questRandomizer;
     }
 }

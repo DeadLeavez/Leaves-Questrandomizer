@@ -299,7 +299,7 @@
 	],
 	"35": [
 		"66572c82ad599021091c6118", //Killa figurine - Jewelry",
-		"66572cbdad599021091c611a", //Tagilla figurine - Jewelry",
+		//"66572cbdad599021091c611a", //Tagilla figurine - Jewelry", (SEEMS TO NOT SPAWN)
 		"5c12613b86f7743bbe2c3f76", //Intelligence folder - Info",
 		"591094e086f7747caa7bb2ef", //Body armor repair kit - undefined",
 		"5c05300686f7746dce784e5d", //VPX Flash Storage Module - Electronics",

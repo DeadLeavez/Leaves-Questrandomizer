@@ -1,6 +1,6 @@
 import { DependencyContainer } from "tsyringe";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
-import { LeavesUtils } from "./LeavesUtils"
+import { LeavesUtils } from "./deps/LeavesUtils";
 import { randomInt } from "node:crypto";
 
 export class LeavesSettingsManager

@@ -8,6 +8,7 @@
     "scripts": {
         "setup": "npm i",
         "build": "node ./build.mjs",
+        "updatedeps": "npx tsc --module node16 updatedeps.ts && node updatedeps.js",
         "buildinfo": "node ./build.mjs --verbose"
     },
     "devDependencies": {

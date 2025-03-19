@@ -353,7 +353,6 @@
         "6578ec473dbd035d04531a8d", //Steady Signal
         "658027799634223183395339", //No Swiping
         "65802b627b44fa5e14638899", //Nothing Fishy About This
-        "65e85198e32da31f2b30978e", //Evil Spirits - Event
         "6603fe74e773dcf3b0099f88", //The Tarkov Mystery
         "66058cb22cee99303f1ba067", //Easy Money - Part 1
         "66058cb5ae4719735349b9e8", //Easy Money - Part 2
@@ -449,8 +448,63 @@
         "67040ccdcc1f3752720376ef", //Forgotten Oaths
         "67190f6c1b3f4964d90d71e9", //Global Threat
         "67190f9c7b0991dc22064766", //Watch the Watcher
+        "67190febcce4a5fdf605d4f8", //Not a Step Back
+        "67191048eddf081d340d4c6e", //Pressured by Circumstances
+        "671910d5dbd4354ac10e9784", //Conservation Area
         "671a49f77d49aea42c029b5f", //Irresistible
         "671a59e43d73dac1360765cc", //Dangerous Props
-        "6727ef2c6015b7cc540ea754" //Unknown quest
+        "6727ef2c6015b7cc540ea754", //Contagious Beast
+        "673f2cd5d3346c2167020484", //Shipping Delay - Part 2
+        "673f348dd3346c21670217e7", //Shipping Delay - Part 1
+        "673f4e956f1b89c7bc0f56ef", //Hot Wheels
+        "673f5a4976553f78350bdac1", //Hot Wheels - Lets Try Again
+        "673f6027352b4da8e00322d2", //Inevitable Response
+        "673f61a066e6a521aa04b62b", //Order From Outside
+        "673f629c5b555b53460cf827", //Building Foundations
+        "6740a02a69a58fceba0ff399", //Natural Exchange
+        "6740a15566e6a521aa051b15", //Forge a Friendship
+        "6740a2c17e3818d5bb0648b6", //Half-Empty
+        "6740a3f4eca8acb2d2055159", //Stick in the Wheel
+        "6740b60c60a98cad1b0e0aa0", //Another Shipping Delay
+        "674492b6909d2013670a347a", //Ask for Directions
+        "6744a4717e3818d5bb0680bb", //Stabilize Business
+        "6744a728352b4da8e003eda9", //Battery Change
+        "6744a9dfef61d56e020b5c4a", //Battery Change
+        "6744ab1def61d56e020b5c56", //Protect the Sky
+        "6744aca8d3346c216702c583", //Discombobulate
+        "6744af0969a58fceba101fed", //The Price of Independence
+        "6745cbee909d2013670a4a55", //The Price of Independence
+        "6745fae369a58fceba10343d", //The Higher They Fly
+        "6745fcded0fbbc74ca0f721d", //Swift Retribution
+        "6745fdddd3346c216702e0bf", //Simple Side Job
+        "674600a366e6a521aa05eb66", //Route Deviation
+        "674602307e3818d5bb069489", //Hindsight 2020
+        "6746053b5b555b53460d9896", //Key Partner
+        "674605df60a98cad1b0ec799", //Killer Argument
+        "67460662d0fbbc74ca0f7229", //Choose Your Friends Wisely
+        "675031be899713ccad00060c", //Christmas Dinner
+        "675031d3884e1da4a90b3bc9", //Chilly
+        "675031e1f300496cc4104450", //Hide in Plain Sight
+        "675031f57775aada6b0f96a1", //Cheer Up
+        "6750320e23fc8fd9cc087d14", //Holiday Beyond the Means
+        "67503219527c9a38e80496ae", //Illegal Logging
+        "67503247622398376d0b57cd", //Khorovod
+        "67503260899713ccad00060e", //Enough Drinks for That One
+        "6752f6d83038f7df520c83e8", //A Helping Hand
+        "675c03d1f7da9792a405549a", //Abandoned Cargo
+        "675c047fa46173572a0bd878", //Shipment Tracking
+        "675c04f4db8807b75d0f38e8", //Closer to the People
+        "675c085d59b0575973005f52", //Break the Deal
+        "675c1570526ff496850895d9", //Passion for Ergonomics
+        "675c1cf4a757ddd00404f0a3", //Work Smarter
+        "675c1d6d59b0575973008fc7", //Seizing the Initiative
+        "675c1ec7a46173572a0bf20a", //Rite of Passage
+        "675c1ff1a757ddd00404f0aa", //Test Drive - Part 6
+        "675c3507a06634b5110e3c18", //Belka and Strelka
+        "675c3582f6ddc329a90f9c6d", //Private Club
+        "6764174c86addd02bc033d68", //Connections Up North
+        "676529af9c90953d090882e7", //Gunsmith - Old Friends Request
+        "676c243577f0257dd50239e6", //The Price of Celebration
+        "676c243fb16f4b14b905e7f4" //This Is My Party
     ]
 }

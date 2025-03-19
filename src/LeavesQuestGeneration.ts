@@ -3,7 +3,7 @@ import { QuestTypeEnum } from "@spt/models/enums/QuestTypeEnum";
 import { ELocationName } from "@spt/models/enums/ELocationName";
 import { QuestStatus } from "@spt/models/enums/QuestStatus";
 
-import { LeavesUtils } from "./LeavesUtils";
+import { LeavesUtils } from "./deps/LeavesUtils";
 import { LeavesQuestTools } from "./LeavesQuestTools";
 import { LeavesSettingsManager } from "./LeavesSettingsManager";
 import { LeavesLocaleGeneration } from "./LeavesLocaleGeneration";

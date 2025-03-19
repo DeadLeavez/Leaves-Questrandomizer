@@ -3,10 +3,9 @@ import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import { JsonUtil } from "@spt/utils/JsonUtil";
-import { VFS } from "@spt/utils/VFS";
+import { VFS } from "./VFS";
 import { randomInt } from "crypto";
 import { jsonc } from "jsonc";
-import * as path from "node:path";
 import { WeightedRandomHelper } from "@spt/helpers/WeightedRandomHelper";
 import { IItem } from "@spt/models/eft/common/tables/IItem";
 
@@ -26,13 +25,14 @@ export class LeavesUtils
 
     constructor( container: DependencyContainer )
     {
+        this.vfs = new VFS();
+        this.modFolder = this.vfs.resolve( `../` );
+
         this.databaseServer = container.resolve<DatabaseServer>( "DatabaseServer" );
-        this.vfs = container.resolve<VFS>( "VFS" );
         this.jsonUtil = container.resolve<JsonUtil>( "JsonUtil" );
         this.logger = container.resolve<ILogger>( "WinstonLogger" );
         this.weightedRandomHelper = container.resolve<WeightedRandomHelper>( "WeightedRandomHelper" );
 
-        this.modFolder = path.resolve( __dirname, `../` );
         this.debug = false;
     }
 
@@ -506,6 +506,23 @@ export class LeavesUtils
         return false;
     }
 
+    public getParents( itemID: string ): string[]
+    {
+        let current = itemID;
+        let parents: string[] = [];
+
+        while ( current !== "" )
+        {
+            current = this.databaseServer.getTables().templates.items[ current ]._parent;
+            if ( current === "" )
+            {
+                return parents;
+            }
+            parents.push( current );
+        }
+        return [];
+    }
+
     private add( item: string, target: any )
     {
         let order: string[] = [];
@@ -544,11 +561,54 @@ export class LeavesUtils
         }
     }
 
-
-
-
-
+    public getBaseDBPLocation(): DBPLocation
+    {
+        return {
+            "coordinates": { "x": 0, "y": 0, "z": 0 },
+            "label": "",
+            "text": "",
+            "labelColor": { "r": 1.0, "g": 1.0, "b": 1.0, "a": 1.0 },
+            "textColor": { "r": 1.0, "g": 1.0, "b": 1.0, "a": 1.0 },
+            "objectColor": { "r": 1.0, "g": 1.0, "b": 1.0, "a": 0.35 },
+            "objectType": "sphere",
+            "objectScale": { "x": 0.085, "y": 0.085, "z": 0.085 },
+            "physics": false
+        }
+    }
 }
+
+export class DBPLocations
+{
+    locations: Map<string, DBPLocation[]>;    
+}
+
+export interface DBPLocation
+{
+    coordinates: UnityVector3,
+    label: string,
+    text: string,
+    labelColor: UnityColor,
+    textColor: UnityColor,
+    objectColor: UnityColor,
+    objectType: string,
+    objectScale: UnityVector3,
+    physics: boolean
+}
+
+export interface UnityColor
+{
+    r: number,
+    g: number,
+    b: number,
+    a: number
+}
+export interface UnityVector3
+{
+    x: number,
+    y: number,
+    z: number
+}
+
 export const RTT_Align =
 {
     LEFT: "left",
