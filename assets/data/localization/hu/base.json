@@ -21,6 +21,8 @@
     "OneRequired": "Any Required",
     "AND": "ÉS",
     "OR": "VAGY",
+    "PartOf": "Part of category:",
+    "EquivalentTo": "Equivalent to:",
     "bigmap": "Customs",
     "factory4_day": "Gyár - Nappal",
     "factory4_night": "Gyár - Éjszaka",
